@@ -7,19 +7,20 @@ import {
   StatusBar,
   Button
 } from 'react-native';
-import { getAccessToken, getUser, clearTokens } from '@okta/okta-react-native';
+import { getAccessToken, getUser, clearTokens, getUserFromIdToken } from '@okta/okta-react-native';
 import Spinner from 'react-native-loading-spinner-overlay';
 import Error from './components/Error';
+import jwt_decode from "jwt-decode";
+import HomeService from './services/home.service';
 
 export default ProfileScreen = (props) => {
   const [accessToken, setAccessToken] = useState(null);
   const [user, setUser] = useState(null);
   const [progress, setProgress] = useState(true);
   const [error, setError] = useState('');
+  const [requests, setRequests] = useState([]);
 
   useEffect(() => {
-    console.log('run');
-    
     props.navigation.setOptions(
       {
         headerLeft: () =>
@@ -33,11 +34,16 @@ export default ProfileScreen = (props) => {
       .then(user => {
         setProgress(false);
         setUser(user);
+        console.log(user)
       })
       .catch(e => {
         setProgress(false);
         setError(e.message);
       });
+
+    getToken()
+
+    return () => logout();
   }, []);
 
 
@@ -45,8 +51,15 @@ export default ProfileScreen = (props) => {
     setProgress(false);
     getAccessToken()
       .then(token => {
+        const decoded = jwt_decode(token.access_token);
         setProgress(false);
         setAccessToken(token.access_token);
+        console.log(token.access_token)
+        const homeService = new HomeService();
+        homeService.getAllRequest(token.access_token).then(data => {
+          console.log(data);
+          setRequests(data);
+        });
       })
       .catch(e => {
         setProgress(false);
@@ -92,13 +105,14 @@ export default ProfileScreen = (props) => {
           </View>
         )}
         <View style={{ flexDirection: 'column', marginTop: 20, paddingLeft: 20, width: 300 }}>
-          <Button style={{ marginTop: 40 }} title="Get access token" onPress={() => getToken()} />
-          {accessToken &&
-            <View style={styles.tokenContainer}>
-              <Text style={styles.tokenTitle}>Access Token:</Text>
-              <Text style={{ marginTop: 20 }} numberOfLines={5}>{accessToken}</Text>
-            </View>
-          }
+          <View style={styles.tokenContainer}>
+            <Text style={styles.tokenTitle}>Requests:</Text>
+            {requests.map((requests, index) => {
+              return (
+                <Text key={index} style={{ marginTop: 20 }} numberOfLines={5}>{`Start: ${requests.startDate} End: ${requests.endDate}`}</Text>
+              );
+            })}
+          </View>
         </View>
       </SafeAreaView>
     </>

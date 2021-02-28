@@ -23,7 +23,6 @@ export default LoginScreen = (props) => {
 
 
   const login = () => {
-    console.log('run');
     setState({ ...state, progress: true });
 
     const { navigation } = props;
