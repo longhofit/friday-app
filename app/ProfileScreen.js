@@ -12,6 +12,8 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import Error from './components/Error';
 import jwt_decode from "jwt-decode";
 import HomeService from './services/home.service';
+import CalendarComponent from './components/calendar/calendar.component';
+import { yyyMMddFormatter, getDatesBetweenDates } from '../core/formatters';
 
 export default ProfileScreen = (props) => {
   const [accessToken, setAccessToken] = useState(null);
@@ -19,12 +21,14 @@ export default ProfileScreen = (props) => {
   const [progress, setProgress] = useState(true);
   const [error, setError] = useState('');
   const [requests, setRequests] = useState([]);
+  const [dates, setDates] = useState([]);
 
   useEffect(() => {
     props.navigation.setOptions(
       {
         headerLeft: () =>
-          <Text onPress={() => logout()} style={styles.logoutButton}>Logout</Text>
+          <Text onPress={() => logout()} style={styles.logoutButton}>Logout</Text>,
+        headerCenter:()=><Text>asdas</Text>
       }
     );
 
@@ -43,8 +47,33 @@ export default ProfileScreen = (props) => {
 
     getToken()
 
-    return () => logout();
+    // return () => logout();
   }, []);
+
+  useEffect(() => {
+    const dateTemps = [];
+
+    requests.forEach(request => {
+      const dateBw = getDatesBetweenDates(request.startDate, request.endDate).map(date => { return yyyMMddFormatter(date) });
+
+      dateBw.forEach((item, index) => {
+        dateTemps.push({
+          date: item,
+          option: {
+            color: '#70d7c7',
+            textColor: 'white',
+            startingDay: index === 0,
+            endingDay: index === (dateBw.length - 1),
+          },
+        })
+      });
+
+    });
+
+    console.log(dateTemps);
+
+    setDates(dateTemps);
+  }, [requests]);
 
 
   const getToken = () => {
@@ -57,7 +86,6 @@ export default ProfileScreen = (props) => {
         console.log(token.access_token)
         const homeService = new HomeService();
         homeService.getAllRequest(token.access_token).then(data => {
-          console.log(data);
           setRequests(data);
         });
       })
@@ -88,7 +116,7 @@ export default ProfileScreen = (props) => {
         />
         <Error error={error} />
         {user && (
-          <View style={{ paddingLeft: 20, paddingTop: 20 }}>
+          <View style={{ paddingLeft: 10 }}>
             <Text style={styles.titleHello}>Hello {user.name}</Text>
             <View style={{ flexDirection: 'row' }}>
               <Text>Name: </Text>
@@ -104,16 +132,15 @@ export default ProfileScreen = (props) => {
             </View>
           </View>
         )}
-        <View style={{ flexDirection: 'column', marginTop: 20, paddingLeft: 20, width: 300 }}>
+        <View style={{ flexDirection: 'column', marginTop: 10, paddingLeft: 20, width: 300, marginBottom: 10 }}>
           <View style={styles.tokenContainer}>
             <Text style={styles.tokenTitle}>Requests:</Text>
-            {requests.map((requests, index) => {
-              return (
-                <Text key={index} style={{ marginTop: 20 }} numberOfLines={5}>{`Start: ${requests.startDate} End: ${requests.endDate}`}</Text>
-              );
-            })}
           </View>
         </View>
+
+        <CalendarComponent
+          requestDates={dates}
+        />
       </SafeAreaView>
     </>
   );
@@ -140,6 +167,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     backgroundColor: '#FFFFFF',
+    paddingBottom: 50,
   },
   titleHello: {
     fontSize: 20,

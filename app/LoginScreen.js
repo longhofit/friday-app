@@ -12,7 +12,6 @@ import { signIn } from '@okta/okta-react-native';
 import Spinner from 'react-native-loading-spinner-overlay';
 import Error from './components/Error';
 
-
 export default LoginScreen = (props) => {
   const [state, setState] = useState({
     username: '',
@@ -51,7 +50,7 @@ export default LoginScreen = (props) => {
           textContent={'Loading...'}
           textStyle={styles.spinnerTextStyle}
         />
-        <Text style={styles.title}>Native Sign-In</Text>
+        <Text style={styles.title}>Friday App</Text>
         <Error error={state.error} />
         <View style={styles.buttonContainer}>
           <View style={styles.button}>
@@ -68,6 +67,7 @@ export default LoginScreen = (props) => {
             />
             <View style={{ marginTop: 40, height: 40 }}>
               <Button
+                style={{ borderRadius: 5 }}
                 testID="loginButton"
                 onPress={() => login()}
                 title="Login"
@@ -89,6 +89,7 @@ const styles = StyleSheet.create({
     height: 40,
     borderColor: 'gray',
     borderWidth: 1,
+    borderRadius: 5,
   },
   buttonContainer: {
     flexDirection: 'column',

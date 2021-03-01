@@ -12,12 +12,13 @@
 
 import 'react-native-gesture-handler';
 import React, { useState, useEffect } from 'react';
-import { View, Text, SafeAreaView } from 'react-native';
+import { View, Text, LogBox } from 'react-native';
 import { isAuthenticated } from '@okta/okta-react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import LoginScreen from './app/LoginScreen.js';
 import ProfileScreen from './app/ProfileScreen.js';
+LogBox.ignoreAllLogs()
 
 const Stack = createStackNavigator();
 
@@ -50,12 +51,12 @@ const App = () => {
         <Stack.Screen
           name="Login"
           component={LoginScreen}
-          options={{ title: 'Login', headerLeft: null }}
+          options={{ title: 'Login', headerLeft: null, headerTitleAlign: 'center'}}
         />
         <Stack.Screen
           name="Profile"
           component={ProfileScreen}
-          options={{ title: 'User Profile' }}
+          options={{ title: 'User Profile', headerTitleAlign: 'center' }}
         />
       </Stack.Navigator>
     </NavigationContainer>
