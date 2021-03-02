@@ -26,7 +26,9 @@ export default LoginScreen = (props) => {
 
     const { navigation } = props;
 
-    signIn({ username: state.username, password: state.password })
+    console.log(state.username,state.password)
+
+    signIn({ username: 'elpulga246@gmail.com', password: 'nguyenvanhieu' })
       .then(token => {
         setState({
           progress: false,
@@ -34,7 +36,7 @@ export default LoginScreen = (props) => {
           password: '',
           error: ''
         });
-        navigation.navigate('Profile');
+        navigation.navigate('Main');
       })
       .catch(e => {
         setState({ ...state, progress: false, error: e.message });

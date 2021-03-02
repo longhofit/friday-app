@@ -14,13 +14,20 @@ import 'react-native-gesture-handler';
 import React, { useState, useEffect } from 'react';
 import { View, Text, LogBox } from 'react-native';
 import { isAuthenticated } from '@okta/okta-react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { NavigationContainer, getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import LoginScreen from './app/LoginScreen.js';
 import ProfileScreen from './app/ProfileScreen.js';
+import {
+  createDrawerNavigator,
+  DrawerItem,
+  DrawerContentScrollView,
+  DrawerItemList,
+} from '@react-navigation/drawer';
+import { createStackNavigator } from '@react-navigation/stack';
+import { menuItems } from './core/constant/menuSideBarConstant'
+
 LogBox.ignoreAllLogs()
 
-const Stack = createStackNavigator();
 
 const App = () => {
   const [progress, setProgress] = useState(false);
@@ -45,20 +52,73 @@ const App = () => {
     )
   }
 
-  return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName={authenticated ? 'Profile' : 'Login'}>
+  const Drawer = createDrawerNavigator();
+  const Stack = createStackNavigator();
+
+  const DrawerContent = (props) => {
+    return (
+      <DrawerContentScrollView>
+        {menuItems && menuItems.map((item, index) => {
+          return (
+            <DrawerItem
+              focused={index === 2}
+              label={item}
+              onPress={() => props.navigation.navigate(item)}
+            />
+          );
+        })}
+      </DrawerContentScrollView>
+    );
+  }
+
+
+
+  const MainStackNavigator = () => {
+    return (
+      <Stack.Navigator
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: "#9AC4F8",
+          },
+          headerTintColor: "white",
+          headerBackTitle: "Back",
+          headerTitleAlign: 'center',
+        }}
+      >
         <Stack.Screen
-          name="Login"
-          component={LoginScreen}
-          options={{ title: 'Login', headerLeft: null, headerTitleAlign: 'center'}}
-        />
-        <Stack.Screen
-          name="Profile"
+          name="Dashboard"
           component={ProfileScreen}
-          options={{ title: 'User Profile', headerTitleAlign: 'center' }}
+          options={{
+            title: 'Dashboard',
+          }}
         />
       </Stack.Navigator>
+    );
+  }
+
+  const DrawerNavigator = (props) => {
+    return (
+      <Drawer.Navigator
+        drawerContent={DrawerContent}>
+        <Drawer.Screen
+          name="Login"
+          component={LoginScreen}
+          options={{
+            swipeEnabled: false,
+          }}
+        />
+        <Drawer.Screen
+          name="Main"
+          component={MainStackNavigator}
+        />
+      </Drawer.Navigator>
+    );
+  }
+
+
+  return (
+    <NavigationContainer>
+      <DrawerNavigator />
     </NavigationContainer>
   )
 };

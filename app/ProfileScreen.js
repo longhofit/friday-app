@@ -5,7 +5,8 @@ import {
   Text,
   View,
   StatusBar,
-  Button
+  Button,
+  TouchableOpacity
 } from 'react-native';
 import { getAccessToken, getUser, clearTokens, getUserFromIdToken } from '@okta/okta-react-native';
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -24,14 +25,6 @@ export default ProfileScreen = (props) => {
   const [dates, setDates] = useState([]);
 
   useEffect(() => {
-    props.navigation.setOptions(
-      {
-        headerLeft: () =>
-          <Text onPress={() => logout()} style={styles.logoutButton}>Logout</Text>,
-        headerCenter:()=><Text>asdas</Text>
-      }
-    );
-
     setProgress(true);
 
     getUser()
@@ -134,7 +127,10 @@ export default ProfileScreen = (props) => {
         )}
         <View style={{ flexDirection: 'column', marginTop: 10, paddingLeft: 20, width: 300, marginBottom: 10 }}>
           <View style={styles.tokenContainer}>
-            <Text style={styles.tokenTitle}>Requests:</Text>
+            <TouchableOpacity onPress={() => logout()}>
+              <Text style={styles.tokenTitle}>Requests:</Text>
+            </TouchableOpacity>
+
           </View>
         </View>
 
