@@ -26,9 +26,7 @@ export default LoginScreen = (props) => {
 
     const { navigation } = props;
 
-    console.log(state.username,state.password)
-
-    signIn({ username: 'elpulga246@gmail.com', password: 'nguyenvanhieu' })
+    signIn({ username: state.username, password: state.password })
       .then(token => {
         setState({
           progress: false,

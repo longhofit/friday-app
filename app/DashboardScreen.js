@@ -5,24 +5,30 @@ import {
   Text,
   View,
   StatusBar,
-  Button,
-  TouchableOpacity
+  TouchableOpacity,
+  ScrollView,
 } from 'react-native';
-import { getAccessToken, getUser, clearTokens, getUserFromIdToken } from '@okta/okta-react-native';
+import { useSelector, useDispatch } from 'react-redux';
+import { getAccessToken, getUser, clearTokens } from '@okta/okta-react-native';
 import Spinner from 'react-native-loading-spinner-overlay';
 import Error from './components/Error';
 import jwt_decode from "jwt-decode";
 import HomeService from './services/home.service';
 import CalendarComponent from './components/calendar/calendar.component';
 import { yyyMMddFormatter, getDatesBetweenDates } from '../core/formatters';
+import { onSetToken } from '../core/store/reducer/session/actions';
+import { onSetUser, onSetRole } from '../core/store/reducer/user/actions';
 
-export default ProfileScreen = (props) => {
-  const [accessToken, setAccessToken] = useState(null);
+export default DashboardScreen = (props) => {
   const [user, setUser] = useState(null);
   const [progress, setProgress] = useState(true);
   const [error, setError] = useState('');
   const [requests, setRequests] = useState([]);
   const [dates, setDates] = useState([]);
+  const session = useSelector(state => state.session);
+  const userState = useSelector(state => state.user);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     setProgress(true);
@@ -30,8 +36,14 @@ export default ProfileScreen = (props) => {
     getUser()
       .then(user => {
         setProgress(false);
+        dispatch(onSetUser({
+          name: user.name,
+          email: user.preferred_username,
+          sub: user.sub,
+          role: '',
+        }))
         setUser(user);
-        console.log(user)
+
       })
       .catch(e => {
         setProgress(false);
@@ -39,8 +51,6 @@ export default ProfileScreen = (props) => {
       });
 
     getToken()
-
-    // return () => logout();
   }, []);
 
   useEffect(() => {
@@ -63,8 +73,6 @@ export default ProfileScreen = (props) => {
 
     });
 
-    console.log(dateTemps);
-
     setDates(dateTemps);
   }, [requests]);
 
@@ -73,10 +81,13 @@ export default ProfileScreen = (props) => {
     setProgress(false);
     getAccessToken()
       .then(token => {
-        const decoded = jwt_decode(token.access_token);
         setProgress(false);
-        setAccessToken(token.access_token);
-        console.log(token.access_token)
+        dispatch(onSetToken(token.access_token));
+
+        const decoded = jwt_decode(token.access_token);
+        const role = decoded.groups.length > 1 ? 'HR' : 'Everyone';
+        dispatch(onSetRole(role));
+
         const homeService = new HomeService();
         homeService.getAllRequest(token.access_token).then(data => {
           setRequests(data);
@@ -101,7 +112,7 @@ export default ProfileScreen = (props) => {
   return (
     <>
       <StatusBar barStyle="dark-content" />
-      <SafeAreaView style={styles.container}>
+      <ScrollView style={{ flex: 1, paddingBottom: 50 }} contentContainerStyle={styles.container}>
         <Spinner
           visible={progress}
           textContent={'Loading...'}
@@ -123,6 +134,9 @@ export default ProfileScreen = (props) => {
               <Text>Zone Info: </Text>
               <Text>{user.zoneinfo}</Text>
             </View>
+            <View style={{ flexDirection: 'row' }}>
+              <Text>{`Token:\n${session.accessToken}`}</Text>
+            </View>
           </View>
         )}
         <View style={{ flexDirection: 'column', marginTop: 10, paddingLeft: 20, width: 300, marginBottom: 10 }}>
@@ -133,11 +147,13 @@ export default ProfileScreen = (props) => {
 
           </View>
         </View>
+        <View style={{ width: '100%', height: 400 }}>
+          <CalendarComponent
+            requestDates={dates}
+          />
+        </View>
 
-        <CalendarComponent
-          requestDates={dates}
-        />
-      </SafeAreaView>
+      </ScrollView>
     </>
   );
 }
@@ -160,10 +176,10 @@ const styles = StyleSheet.create({
     color: '#0066cc'
   },
   container: {
-    flex: 1,
-    flexDirection: 'column',
-    backgroundColor: '#FFFFFF',
-    paddingBottom: 50,
+    // flex: 1,
+    // flexDirection: 'column',
+    // backgroundColor: '#FFFFFF',
+    // paddingBottom: 50,
   },
   titleHello: {
     fontSize: 20,

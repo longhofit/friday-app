@@ -11,12 +11,13 @@
  */
 
 import 'react-native-gesture-handler';
+import { Provider } from 'react-redux';
 import React, { useState, useEffect } from 'react';
 import { View, Text, LogBox } from 'react-native';
 import { isAuthenticated } from '@okta/okta-react-native';
 import { NavigationContainer, getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import LoginScreen from './app/LoginScreen.js';
-import ProfileScreen from './app/ProfileScreen.js';
+import DashboardScreen from './app/DashboardScreen.js';
 import {
   createDrawerNavigator,
   DrawerItem,
@@ -25,6 +26,7 @@ import {
 } from '@react-navigation/drawer';
 import { createStackNavigator } from '@react-navigation/stack';
 import { menuItems } from './core/constant/menuSideBarConstant'
+import { store } from './core/store';
 
 LogBox.ignoreAllLogs()
 
@@ -61,6 +63,7 @@ const App = () => {
         {menuItems && menuItems.map((item, index) => {
           return (
             <DrawerItem
+              key={index}
               focused={index === 2}
               label={item}
               onPress={() => props.navigation.navigate(item)}
@@ -87,7 +90,7 @@ const App = () => {
       >
         <Stack.Screen
           name="Dashboard"
-          component={ProfileScreen}
+          component={DashboardScreen}
           options={{
             title: 'Dashboard',
           }}
@@ -117,9 +120,11 @@ const App = () => {
 
 
   return (
-    <NavigationContainer>
-      <DrawerNavigator />
-    </NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer>
+        <DrawerNavigator />
+      </NavigationContainer>
+    </Provider>
   )
 };
 
