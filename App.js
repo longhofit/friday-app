@@ -27,6 +27,7 @@ import {
 import { createStackNavigator } from '@react-navigation/stack';
 import { menuItems } from './core/constant/menuSideBarConstant'
 import { store } from './core/store';
+import EmployeesScreen from './app/EmployeesScreen.js';
 
 LogBox.ignoreAllLogs()
 
@@ -64,7 +65,7 @@ const App = () => {
           return (
             <DrawerItem
               key={index}
-              focused={index === 2}
+              focused={index === 0}
               label={item}
               onPress={() => props.navigation.navigate(item)}
             />
@@ -93,6 +94,13 @@ const App = () => {
           component={DashboardScreen}
           options={{
             title: 'Dashboard',
+          }}
+        />
+        <Stack.Screen
+          name="Employees"
+          component={EmployeesScreen}
+          options={{
+            title: 'Employees',
           }}
         />
       </Stack.Navigator>

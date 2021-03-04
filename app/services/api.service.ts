@@ -32,8 +32,9 @@ export default class ApiService {
     body: any = null,
     params: object = {},
     hasToken: boolean = false,
+    token: string,
   ): Promise<T> {
-    return this.apiRun<T>('put', url, body, params, hasToken);
+    return this.apiRun<T>('put', url, body, params, hasToken, token);
   }
 
   protected apiDelete<T>(
