@@ -14,8 +14,8 @@ import Error from './components/Error';
 
 export default LoginScreen = (props) => {
   const [state, setState] = useState({
-    username: '',
-    password: '',
+    username: 'thkduy123@gmail.com',
+    password: 'khanhduy123',
     progress: false,
     error: '',
   });
