@@ -18,6 +18,7 @@ import CalendarComponent from './components/calendar/calendar.component';
 import { yyyMMddFormatter, getDatesBetweenDates } from '../core/formatters';
 import { onSetToken } from '../core/store/reducer/session/actions';
 import { onSetUser, onSetRole } from '../core/store/reducer/user/actions';
+import { pxPhone } from '../core/utils/utils';
 
 export default DashboardScreen = (props) => {
   const [user, setUser] = useState(null);
@@ -35,6 +36,7 @@ export default DashboardScreen = (props) => {
 
     getUser()
       .then(user => {
+        console.log(user);
         setProgress(false);
         dispatch(onSetUser({
           name: user.name,
@@ -42,6 +44,8 @@ export default DashboardScreen = (props) => {
           sub: user.sub,
           role: '',
         }))
+
+        console.log(user)
         setUser(user);
 
       })
@@ -58,12 +62,14 @@ export default DashboardScreen = (props) => {
 
     requests.forEach(request => {
       const dateBw = getDatesBetweenDates(request.startDate, request.endDate).map(date => { return yyyMMddFormatter(date) });
+      const { type } = request;
+      const color = type === 'unpaid' ? '#1d0f52' : type === 'remote' ? '#b54b04' : '#1e8f18';
 
       dateBw.forEach((item, index) => {
         dateTemps.push({
           date: item,
           option: {
-            color: '#70d7c7',
+            color,
             textColor: 'white',
             startingDay: index === 0,
             endingDay: index === (dateBw.length - 1),
@@ -76,7 +82,6 @@ export default DashboardScreen = (props) => {
     setDates(dateTemps);
   }, [requests]);
 
-
   const getToken = () => {
     setProgress(false);
     getAccessToken()
@@ -88,10 +93,8 @@ export default DashboardScreen = (props) => {
         const role = decoded.groups.length > 1 ? 'HR' : 'Everyone';
         dispatch(onSetRole(role));
 
-        const homeService = new HomeService();
-        homeService.getAllRequest(token.access_token).then(data => {
-          setRequests(data);
-        });
+        getAllRequest();
+
       })
       .catch(e => {
         setProgress(false);
@@ -99,9 +102,32 @@ export default DashboardScreen = (props) => {
       })
   }
 
+  const getAllRequest = () => {
+    const homeService = new HomeService();
+    homeService.getAllRequest().then(data => {
+      setRequests(data);
+    });
+  };
+
+  const deleteLeaveRequest = (id) => {
+    const homeService = new HomeService();
+    homeService.deleteLeave(id)
+      .then(data => {
+        console.log(data);
+        setRequests(requests.filter(request => request.id !== id));
+      })
+      .catch(e => console.log(e));
+  };
+
   logout = () => {
     clearTokens()
       .then(() => {
+        dispatch(onSetUser({
+          name: '',
+          email: '',
+          sub: '',
+          role: '',
+        }))
         props.navigation.navigate('Login');
       })
       .catch(e => {
@@ -111,7 +137,7 @@ export default DashboardScreen = (props) => {
 
   return (
     <>
-      <StatusBar barStyle="dark-content" />
+      <StatusBar barStyle="default" />
       <ScrollView style={{ flex: 1, paddingBottom: 50 }} contentContainerStyle={styles.container}>
         <Spinner
           visible={progress}
@@ -120,7 +146,7 @@ export default DashboardScreen = (props) => {
         />
         <Error error={error} />
         {user && (
-          <View style={{ paddingLeft: 10 }}>
+          <View>
             <Text style={styles.titleHello}>Hello {user.name}</Text>
             <View style={{ flexDirection: 'row' }}>
               <Text>Name: </Text>
@@ -134,22 +160,22 @@ export default DashboardScreen = (props) => {
               <Text>Zone Info: </Text>
               <Text>{user.zoneinfo}</Text>
             </View>
-            <View style={{ flexDirection: 'row' }}>
-              <Text>{`Token:\n${session.accessToken}`}</Text>
-            </View>
           </View>
         )}
-        <View style={{ flexDirection: 'column', marginTop: 10, paddingLeft: 20, width: 300, marginBottom: 10 }}>
+        <View style={{ flexDirection: 'column', marginTop: 10, width: 300, marginBottom: 10 }}>
           <View style={styles.tokenContainer}>
             <TouchableOpacity onPress={() => logout()}>
-              <Text style={styles.tokenTitle}>Requests:</Text>
+              <Text style={styles.tokenTitle}>{'Your leave:'}</Text>
             </TouchableOpacity>
 
           </View>
         </View>
         <View style={{ width: '100%', height: 400 }}>
           <CalendarComponent
+            deleteLeaveRequest={deleteLeaveRequest}
+            getAllRequest={getAllRequest}
             requestDates={dates}
+            requests={requests}
           />
         </View>
 
@@ -176,6 +202,7 @@ const styles = StyleSheet.create({
     color: '#0066cc'
   },
   container: {
+    padding: pxPhone(16),
     // flex: 1,
     // flexDirection: 'column',
     // backgroundColor: '#FFFFFF',
@@ -185,7 +212,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: '#0066cc',
-    paddingTop: 40
   },
   titleDetails: {
     fontSize: 15,

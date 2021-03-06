@@ -20,13 +20,17 @@ export default LoginScreen = (props) => {
     error: '',
   });
 
-
   const login = () => {
     setState({ ...state, progress: true });
 
     const { navigation } = props;
 
-    signIn({ username: state.username, password: state.password })
+    // username: 'thkduy123@gmail.com', password:'khanhduy123'
+    // username: 'elpulga246@gmail.com', password:'nguyenvanhieu'
+    // username: 'lelongho998@gmail.com', password:'123456@X'
+
+
+    signIn({ username: 'elpulga246@gmail.com', password:'nguyenvanhieu' })
       .then(token => {
         setState({
           progress: false,

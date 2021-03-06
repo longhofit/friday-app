@@ -1,6 +1,7 @@
 import axios, { AxiosRequestConfig, Method } from 'axios';
 import queryString from 'query-string';
 import { SERVER_ADDRESS, API_URL } from '../../config';
+import { store } from '../../core/store'
 
 interface RequestHeader {
   Accept: string;
@@ -13,9 +14,8 @@ export default class ApiService {
     url: string,
     params: object = null,
     hasToken: boolean = false,
-    token: string,
   ): Promise<T> {
-    return this.apiRun<T>('get', url, null, params, hasToken, token);
+    return this.apiRun<T>('get', url, null, params, hasToken);
   }
 
   protected apiPost<T>(
@@ -50,7 +50,6 @@ export default class ApiService {
     body: any = null,
     params: object = {},
     hasToken: boolean = false,
-    token?: string,
   ): Promise<T> {
     const requestConfig: AxiosRequestConfig = {
       url,
@@ -58,7 +57,7 @@ export default class ApiService {
       baseURL: `${SERVER_ADDRESS}${API_URL}`,
       params,
       data: body,
-      headers: this.appendHeaders(hasToken, token),
+      headers: this.appendHeaders(hasToken),
       withCredentials: true,
     };
     return new Promise<T>((resolve, reject) => {
@@ -76,14 +75,17 @@ export default class ApiService {
     });
   }
 
-  private appendHeaders(hasToken: boolean = false, token?: string): RequestHeader {
+  private appendHeaders(hasToken: boolean = false): RequestHeader {
+    const { accessToken } = store.getState().session;
+
     const headers: RequestHeader = {
       Accept: 'application/json',
       'Content-Type': 'application/json',
     };
 
-    if (token) {
-      headers.Authorization = `Bearer ${token}`;
+    if (hasToken) {
+      console.log(accessToken, 'accessToken');
+      headers.Authorization = `Bearer ${accessToken}`;
     }
 
     return headers;
