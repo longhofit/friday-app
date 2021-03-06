@@ -61,3 +61,24 @@ export const IconCheck = (style) => {
 
   return Icon(source, style);
 };
+export const IconEdit = (style) => {
+  const source = {
+    imageSource: require('./other/edit2.png'),
+  };
+
+  return Icon(source, style);
+};
+export const IconUpArrow = (style) => {
+  const source = {
+    imageSource: require('./other/up-arrow.png'),
+  };
+
+  return Icon(source, style);
+};
+export const IconDownArrow = (style) => {
+  const source = {
+    imageSource: require('./other/down-arrow.png'),
+  };
+
+  return Icon(source, style);
+};

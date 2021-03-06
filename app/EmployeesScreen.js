@@ -9,21 +9,17 @@ import {
   ScrollView,
   TextInput,
 } from 'react-native';
-import { useSelector } from 'react-redux';
+import { pxPhone } from '../core/utils/utils';
 import EmployeesService from './services/employees.service';
 
 export default EmployeesScreen = (props) => {
   const [data, setData] = useState(null);
   const [reqData, setReqData] = useState(null);
   const [isSaveChanges, setIsSaveChanges] = useState(false);
-  const [isPending, setIsPending] = useState(false);
-  const session = useSelector(state => state.session);
-  const userState = useSelector(state => state.user);
   useEffect(() => {
     const fetchData = async () => {
-      const accessToken = session.accessToken;
       const employeesService = new EmployeesService();
-      const response = employeesService.getAllEmployee(accessToken);
+      const response = employeesService.getAllEmployee();
       response.then(res => {
         const reqDataArray = [];
           res.map((item) => 
@@ -57,9 +53,7 @@ export default EmployeesScreen = (props) => {
           "slackId" : item.slackId
         }
       )
-      if(item.slackId) {
-        count++;
-      }
+      count++;
     })
     setData(newReqData);
     setReqData(reqDataArray);  
@@ -67,9 +61,8 @@ export default EmployeesScreen = (props) => {
         else setIsSaveChanges(false);
   }
   const onPressSaveChanges = () => {
-    const accessToken = session.accessToken;
     const employeesService = new EmployeesService();
-    const response = employeesService.updateSlackID(accessToken, JSON.stringify(reqData));
+    const response = employeesService.updateSlackID(JSON.stringify(reqData));
     response.then(res=>{
       const reqDataArray = [];
           res.map((item) => 
@@ -132,24 +125,24 @@ const styles = StyleSheet.create({
     backgroundColor: '#fafbfc'
   },
   textHeader: {
-    fontSize: 20,
-    marginTop: 30,
-    marginLeft: 20,
+    fontSize: pxPhone(20),
+    marginTop: pxPhone(30),
+    marginLeft: pxPhone(20),
   },
   viewTable:{
-    borderRadius: 9,
-    paddingVertical: 5,
+    borderRadius: pxPhone(9),
+    paddingVertical: pxPhone(5),
     backgroundColor: 'white',
     shadowColor: '#000',
     shadowOffset: {
-      width: 3,
-      height: 4,
+      width: pxPhone(3),
+      height: pxPhone(4),
     },
-    shadowOpacity: 0.25,
-    shadowRadius: 7,
-    borderWidth: 0.1,
-    marginHorizontal: 20,
-    marginTop: 30,
+    shadowOpacity: pxPhone(0.25),
+    shadowRadius: pxPhone(7),
+    borderWidth: pxPhone(0.1),
+    marginHorizontal: pxPhone(20),
+    marginTop: pxPhone(30),
   },
   viewItemHeader:{
     flexDirection: 'row',
@@ -158,32 +151,33 @@ const styles = StyleSheet.create({
   viewItem:{
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 0.1,
-    paddingVertical: 10,
+    borderWidth: pxPhone(0.1),
+    paddingVertical: pxPhone(10),
   },
   number:{
     width: '15%',
     textAlign: 'center',
-    fontSize: 15,
+    fontSize: pxPhone(15),
   },
   employee:{
     width: '45%',
     textAlign: 'center',
-    fontSize: 15,
+    fontSize: pxPhone(15),
   },
   slackId:{
     width: '50%',
     textAlign: 'center',
-    fontSize: 15,
+    fontSize: pxPhone(15),
   },
   buttonSave:{
     backgroundColor: "#0052cc",
     alignSelf: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingHorizontal: pxPhone(20),
+    paddingVertical: pxPhone(10),
+    marginBottom: pxPhone(20),
   },
   textButton:{
     color:'white',
-    fontSize: 17,
+    fontSize: pxPhone(17),
   }
 });
