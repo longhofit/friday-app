@@ -28,6 +28,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { menuItems } from './core/constant/menuSideBarConstant'
 import { store } from './core/store';
 import EmployeesScreen from './app/EmployeesScreen.js';
+import SettingScreen from './app/SettingScreen.js';
+
 
 LogBox.ignoreAllLogs()
 
@@ -101,6 +103,13 @@ const App = () => {
           component={EmployeesScreen}
           options={{
             title: 'Employees',
+          }}
+        />
+        <Stack.Screen
+          name="Setting"
+          component={SettingScreen}
+          options={{
+            title: 'Setting',
           }}
         />
       </Stack.Navigator>

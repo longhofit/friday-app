@@ -99,7 +99,7 @@ export default EmployeesScreen = (props) => {
   return (
     <ScrollView style = {styles.container}>
       <StatusBar barStyle="dark-content" />
-      <Text style={styles.textHeader}> Manage Employee</Text>
+      <Text style={styles.textHeader}>Manage Employee</Text>
       
       <View style={styles.viewTable}>
         <View style={styles.viewItemHeader}>
