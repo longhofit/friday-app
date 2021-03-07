@@ -35,6 +35,7 @@ import { useDispatch } from 'react-redux';
 import { clearTokens } from '@okta/okta-react-native';
 import { onSetUser } from './core/store/reducer/user/actions';
 import Spinner from 'react-native-loading-spinner-overlay';
+import CreatePolicyScreen from './app/CreatePolicyScreen.js';
 
 LogBox.ignoreAllLogs()
 
@@ -184,6 +185,29 @@ const App = () => {
     );
   }
 
+  const PolicyStackNavigator = () => {
+    return (
+      <Stack.Navigator
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: "#9AC4F8",
+          },
+          headerTintColor: "white",
+          headerBackTitle: "Back",
+          headerTitleAlign: 'center',
+        }}
+      >
+        <Stack.Screen
+          name="CreatePolicy"
+          component={CreatePolicyScreen}
+          options={{
+            title: 'Policy',
+          }}
+        />
+      </Stack.Navigator>
+    );
+  }
+
   const DrawerNavigator = (props) => {
     const dispatch = useDispatch();
 
@@ -196,6 +220,10 @@ const App = () => {
           options={{
             swipeEnabled: false,
           }}
+        />
+        <Drawer.Screen
+          name="Policy"
+          component={PolicyStackNavigator}
         />
         <Drawer.Screen
           name="Main"

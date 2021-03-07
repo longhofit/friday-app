@@ -21,6 +21,7 @@ export default EmployeesScreen = (props) => {
       const employeesService = new EmployeesService();
       const response = employeesService.getAllEmployee();
       response.then(res => {
+        console.log("res:", res);
         const reqDataArray = [];
           res.map((item) => 
             reqDataArray.push(
@@ -130,8 +131,9 @@ const styles = StyleSheet.create({
     marginLeft: pxPhone(20),
   },
   viewTable:{
-    borderRadius: pxPhone(9),
-    paddingVertical: pxPhone(5),
+    borderRadius: pxPhone(7),
+    paddingVertical: pxPhone(10),
+    paddingHorizontal: pxPhone(10),
     backgroundColor: 'white',
     shadowColor: '#000',
     shadowOffset: {
@@ -143,6 +145,7 @@ const styles = StyleSheet.create({
     borderWidth: pxPhone(0.1),
     marginHorizontal: pxPhone(20),
     marginTop: pxPhone(30),
+    marginBottom: pxPhone(20),
   },
   viewItemHeader:{
     flexDirection: 'row',
