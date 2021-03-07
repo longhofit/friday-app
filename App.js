@@ -15,20 +15,21 @@ import { Provider } from 'react-redux';
 import React, { useState, useEffect } from 'react';
 import { View, Text, LogBox } from 'react-native';
 import { isAuthenticated } from '@okta/okta-react-native';
-import { NavigationContainer, getFocusedRouteNameFromRoute } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import LoginScreen from './app/LoginScreen.js';
 import DashboardScreen from './app/DashboardScreen.js';
 import {
   createDrawerNavigator,
   DrawerItem,
   DrawerContentScrollView,
-  DrawerItemList,
 } from '@react-navigation/drawer';
 import { createStackNavigator } from '@react-navigation/stack';
 import { menuItems } from './core/constant/menuSideBarConstant'
 import { store } from './core/store';
 import EmployeesScreen from './app/EmployeesScreen.js';
 import SettingScreen from './app/SettingScreen.js';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { pxPhone } from './core/utils/utils.js';
 
 
 LogBox.ignoreAllLogs()
@@ -60,26 +61,52 @@ const App = () => {
   const Drawer = createDrawerNavigator();
   const Stack = createStackNavigator();
 
+  const myButton = (name) => {
+    return (
+      <Icon
+        name={name}
+        size={14}
+      />
+    )
+  };
+
   const DrawerContent = (props) => {
     return (
-      <DrawerContentScrollView>
+      <DrawerContentScrollView style={{ backgroundColor: '#9AC4F8' }}>
+        <DrawerItem
+          labelStyle={{ fontWeight: 'bold', fontSize: pxPhone(25) }}
+          icon={() => myButton('user-circle-o')}
+          label={'Ho Le'}
+          onPress={() => {
+          }}
+        />
         {menuItems && menuItems.map((item, index) => {
           return (
             <DrawerItem
+              labelStyle={{ fontWeight: 'bold', fontSize: pxPhone(18) }}
+              icon={() => myButton('key')}
               key={index}
-              focused={index === 0}
               label={item}
-              onPress={() => props.navigation.navigate(item)}
+              onPress={() => {
+                props.navigation.navigate(item);
+              }}
             />
           );
         })}
+        <DrawerItem
+          labelStyle={{ fontWeight: 'bold', fontSize: pxPhone(18) }}
+          icon={() => myButton('user-circle-o')}
+          label={'Log out'}
+          onPress={() => {
+          }}
+        />
       </DrawerContentScrollView>
     );
   }
 
 
 
-  const MainStackNavigator = () => {
+  const MainStackNavigator = (props) => {
     return (
       <Stack.Navigator
         screenOptions={{

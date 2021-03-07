@@ -6,31 +6,36 @@ import {
   Text,
   View,
   StatusBar,
-  TextInput,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+  Linking,
 } from 'react-native';
 import { signIn } from '@okta/okta-react-native';
 import Spinner from 'react-native-loading-spinner-overlay';
 import Error from './components/Error';
+import { imageBackground2, logo } from './assets/images';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import { Sae } from 'react-native-textinput-effects';
+import { pxPhone } from '../core/utils/utils';
+
 
 export default LoginScreen = (props) => {
   const [state, setState] = useState({
-    username: 'thkduy123@gmail.com',
-    password: 'khanhduy123',
+    username: '',
+    password: '',
     progress: false,
     error: '',
   });
+  const [isUserNameFocus, setIsUserNameFocus] = useState(false);
+  const [isPasswordFocus, setIsPasswordFocus] = useState(false)
 
   const login = () => {
     setState({ ...state, progress: true });
 
     const { navigation } = props;
 
-    // username: 'thkduy123@gmail.com', password:'khanhduy123'
-    // username: 'elpulga246@gmail.com', password:'nguyenvanhieu'
-    // username: 'lelongho998@gmail.com', password:'123456@X'
-
-
-    signIn({ username: 'elpulga246@gmail.com', password:'nguyenvanhieu' })
+    signIn({ username: state.username, password: state.password })
       .then(token => {
         setState({
           progress: false,
@@ -49,41 +54,109 @@ export default LoginScreen = (props) => {
     <>
       <StatusBar barStyle="dark-content" />
       <SafeAreaView style={styles.container}>
-        <Spinner
-          visible={state.progress}
-          textContent={'Loading...'}
-          textStyle={styles.spinnerTextStyle}
-        />
-        <Text style={styles.title}>Friday App</Text>
-        <Error error={state.error} />
-        <View style={styles.buttonContainer}>
-          <View style={styles.button}>
-            <TextInput
-              style={styles.textInput}
-              placeholder="User Name"
-              onChangeText={username => setState({ ...state, username: username })}
-            />
-            <TextInput
-              style={styles.textInput}
-              placeholder="Password"
-              secureTextEntry={true}
-              onChangeText={password => setState({ ...state, password: password })}
-            />
-            <View style={{ marginTop: 40, height: 40 }}>
-              <Button
-                style={{ borderRadius: 5 }}
-                testID="loginButton"
-                onPress={() => login()}
-                title="Login"
+        <ScrollView
+          style={{
+            flex: 1,
+            flexDirection: 'column',
+            backgroundColor: 'white',
+          }}>
+          <Spinner
+            visible={state.progress}
+            textContent={'Loading...'}
+            textStyle={styles.spinnerTextStyle}
+          />
+          <View style={{ padding: pxPhone(30) }}>
+            <View style={{alignItems:'center'}}>
+              <Image
+                style={{
+                  width: pxPhone(180) * (1346 / 1769),
+                  height: pxPhone(180),
+                }}
+                source={logo.imageSource}
+              />
+              <Text style={{
+                marginTop: pxPhone(5),
+                fontWeight: 'normal',
+                // color:'#0052CC',
+                color: '#9AC4F8',
+                fontSize: pxPhone(20)
+              }}>
+                {'Time tracking for better work'}
+              </Text>
+              <Text style={{
+                fontWeight: 'bold',
+                fontSize: pxPhone(40),
+                color: '#0052CC',
+                marginTop:pxPhone(10)
+              }}>
+                {'Login'}
+              </Text>
+            </View>
+            <View
+              style={state.username === '' && !isUserNameFocus && {
+                borderBottomWidth: pxPhone(2),
+                borderColor: 'gray',
+                paddingBottom: pxPhone(10),
+                marginTop: pxPhone(20),
+              }}>
+              <Sae
+                value={state.username}
+                label={'Username'}
+                iconClass={FontAwesomeIcon}
+                iconName={'user-circle-o'}
+                iconColor={'#0052CC'}
+                inputPadding={pxPhone(20)}
+                labelHeight={pxPhone(24)}
+                // active border height
+                borderHeight={pxPhone(2)}
+                // TextInput props
+                inputStyle={{ color: 'black' }}
+                autoCapitalize={'none'}
+                autoCorrect={false}
+                onFocus={() => setIsUserNameFocus(true)}
+                onEndEditing={() => setIsUserNameFocus(false)}
+                onChangeText={username => setState({ ...state, username })}
               />
             </View>
+            <View style={state.password === '' && !isPasswordFocus && { borderBottomWidth: pxPhone(2), borderColor: 'gray', paddingBottom: pxPhone(10) }}>
+              <Sae
+                value={state.password}
+                secureTextEntry
+                label={'Password'}
+                iconClass={FontAwesomeIcon}
+                iconName={'lock'}
+                iconColor={'#0052CC'}
+                inputPadding={pxPhone(20)}
+                labelHeight={pxPhone(24)}
+                // active border height
+                borderHeight={pxPhone(2)}
+                // TextInput props
+                inputStyle={{ color: 'black' }}
+                autoCapitalize={'none'}
+                autoCorrect={false}
+                onFocus={() => setIsPasswordFocus(true)}
+                onEndEditing={() => setIsPasswordFocus(false)}
+                onChangeText={password => setState({ ...state, password })}
+              />
+            </View>
+            <TouchableOpacity
+              onPress={login}
+              activeOpacity={0.75}
+              style={{ marginTop: pxPhone(40), padding: pxPhone(12), backgroundColor: '#0052CC', alignItems: 'center', borderRadius: pxPhone(5) }}>
+              <Text style={{ color: 'white', fontWeight: 'bold', fontSize: pxPhone(20) }}>
+                {'LOGIN'}
+              </Text>
+            </TouchableOpacity>
+            <Text style={{ textAlign: 'center', color: '#0052CC', fontSize: pxPhone(15), marginTop: pxPhone(18) }}>
+              {'Forgot Password?'}
+            </Text>
           </View>
-        </View>
+          <Error error={state.error} />
+        </ScrollView>
       </SafeAreaView>
     </>
   );
 }
-
 const styles = StyleSheet.create({
   spinnerTextStyle: {
     color: '#FFF'
@@ -110,14 +183,11 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    flexDirection: 'column',
-    backgroundColor: '#FFFFFF',
-    alignItems: 'center',
   },
   title: {
     fontSize: 30,
     fontWeight: 'bold',
-    color: '#0066cc',
+    color: 'white',
     paddingTop: 40,
     textAlign: 'center',
   }
