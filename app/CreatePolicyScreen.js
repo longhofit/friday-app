@@ -27,7 +27,7 @@ export default CreatePolicyScreen = (props) => {
   const [itemHolidayOff, setItemHolidayOff] = useState(null);
   const [leaveType, setLeaveType] = useState([
     {
-      name: 'Annual Leave',
+      name: 'Annual leave',
       numberOfDays: 12,
     },
     {
@@ -42,8 +42,8 @@ export default CreatePolicyScreen = (props) => {
       const response = createPolicyService.getHolidayFromGoogle();
       response
         .then((res) => {
-          console.log('res:', res);
-          const items = res.items;
+          const result = JSON.parse(res.request._response);
+          const items = result.items;
           const year = new Date().getFullYear();
           let listHolidayInCurrentYear = [];
           items.map((item) => {
@@ -240,7 +240,7 @@ export default CreatePolicyScreen = (props) => {
             )}
           </View>
           {diffDays > 1 ? (
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <View style={{flexDirection: 'row', alignItems: 'center', marginTop: pxPhone(5)}}>
               {IconCalendar({
                 width: pxPhone(25),
                 height: pxPhone(25),
@@ -256,7 +256,7 @@ export default CreatePolicyScreen = (props) => {
               <Text>{column.item.end.toDateString().substring(0, 10)}</Text>
             </View>
           ) : (
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <View style={{flexDirection: 'row', alignItems: 'center', marginTop: pxPhone(5)}}>
               {IconCalendar({
                 width: pxPhone(25),
                 height: pxPhone(25),
@@ -403,6 +403,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     borderRadius: pxPhone(6),
+    alignItems: 'center',
   },
   holidaysItem: {
     backgroundColor: '#9AC4F8',
@@ -412,6 +413,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     borderRadius: pxPhone(8),
+    alignItems: 'center',
   },
   textDayOff: {
     color: '#0052cc',

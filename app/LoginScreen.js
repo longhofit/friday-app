@@ -22,7 +22,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { onSetToken } from '../core/store/reducer/session/actions';
 import { onSetUser, onSetRole } from '../core/store/reducer/user/actions';
 import jwt_decode from "jwt-decode";
-
+import axios from 'axios';
+import SettingService from './services/setting.service';
 
 export default LoginScreen = (props) => {
   const [state, setState] = useState({
@@ -51,21 +52,35 @@ export default LoginScreen = (props) => {
 
     const { navigation } = props;
     signIn({ username: state.username, password: state.password })
-      .then(token => {
+      .then( (token) => {
         dispatch(onSetToken(token.access_token));
-
         const decoded = jwt_decode(token.access_token);
         console.log(decoded);
         const role = decoded.groups.length > 1 ? 'HR' : 'Everyone';
         dispatch(onSetRole(role));
-
+        console.log("role:", role);
         setState({
           progress: false,
           username: '',
           password: '',
           error: ''
         });
-        navigation.navigate('Main');
+        if(role === 'HR'){
+          const settingService = new SettingService();
+          const response = settingService.getPolicy();
+          response.then((res) => {
+            console.log("res:",res);
+            navigation.navigate('Main');
+          })
+          .catch((e) => {
+            console.log('error:', e);
+            if(e.status === 404){
+              navigation.navigate('Policy');
+            }
+          });
+        }else{
+          navigation.navigate('Main');
+        }
       })
       .catch(e => {
         setState({ ...state, progress: false, error: e.message });

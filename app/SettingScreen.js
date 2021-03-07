@@ -31,6 +31,7 @@ export default SettingScreen = (props) => {
     const fetchPolicy = async () => {
       const settingService = new SettingService();
       const response = settingService.getPolicy();
+      console.log("response.status:", response.status);
       response
         .then((res) => {
           console.log('res:', res);
@@ -205,7 +206,7 @@ export default SettingScreen = (props) => {
             )}
           </View>
           {diffDays > 1 ? (
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <View style={{flexDirection: 'row', alignItems: 'center', marginTop: pxPhone(5)}}>
               {IconCalendar({
                 width: pxPhone(25),
                 height: pxPhone(25),
@@ -221,7 +222,7 @@ export default SettingScreen = (props) => {
               <Text>{column.item.end.toDateString().substring(0, 10)}</Text>
             </View>
           ) : (
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <View style={{flexDirection: 'row', alignItems: 'center', marginTop: pxPhone(5)}}>
               {IconCalendar({
                 width: pxPhone(25),
                 height: pxPhone(25),
@@ -358,6 +359,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     borderRadius: pxPhone(6),
+    alignItems: 'center',
   },
   holidaysItem: {
     backgroundColor: '#9AC4F8',
@@ -367,6 +369,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     borderRadius: pxPhone(8),
+    alignItems: 'center',
   },
   textDayOff: {
     color: '#0052cc',
