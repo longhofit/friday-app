@@ -107,7 +107,7 @@ export default LoginScreen = (props) => {
             </View>
             <View
               style={state.username === '' && !isUserNameFocus && {
-                borderBottomWidth: pxPhone(2),
+                borderBottomWidth: pxPhone(1),
                 borderColor: 'gray',
                 paddingBottom: pxPhone(10),
                 marginTop: pxPhone(20),
@@ -120,9 +120,7 @@ export default LoginScreen = (props) => {
                 iconColor={'#0052CC'}
                 inputPadding={pxPhone(20)}
                 labelHeight={pxPhone(24)}
-                // active border height
                 borderHeight={pxPhone(2)}
-                // TextInput props
                 inputStyle={{ color: 'black' }}
                 autoCapitalize={'none'}
                 autoCorrect={false}
@@ -131,7 +129,12 @@ export default LoginScreen = (props) => {
                 onChangeText={username => setState({ ...state, username })}
               />
             </View>
-            <View style={state.password === '' && !isPasswordFocus && { borderBottomWidth: pxPhone(2), borderColor: 'gray', paddingBottom: pxPhone(10) }}>
+            <View style={
+              state.password === '' && !isPasswordFocus && {
+                borderColor: 'gray',
+                paddingBottom: pxPhone(10),
+                borderBottomWidth: pxPhone(1),
+              }}>
               <Sae
                 value={state.password}
                 secureTextEntry
@@ -141,9 +144,7 @@ export default LoginScreen = (props) => {
                 iconColor={'#0052CC'}
                 inputPadding={pxPhone(20)}
                 labelHeight={pxPhone(24)}
-                // active border height
                 borderHeight={pxPhone(2)}
-                // TextInput props
                 inputStyle={{ color: 'black' }}
                 autoCapitalize={'none'}
                 autoCorrect={false}

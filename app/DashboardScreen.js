@@ -104,26 +104,10 @@ export default DashboardScreen = (props) => {
       .catch(e => console.log(e));
   };
 
-  logout = () => {
-    clearTokens()
-      .then(() => {
-        dispatch(onSetUser({
-          name: '',
-          email: '',
-          sub: '',
-          role: '',
-        }))
-        props.navigation.navigate('Login');
-      })
-      .catch(e => {
-        setError(e.message);
-      });
-  }
-
   return (
     <>
       <StatusBar barStyle="default" />
-      <ScrollView style={{ flex: 1, paddingBottom: 50 }} contentContainerStyle={styles.container}>
+      <View style={{ flex: 1 }} >
         <Spinner
           visible={progress}
           textContent={'Loading...'}
@@ -131,36 +115,35 @@ export default DashboardScreen = (props) => {
         />
         <Error error={error} />
         {(
-          <View>
-            <Text style={styles.titleHello}>Hello {userState.name}</Text>
-            <View style={{ flexDirection: 'row' }}>
-              <Text>Name: </Text>
-              <Text>{userState.name}</Text>
-            </View>
-            <View style={{ flexDirection: 'row' }}>
-              <Text>Role: </Text>
-              <Text>{userState.role}</Text>
+          <View style={{ paddingLeft: pxPhone(12),marginTop:pxPhone(15) }}>
+            <Text style={styles.titleHello}>
+              <Text style={{ color: 'black' }}>
+                {'Hello '}
+              </Text>
+              {`${userState.name},`}
+            </Text>
+            <View style={{ flexDirection: 'row', marginTop: pxPhone(12) }}>
+              <Text style={{ fontWeight: 'bold', fontSize: pxPhone(18) }}>
+                {`You have ${requests.length} leave ${requests.length <= 1 ? 'request' : 'requests'}:`}
+              </Text>
             </View>
           </View>
         )}
-        <View style={{ flexDirection: 'column', marginTop: 10, width: 300, marginBottom: 10 }}>
+        {/* <View style={{ flexDirection: 'column', marginTop: 10, width: 300, marginBottom: 10 }}>
           <View style={styles.tokenContainer}>
             <TouchableOpacity onPress={() => logout()}>
               <Text style={styles.tokenTitle}>{'Your leave:'}</Text>
             </TouchableOpacity>
 
           </View>
-        </View>
-        <View style={{ width: '100%', height: 400 }}>
-          <CalendarComponent
-            deleteLeaveRequest={deleteLeaveRequest}
-            getAllRequest={getAllRequestLeave}
-            requestDates={dates}
-            requests={requests}
-          />
-        </View>
-
-      </ScrollView>
+        </View> */}
+        <CalendarComponent
+          deleteLeaveRequest={deleteLeaveRequest}
+          getAllRequest={getAllRequestLeave}
+          requestDates={dates}
+          requests={requests}
+        />
+      </View>
     </>
   );
 }

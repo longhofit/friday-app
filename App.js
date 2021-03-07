@@ -30,6 +30,9 @@ import EmployeesScreen from './app/EmployeesScreen.js';
 import SettingScreen from './app/SettingScreen.js';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { pxPhone } from './core/utils/utils.js';
+import { useDispatch } from 'react-redux';
+import { clearTokens } from '@okta/okta-react-native';
+import { onSetUser } from './core/store/reducer/user/actions';
 
 
 LogBox.ignoreAllLogs()
@@ -50,6 +53,24 @@ const App = () => {
     checkAuthStatus();
   }, []);
 
+  logout = () => {
+    setProgress(true);
+
+    clearTokens()
+      .then(() => {
+        dispatch(onSetUser({
+          name: '',
+          email: '',
+          sub: '',
+          role: '',
+        }))
+        props.navigation.navigate('Login');
+      })
+      .catch(e => {
+        setProgress(false);
+      });
+  }
+
   if (progress) {
     return (
       <View>
@@ -61,11 +82,12 @@ const App = () => {
   const Drawer = createDrawerNavigator();
   const Stack = createStackNavigator();
 
-  const myButton = (name) => {
+  const myButton = (name, color) => {
     return (
       <Icon
         name={name}
         size={14}
+        color={color}
       />
     )
   };
@@ -94,11 +116,10 @@ const App = () => {
           );
         })}
         <DrawerItem
-          labelStyle={{ fontWeight: 'bold', fontSize: pxPhone(18) }}
-          icon={() => myButton('user-circle-o')}
+          labelStyle={{ fontWeight: 'bold', fontSize: pxPhone(18), color: 'red' }}
+          icon={() => myButton('power-off', 'red')}
           label={'Log out'}
-          onPress={() => {
-          }}
+          onPress={logout}
         />
       </DrawerContentScrollView>
     );
@@ -107,6 +128,8 @@ const App = () => {
 
 
   const MainStackNavigator = (props) => {
+    const dispatch = useDispatch();
+
     return (
       <Stack.Navigator
         screenOptions={{

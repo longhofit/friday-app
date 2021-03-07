@@ -148,12 +148,11 @@ export default CalendarComponent = (props) => {
   };
 
   return (
-    <View style={{ width: '100%' }}>
+    <View style={{ width: '100%', flex: 1, backgroundColor: '#9AC4F8', justifyContent: 'center', marginTop: pxPhone(30) }}>
       <Calendar
         markingType={'period'}
         style={{
-          height: pxPhone(380),
-          borderRadius: pxPhone(8),
+          height: pxPhone(400),
         }}
         markedDates={selectDay}
         theme={{
