@@ -11,13 +11,17 @@ import {
   TouchableOpacity,
   Linking,
 } from 'react-native';
-import { signIn } from '@okta/okta-react-native';
 import Spinner from 'react-native-loading-spinner-overlay';
 import Error from './components/Error';
 import { imageBackground2, logo } from './assets/images';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import { Sae } from 'react-native-textinput-effects';
 import { pxPhone } from '../core/utils/utils';
+import { clearTokens, signIn } from '@okta/okta-react-native';
+import { useSelector, useDispatch } from 'react-redux';
+import { onSetToken } from '../core/store/reducer/session/actions';
+import { onSetUser, onSetRole } from '../core/store/reducer/user/actions';
+import jwt_decode from "jwt-decode";
 
 
 export default LoginScreen = (props) => {
@@ -30,6 +34,8 @@ export default LoginScreen = (props) => {
   const [isUserNameFocus, setIsUserNameFocus] = useState(false);
   const [isPasswordFocus, setIsPasswordFocus] = useState(false)
 
+  const dispatch = useDispatch();
+
   const login = () => {
     setState({ ...state, progress: true });
 
@@ -37,6 +43,13 @@ export default LoginScreen = (props) => {
 
     signIn({ username: state.username, password: state.password })
       .then(token => {
+        dispatch(onSetToken(token.access_token));
+
+        const decoded = jwt_decode(token.access_token);
+        console.log(decoded);
+        const role = decoded.groups.length > 1 ? 'HR' : 'Everyone';
+        dispatch(onSetRole(role));
+
         setState({
           progress: false,
           username: '',
@@ -66,7 +79,7 @@ export default LoginScreen = (props) => {
             textStyle={styles.spinnerTextStyle}
           />
           <View style={{ padding: pxPhone(30) }}>
-            <View style={{alignItems:'center'}}>
+            <View style={{ alignItems: 'center' }}>
               <Image
                 style={{
                   width: pxPhone(180) * (1346 / 1769),
@@ -87,7 +100,7 @@ export default LoginScreen = (props) => {
                 fontWeight: 'bold',
                 fontSize: pxPhone(40),
                 color: '#0052CC',
-                marginTop:pxPhone(10)
+                marginTop: pxPhone(10)
               }}>
                 {'Login'}
               </Text>

@@ -1,6 +1,5 @@
 ﻿import React, { useState, useEffect } from 'react';
 import {
-  SafeAreaView,
   StyleSheet,
   Text,
   View,
@@ -9,19 +8,16 @@ import {
   ScrollView,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { getAccessToken, getUser, clearTokens } from '@okta/okta-react-native';
+import { getUser, clearTokens } from '@okta/okta-react-native';
 import Spinner from 'react-native-loading-spinner-overlay';
 import Error from './components/Error';
-import jwt_decode from "jwt-decode";
 import HomeService from './services/home.service';
 import CalendarComponent from './components/calendar/calendar.component';
 import { yyyMMddFormatter, getDatesBetweenDates } from '../core/formatters';
-import { onSetToken } from '../core/store/reducer/session/actions';
-import { onSetUser, onSetRole } from '../core/store/reducer/user/actions';
+import { onSetUser } from '../core/store/reducer/user/actions';
 import { pxPhone } from '../core/utils/utils';
 
 export default DashboardScreen = (props) => {
-  const [user, setUser] = useState(null);
   const [progress, setProgress] = useState(true);
   const [error, setError] = useState('');
   const [requests, setRequests] = useState([]);
@@ -34,28 +30,10 @@ export default DashboardScreen = (props) => {
   useEffect(() => {
     setProgress(true);
 
-    getUser()
-      .then(user => {
-        console.log(user);
-        setProgress(false);
-        dispatch(onSetUser({
-          name: user.name,
-          email: user.preferred_username,
-          sub: user.sub,
-          role: '',
-        }))
+    getUserInfo();
 
-        console.log(user)
-        setUser(user);
-
-      })
-      .catch(e => {
-        setProgress(false);
-        setError(e.message);
-      });
-
-    getToken()
-  }, []);
+    getAllRequestLeave();
+  }, [session.accessToken]);
 
   useEffect(() => {
     const dateTemps = [];
@@ -82,31 +60,38 @@ export default DashboardScreen = (props) => {
     setDates(dateTemps);
   }, [requests]);
 
-  const getToken = () => {
-    setProgress(false);
-    getAccessToken()
-      .then(token => {
-        setProgress(false);
-        dispatch(onSetToken(token.access_token));
+  const getUserInfo = () => {
+    getUser()
+      .then(user => {
+        dispatch(onSetUser({
+          name: user.name,
+          email: user.preferred_username,
+          sub: user.sub,
+          role: '',
+        }));
 
-        const decoded = jwt_decode(token.access_token);
-        const role = decoded.groups.length > 1 ? 'HR' : 'Everyone';
-        dispatch(onSetRole(role));
-
-        getAllRequest();
-
+        console.log(user)
       })
       .catch(e => {
-        setProgress(false);
         setError(e.message);
       })
-  }
+      .finally(() => {
+        setProgress(false);
+      });
+  };
 
-  const getAllRequest = () => {
+  const getAllRequestLeave = () => {
     const homeService = new HomeService();
-    homeService.getAllRequest().then(data => {
-      setRequests(data);
-    });
+    homeService.getAllRequest()
+      .then(data => {
+        setRequests(data);
+      })
+      .catch(e => {
+        setError(e.message);
+      })
+      .finally(() => {
+        setProgress(false);
+      });
   };
 
   const deleteLeaveRequest = (id) => {
@@ -145,20 +130,16 @@ export default DashboardScreen = (props) => {
           textStyle={styles.spinnerTextStyle}
         />
         <Error error={error} />
-        {user && (
+        {(
           <View>
-            <Text style={styles.titleHello}>Hello {user.name}</Text>
+            <Text style={styles.titleHello}>Hello {userState.name}</Text>
             <View style={{ flexDirection: 'row' }}>
               <Text>Name: </Text>
-              <Text>{user.name}</Text>
+              <Text>{userState.name}</Text>
             </View>
             <View style={{ flexDirection: 'row' }}>
-              <Text>Locale: </Text>
-              <Text>{user.locale}</Text>
-            </View>
-            <View style={{ flexDirection: 'row' }}>
-              <Text>Zone Info: </Text>
-              <Text>{user.zoneinfo}</Text>
+              <Text>Role: </Text>
+              <Text>{userState.role}</Text>
             </View>
           </View>
         )}
@@ -173,7 +154,7 @@ export default DashboardScreen = (props) => {
         <View style={{ width: '100%', height: 400 }}>
           <CalendarComponent
             deleteLeaveRequest={deleteLeaveRequest}
-            getAllRequest={getAllRequest}
+            getAllRequest={getAllRequestLeave}
             requestDates={dates}
             requests={requests}
           />
