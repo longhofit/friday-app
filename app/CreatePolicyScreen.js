@@ -12,7 +12,6 @@ import {
   Alert,
 } from 'react-native';
 import Modal from 'react-native-modal';
-import SettingService from './services/setting.service';
 import {
   IconCalendar,
   IconEdit,
@@ -20,52 +19,79 @@ import {
   IconDownArrow,
 } from './assets/icons';
 import {pxPhone} from '../core/utils/utils';
-export default SettingScreen = (props) => {
+import CreatePolicyService from './services/create.policy.service';
+export default CreatePolicyScreen = (props) => {
   const [isShowModalUpdate, setIsShowModalUpdate] = useState(false);
   const [newDayOff, setNewDayOff] = useState(0);
   const [isShowModalDelete, setIsShowModalDelete] = useState(false);
   const [itemHolidayOff, setItemHolidayOff] = useState(null);
-  const [leaveType, setLeaveType] = useState(null);
+  const [leaveType, setLeaveType] = useState([
+    {
+      name: 'Annual Leave',
+      numberOfDays: 12,
+    },
+    {
+      name: 'Remote',
+      numberOfDays: 0,
+    },
+  ]);
   const [listHoliday, setListHoliday] = useState(null);
   useEffect(() => {
-    const fetchPolicy = async () => {
-      const settingService = new SettingService();
-      const response = settingService.getPolicy();
+    const fetchHolidayData = async () => {
+      const createPolicyService = new CreatePolicyService();
+      const response = createPolicyService.getHolidayFromGoogle();
       response
         .then((res) => {
           console.log('res:', res);
-          const arrLeaveType = [
-            {
-              name: 'Annual leave',
-              numberOfDays: res.consecutiveOff,
-            },
-            {
-              name: 'Remote',
-              numberOfDays: 0,
-            },
-          ];
-          setNewDayOff(res.consecutiveOff);
-          setLeaveType(arrLeaveType);
-          let arrayHoliday = [];
-          res.holidays.map((itemHoliday) => {
-            const start = new Date(itemHoliday.start);
-            const end = new Date(itemHoliday.end);
-            const name = itemHoliday.name;
-            const item = {
+          const items = res.items;
+          const year = new Date().getFullYear();
+          let listHolidayInCurrentYear = [];
+          items.map((item) => {
+            const start = new Date(item.start.date);
+            const end = new Date(item.end.date);
+            const name = item.summary;
+            const holiday = {
               name: name,
               start: start,
               end: end,
             };
-            arrayHoliday.push(item);
+            if (start.getFullYear() === year && end.getFullYear() === year) {
+              listHolidayInCurrentYear.push(holiday);
+            }
             return 0;
           });
+
+          let arrayHoliday = [];
+          for (let i = 0; i < listHolidayInCurrentYear.length; i++) {
+            let flag = false;
+            const holiday = listHolidayInCurrentYear[i];
+            const start = holiday.start;
+            let end = holiday.end;
+            const name = holiday.name;
+            for (let j = i + 1; j < listHolidayInCurrentYear.length; j++) {
+              const nextHoliday = listHolidayInCurrentYear[j];
+              if (name === nextHoliday.name) {
+                flag = true;
+                end = nextHoliday.end;
+                i++;
+              }
+            }
+            if (flag) {
+              const newHoliday = {
+                name: name,
+                start: start,
+                end: end,
+              };
+              arrayHoliday.push(newHoliday);
+            } else arrayHoliday.push(holiday);
+          }
           setListHoliday(arrayHoliday);
         })
         .catch((e) => {
           console.log('error:', e);
         });
     };
-    fetchPolicy();
+    fetchHolidayData();
   }, []);
   const renderLeaveTypes = (column) => {
     if (column.item.name === 'Annual leave') {
@@ -124,8 +150,15 @@ export default SettingScreen = (props) => {
             width: '100%',
             backgroundColor: 'white',
           }}>
-          <Text style={[styles.headerModal,{marginTop: pxPhone(10)}]}>Edit leave type</Text>
-          <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: pxPhone(20),}}>
+          <Text style={[styles.headerModal, {marginTop: pxPhone(10)}]}>
+            Edit leave type
+          </Text>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              marginTop: pxPhone(20),
+            }}>
             <Text style={styles.textModal}>Leave type name:</Text>
             <Text style={[styles.textModal, {fontWeight: 'bold'}]}>
               Annual leave
@@ -158,7 +191,9 @@ export default SettingScreen = (props) => {
           </View>
           <View style={{flexDirection: 'row-reverse', marginTop: pxPhone(20)}}>
             <TouchableOpacity onPress={handleSaveDayOff}>
-              <Text style={{marginRight: pxPhone(5), color: '#fac046'}}>SAVE</Text>
+              <Text style={{marginRight: pxPhone(5), color: '#fac046'}}>
+                SAVE
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setIsShowModalUpdate(false)}>
               <Text style={{color: '#0052cc', marginRight: pxPhone(20)}}>
@@ -171,21 +206,21 @@ export default SettingScreen = (props) => {
     );
   };
   const setUpNewDayOff = () => {
-    if(newDayOff < 30){
+    if (newDayOff < 30) {
       setNewDayOff(newDayOff + 1);
     }
-  }
+  };
   const setDownNewDayOff = () => {
-    if(newDayOff > 1){
+    if (newDayOff > 1) {
       setNewDayOff(newDayOff - 1);
     }
-  }
+  };
   const handleSaveDayOff = () => {
     let newArray = leaveType.slice();
     newArray[0].numberOfDays = newDayOff;
     setLeaveType(newArray);
     setIsShowModalUpdate(false);
-  }
+  };
   const renderListHolidays = (column) => {
     var item = column.item;
     var timeDiff = Math.abs(
@@ -266,8 +301,10 @@ export default SettingScreen = (props) => {
             width: '100%',
             backgroundColor: 'white',
           }}>
-          <Text style={[styles.headerModal,{marginTop: pxPhone(10)}]}>Delete Official Holiday</Text>
-          <Text style={[styles.textModal, {marginTop: pxPhone(20),}]}>
+          <Text style={[styles.headerModal, {marginTop: pxPhone(10)}]}>
+            Delete Official Holiday
+          </Text>
+          <Text style={[styles.textModal, {marginTop: pxPhone(20)}]}>
             Are you sure want to delete this Holiday
           </Text>
           <View style={{flexDirection: 'row-reverse', marginTop: pxPhone(20)}}>
@@ -296,16 +333,24 @@ export default SettingScreen = (props) => {
       }
     }
   };
-  const onPressSaveChanges = () => {
-    const settingService = new SettingService();
-    const response = settingService.updatePolicy(JSON.stringify({ consecutiveOff: Number(leaveType[0].numberOfDays), holidays: listHoliday }));
-    response.then(res=>{
-      Alert.alert("Update policy successfully!");
-    })
-    .catch(e =>{
-      console.log("error:",e);
-    })
-  }
+  const onPressCreatePolicy = () => {
+    const { navigation } = props;
+    const createPolicyService = new CreatePolicyService();
+    const response = createPolicyService.createPolicy(
+      JSON.stringify({
+        consecutiveOff: Number(leaveType[0].numberOfDays),
+        holidays: listHoliday,
+      }),
+    );
+    response
+      .then((res) => {
+        Alert.alert('Update policy successfully!');
+        navigation.navigate('Main');
+      })
+      .catch((e) => {
+        console.log('error:', e);
+      });
+  };
   return (
     <ScrollView style={styles.container}>
       <StatusBar barStyle="dark-content" />
@@ -329,8 +374,8 @@ export default SettingScreen = (props) => {
           }}
         />
       </View>
-      <TouchableOpacity style={styles.buttonSave} onPress={onPressSaveChanges}>
-          <Text style={styles.textButton}>SAVE CHANGES</Text>
+      <TouchableOpacity style={styles.buttonCreatePolicy} onPress={onPressCreatePolicy}>
+        <Text style={styles.textButton}>Create policy</Text>
       </TouchableOpacity>
       {renderTabDeleteHolidayOff()}
       {renderTabUpdateLeaveTypes()}
@@ -382,15 +427,15 @@ const styles = StyleSheet.create({
   textModal: {
     fontSize: pxPhone(16),
   },
-  buttonSave:{
-    backgroundColor: "#0052cc",
+  buttonCreatePolicy: {
+    backgroundColor: '#0052cc',
     alignSelf: 'center',
     paddingHorizontal: pxPhone(20),
     paddingVertical: pxPhone(10),
     marginBottom: pxPhone(20),
   },
-  textButton:{
-    color:'white',
+  textButton: {
+    color: 'white',
     fontSize: pxPhone(17),
-  }
+  },
 });
