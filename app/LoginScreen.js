@@ -9,7 +9,7 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
-  Linking,
+  ToastAndroid,
 } from 'react-native';
 import Spinner from 'react-native-loading-spinner-overlay';
 import Error from './components/Error';
@@ -36,11 +36,20 @@ export default LoginScreen = (props) => {
 
   const dispatch = useDispatch();
 
+  const showToastWithGravityAndOffset = (text) => {
+    ToastAndroid.showWithGravityAndOffset(
+      text,
+      ToastAndroid.LONG,
+      ToastAndroid.BOTTOM,
+      25,
+      50
+    );
+  };;
+
   const login = () => {
     setState({ ...state, progress: true });
 
     const { navigation } = props;
-
     signIn({ username: state.username, password: state.password })
       .then(token => {
         dispatch(onSetToken(token.access_token));
@@ -60,6 +69,7 @@ export default LoginScreen = (props) => {
       })
       .catch(e => {
         setState({ ...state, progress: false, error: e.message });
+        showToastWithGravityAndOffset(e.message);
       });
   }
 
@@ -110,7 +120,7 @@ export default LoginScreen = (props) => {
                 borderBottomWidth: pxPhone(1),
                 borderColor: 'gray',
                 paddingBottom: pxPhone(10),
-                marginTop: pxPhone(20),
+                marginTop: pxPhone(50),
               }}>
               <Sae
                 value={state.username}
@@ -165,7 +175,6 @@ export default LoginScreen = (props) => {
               {'Forgot Password?'}
             </Text>
           </View>
-          <Error error={state.error} />
         </ScrollView>
       </SafeAreaView>
     </>

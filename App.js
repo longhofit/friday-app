@@ -35,9 +35,7 @@ import { clearTokens } from '@okta/okta-react-native';
 import { onSetUser } from './core/store/reducer/user/actions';
 import Spinner from 'react-native-loading-spinner-overlay';
 
-
 LogBox.ignoreAllLogs()
-
 
 const App = () => {
   const [progress, setProgress] = useState(false);
@@ -53,24 +51,6 @@ const App = () => {
     setProgress(true);
     checkAuthStatus();
   }, []);
-
-  logout = () => {
-    setProgress(true);
-
-    clearTokens()
-      .then(() => {
-        dispatch(onSetUser({
-          name: '',
-          email: '',
-          sub: '',
-          role: '',
-        }))
-        props.navigation.navigate('Login');
-      })
-      .catch(e => {
-        setProgress(false);
-      });
-  }
 
   if (progress) {
     return (
@@ -96,12 +76,32 @@ const App = () => {
   };
 
   const DrawerContent = (props) => {
+    const logout = () => {
+      setProgress(true);
+
+      clearTokens()
+        .then(() => {
+          props.dispatch(onSetUser({
+            name: '',
+            email: '',
+            sub: '',
+            role: '',
+          }))
+          props.navigation.navigate('Login');
+        })
+        .catch(e => {
+        })
+        .finally(() => {
+          setProgress(false);
+        });
+    };
+
     return (
       <DrawerContentScrollView style={{ backgroundColor: '#9AC4F8' }}>
         <DrawerItem
           labelStyle={{ fontWeight: 'bold', fontSize: pxPhone(25) }}
           icon={() => myButton('user-circle-o')}
-          label={'Ho Le'}
+          label={'Profile'}
           onPress={() => {
           }}
         />
@@ -130,9 +130,7 @@ const App = () => {
 
 
 
-  const MainStackNavigator = (props) => {
-    const dispatch = useDispatch();
-
+  const MainStackNavigator = () => {
     return (
       <Stack.Navigator
         screenOptions={{
@@ -170,9 +168,11 @@ const App = () => {
   }
 
   const DrawerNavigator = (props) => {
+    const dispatch = useDispatch();
+
     return (
       <Drawer.Navigator
-        drawerContent={DrawerContent}>
+        drawerContent={props => DrawerContent({ ...props, dispatch: dispatch })}>
         <Drawer.Screen
           name="Login"
           component={LoginScreen}
