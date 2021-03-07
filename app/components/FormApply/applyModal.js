@@ -2,7 +2,7 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import { View, Text, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, ToastAndroid } from 'react-native';
 import Modal from 'react-native-modal';
 import { pxPhone } from '../../../core/utils/utils'
 import { yyyMMddFormatter, getDatesBetweenDates } from '../../../core/formatters';
@@ -36,20 +36,31 @@ export default ApplyForm = (props) => {
   const [isShowDatePicker, setIsShowDatePicker] = useState(false);
   const [dateType, setDateType] = useState(undefined);
 
+  const showToastWithGravityAndOffset = (text) => {
+    ToastAndroid.showWithGravityAndOffset(
+      text,
+      ToastAndroid.LONG,
+      ToastAndroid.BOTTOM,
+      25,
+      50
+    );
+  };;
+
   useEffect(() => {
     setForm({ ...form, startDate: dateSelect, endDate: dateSelect })
   }, [dateSelect])
 
   const onSubmit = (onSuccess) => {
-    console.log(form);
     const homeService = new HomeService();
     homeService.applyLeave(form)
-      .then(data => {
+      .then(() => {
         onSuccess();
-        console.log(data);
+        showToastWithGravityAndOffset('Apply leave successfully');
         props.getAllRequest();
       })
-      .catch(e => console.log(e.message));
+      .catch(e => {
+        showToastWithGravityAndOffset(e.message);
+      });
     onClose();
   };
 
@@ -150,11 +161,12 @@ export default ApplyForm = (props) => {
       style={{ alignItems: 'center', justifyContent: 'center' }}>
       <View style={{
         backgroundColor: 'white',
-        paddingHorizontal: pxPhone(15),
+        paddingHorizontal: pxPhone(25),
         justifyContent: 'center',
         borderRadius: pxPhone(8),
         paddingVertical: pxPhone(10),
         width: '100%',
+        alignItems: 'center',
       }}>
         <Text style={{ textAlign: 'center', fontWeight: 'bold', fontSize: pxPhone(18) }}>
           {'Apply Leave'}
@@ -169,7 +181,7 @@ export default ApplyForm = (props) => {
           <View style={{ width: pxPhone(40) }}>
             {IconWork({ width: pxPhone(20), height: pxPhone(20) })}
           </View>
-          <View style={{ borderWidth: pxPhone(1), borderColor: '#BDBDBD', flex: 1, height: pxPhone(40), borderRadius: pxPhone(5) }}>
+          <View style={{ borderWidth: pxPhone(1), borderColor: '#BDBDBD', flex: 1, height: pxPhone(60), borderRadius: pxPhone(5) }}>
             <View style={{
               position: 'absolute',
               top: pxPhone(-10),
@@ -210,7 +222,7 @@ export default ApplyForm = (props) => {
               borderWidth: pxPhone(1),
               borderColor: '#BDBDBD',
               flex: 1,
-              height: pxPhone(40),
+              height: pxPhone(60),
               borderRadius: pxPhone(5),
               justifyContent: 'center',
               paddingLeft: pxPhone(8),
@@ -249,7 +261,7 @@ export default ApplyForm = (props) => {
               borderWidth: pxPhone(1),
               borderColor: '#BDBDBD',
               flex: 1,
-              height: pxPhone(40),
+              height: pxPhone(60),
               borderRadius: pxPhone(5),
               justifyContent: 'center',
               paddingLeft: pxPhone(8),
@@ -280,7 +292,7 @@ export default ApplyForm = (props) => {
           <View style={{ width: pxPhone(40) }}>
             {IconWork({ width: pxPhone(20), height: pxPhone(20) })}
           </View>
-          <View style={{ borderWidth: pxPhone(1), borderColor: '#BDBDBD', flex: 1, height: pxPhone(40), borderRadius: pxPhone(5) }}>
+          <View style={{ borderWidth: pxPhone(1), borderColor: '#BDBDBD', flex: 1, height: pxPhone(60), borderRadius: pxPhone(5) }}>
             <View style={{
               position: 'absolute',
               top: pxPhone(-10),
@@ -344,17 +356,23 @@ export default ApplyForm = (props) => {
               style={{ flex: 1 }} />
           </View>
         </View>
-        <View style={{ flexDirection: 'row', marginTop: pxPhone(30), alignSelf: 'flex-end', }}>
+        <View style={{
+          flexDirection: 'row',
+          marginTop: pxPhone(30),
+          alignSelf: 'flex-end',
+          width: pxPhone(90),
+          justifyContent: 'space-between',
+        }}>
           <TouchableOpacity
             activeOpacity={0.75}
             onPress={onFormClose}>
-            {IconClose({ width: pxPhone(23), height: pxPhone(23) })}
+            {IconClose({ width: pxPhone(34), height: pxPhone(34) })}
           </TouchableOpacity>
           <TouchableOpacity
             activeOpacity={0.75}
             onPress={onCheckIconPress}
             style={{ marginLeft: pxPhone(12) }}>
-            {IconCheck({ width: pxPhone(19), height: pxPhone(19) })}
+            {IconCheck({ width: pxPhone(25), height: pxPhone(25), bottom: pxPhone(-2) })}
           </TouchableOpacity>
         </View>
         {renderDatePicker()}

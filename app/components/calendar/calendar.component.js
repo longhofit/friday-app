@@ -2,7 +2,7 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import { View, Text, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import Modal from 'react-native-modal';
 import { Calendar } from 'react-native-calendars';
 import { pxPhone } from '../../../core/utils/utils'
@@ -104,17 +104,23 @@ export default CalendarComponent = (props) => {
           </View>
           {requestSelected && renderLeaveItem('Duration', `${requestSelected.startDate} to ${requestSelected.endDate}`)}
           {requestSelected && renderLeaveItem('Reason', requestSelected.reason)}
-          <View style={{ flexDirection: 'row', marginTop: pxPhone(30), alignSelf: 'flex-end', }}>
+          <View style={{
+            flexDirection: 'row',
+            marginTop: pxPhone(30),
+            alignSelf: 'flex-end',
+            width: pxPhone(90),
+            justifyContent: 'space-between',
+          }}>
             <TouchableOpacity
               activeOpacity={0.75}
               onPress={onDeleteLeave}>
-              {IconDelete({ width: pxPhone(23), height: pxPhone(23) })}
+              {IconDelete({ width: pxPhone(30), height: pxPhone(30) })}
             </TouchableOpacity>
             <TouchableOpacity
               activeOpacity={0.75}
               onPress={onCloseLeaveDetail}
               style={{ marginLeft: pxPhone(12) }}>
-              {IconClose({ width: pxPhone(25), height: pxPhone(25) })}
+              {IconClose({ width: pxPhone(32), height: pxPhone(32) })}
             </TouchableOpacity>
           </View>
         </View>
@@ -129,7 +135,7 @@ export default CalendarComponent = (props) => {
   const renderLeaveItem = (title, value) => {
     return (
       <View style={{ flexDirection: 'row', marginTop: pxPhone(5) }}>
-        <View style={{ width: pxPhone(70) }} >
+        <View style={{ width: pxPhone(75) }} >
           <Text style={{ fontWeight: 'bold' }}>
             {`${title}:`}
           </Text>

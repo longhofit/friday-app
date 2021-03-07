@@ -4,8 +4,7 @@ import {
   Text,
   View,
   StatusBar,
-  TouchableOpacity,
-  ScrollView,
+  ToastAndroid,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { getUser, clearTokens } from '@okta/okta-react-native';
@@ -28,8 +27,6 @@ export default DashboardScreen = (props) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    setProgress(true);
-
     getUserInfo();
 
     getAllRequestLeave();
@@ -61,6 +58,7 @@ export default DashboardScreen = (props) => {
   }, [requests]);
 
   const getUserInfo = () => {
+    setProgress(true);
     getUser()
       .then(user => {
         dispatch(onSetUser({
@@ -81,6 +79,7 @@ export default DashboardScreen = (props) => {
   };
 
   const getAllRequestLeave = () => {
+    setProgress(true);
     const homeService = new HomeService();
     homeService.getAllRequest()
       .then(data => {
@@ -94,14 +93,30 @@ export default DashboardScreen = (props) => {
       });
   };
 
+  const showToastWithGravityAndOffset = (text) => {
+    ToastAndroid.showWithGravityAndOffset(
+      text,
+      ToastAndroid.LONG,
+      ToastAndroid.BOTTOM,
+      25,
+      50
+    );
+  };;
+
   const deleteLeaveRequest = (id) => {
+    setProgress(true);
     const homeService = new HomeService();
     homeService.deleteLeave(id)
       .then(data => {
-        console.log(data);
+        showToastWithGravityAndOffset(data);
         setRequests(requests.filter(request => request.id !== id));
       })
-      .catch(e => console.log(e));
+      .catch(e => {
+        showToastWithGravityAndOffset(e.message);
+      })
+      .finally(() => {
+        setProgress(false);
+      });
   };
 
   return (
@@ -115,7 +130,7 @@ export default DashboardScreen = (props) => {
         />
         <Error error={error} />
         {(
-          <View style={{ paddingLeft: pxPhone(12),marginTop:pxPhone(15) }}>
+          <View style={{ paddingLeft: pxPhone(12), marginTop: pxPhone(15) }}>
             <Text style={styles.titleHello}>
               <Text style={{ color: 'black' }}>
                 {'Hello '}

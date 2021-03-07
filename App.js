@@ -33,6 +33,7 @@ import { pxPhone } from './core/utils/utils.js';
 import { useDispatch } from 'react-redux';
 import { clearTokens } from '@okta/okta-react-native';
 import { onSetUser } from './core/store/reducer/user/actions';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 
 LogBox.ignoreAllLogs()
@@ -73,9 +74,11 @@ const App = () => {
 
   if (progress) {
     return (
-      <View>
-        <Text>Loading...</Text>
-      </View>
+      <Spinner
+        visible={progress}
+        textContent={'Loading...'}
+        textStyle={{ color: '#FFF' }}
+      />
     )
   }
 
