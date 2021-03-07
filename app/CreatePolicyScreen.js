@@ -344,7 +344,7 @@ export default CreatePolicyScreen = (props) => {
     );
     response
       .then((res) => {
-        Alert.alert('Update policy successfully!');
+        Alert.alert('Create policy successfully!');
         navigation.navigate('Main');
       })
       .catch((e) => {

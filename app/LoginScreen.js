@@ -22,7 +22,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { onSetToken } from '../core/store/reducer/session/actions';
 import { onSetUser, onSetRole } from '../core/store/reducer/user/actions';
 import jwt_decode from "jwt-decode";
-import axios from 'axios';
 import SettingService from './services/setting.service';
 
 export default LoginScreen = (props) => {
