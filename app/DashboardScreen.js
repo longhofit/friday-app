@@ -125,7 +125,7 @@ export default DashboardScreen = (props) => {
       <View style={{ flex: 1 }} >
         <Spinner
           visible={progress}
-          textContent={'Loading...'}
+          textContent={'Loading ...'}
           textStyle={styles.spinnerTextStyle}
         />
         <Error error={error} />
@@ -135,23 +135,15 @@ export default DashboardScreen = (props) => {
               <Text style={{ color: 'black' }}>
                 {'Hello '}
               </Text>
-              {`${userState.name},`}
+              {`${userState.name}`}
             </Text>
             <View style={{ flexDirection: 'row', marginTop: pxPhone(12) }}>
               <Text style={{ fontWeight: 'bold', fontSize: pxPhone(18) }}>
-                {`You have ${requests.length} leave ${requests.length <= 1 ? 'request' : 'requests'}:`}
+                {`You have ${requests.length} leave ${requests.length <= 1 ? 'request' : 'requests'}.`}
               </Text>
             </View>
           </View>
         )}
-        {/* <View style={{ flexDirection: 'column', marginTop: 10, width: 300, marginBottom: 10 }}>
-          <View style={styles.tokenContainer}>
-            <TouchableOpacity onPress={() => logout()}>
-              <Text style={styles.tokenTitle}>{'Your leave:'}</Text>
-            </TouchableOpacity>
-
-          </View>
-        </View> */}
         <CalendarComponent
           deleteLeaveRequest={deleteLeaveRequest}
           getAllRequest={getAllRequestLeave}

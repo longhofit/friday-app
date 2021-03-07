@@ -88,7 +88,7 @@ export default LoginScreen = (props) => {
             textContent={'Loading...'}
             textStyle={styles.spinnerTextStyle}
           />
-          <View style={{ padding: pxPhone(30) }}>
+          <View style={{ padding: pxPhone(30), paddingTop: pxPhone(60) }}>
             <View style={{ alignItems: 'center' }}>
               <Image
                 style={{
@@ -106,21 +106,13 @@ export default LoginScreen = (props) => {
               }}>
                 {'Time tracking for better work'}
               </Text>
-              <Text style={{
-                fontWeight: 'bold',
-                fontSize: pxPhone(40),
-                color: '#0052CC',
-                marginTop: pxPhone(10)
-              }}>
-                {'Login'}
-              </Text>
             </View>
             <View
               style={state.username === '' && !isUserNameFocus && {
                 borderBottomWidth: pxPhone(1),
                 borderColor: 'gray',
                 paddingBottom: pxPhone(10),
-                marginTop: pxPhone(50),
+                marginTop: pxPhone(60),
               }}>
               <Sae
                 value={state.username}

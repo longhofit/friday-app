@@ -29,6 +29,7 @@ import { store } from './core/store';
 import EmployeesScreen from './app/EmployeesScreen.js';
 import SettingScreen from './app/SettingScreen.js';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon2 from 'react-native-vector-icons/MaterialIcons';
 import { pxPhone } from './core/utils/utils.js';
 import { useDispatch } from 'react-redux';
 import { clearTokens } from '@okta/okta-react-native';
@@ -69,7 +70,7 @@ const App = () => {
     return (
       <Icon
         name={name}
-        size={14}
+        size={pxPhone(22)}
         color={color}
       />
     )
@@ -105,41 +106,46 @@ const App = () => {
           onPress={() => {
           }}
         />
+        <View style={{ width: '100%', height: pxPhone(1), backgroundColor: '#F7F9FC' }} />
         {menuItems && menuItems.map((item, index) => {
           return (
-            <DrawerItem
-              labelStyle={{ fontWeight: 'bold', fontSize: pxPhone(18) }}
-              icon={() => myButton('key')}
-              key={index}
-              label={item}
-              onPress={() => {
-                props.navigation.navigate(item);
-              }}
-            />
+            <React.Fragment>
+              <DrawerItem
+                labelStyle={{ fontWeight: 'bold', fontSize: pxPhone(18) }}
+                icon={() => myButton(item.iconName)}
+                key={index}
+                label={item.name}
+                onPress={() => {
+                  props.navigation.navigate(item.name);
+                }}
+              />
+              <View style={{ width: '100%', height: pxPhone(1), backgroundColor: '#F7F9FC' }} />
+            </React.Fragment>
           );
         })}
         <DrawerItem
-          labelStyle={{ fontWeight: 'bold', fontSize: pxPhone(18), color: 'red' }}
-          icon={() => myButton('power-off', 'red')}
+          labelStyle={{ fontWeight: 'bold', fontSize: pxPhone(18) }}
+          icon={() => myButton('power-off')}
           label={'Log out'}
           onPress={logout}
         />
+        <View style={{ width: '100%', height: pxPhone(1), backgroundColor: '#F7F9FC' }} />
       </DrawerContentScrollView>
     );
   }
 
 
 
-  const MainStackNavigator = () => {
+  const MainStackNavigator = (props) => {
     return (
       <Stack.Navigator
         screenOptions={{
           headerStyle: {
             backgroundColor: "#9AC4F8",
           },
-          headerTintColor: "white",
           headerBackTitle: "Back",
           headerTitleAlign: 'center',
+          headerTitleStyle: { color: 'black', fontWeight: '800' },
         }}
       >
         <Stack.Screen
@@ -147,6 +153,17 @@ const App = () => {
           component={DashboardScreen}
           options={{
             title: 'Dashboard',
+            headerLeft: () => {
+              return (
+                <Icon2
+                  onPress={() => props.navigation.openDrawer()}
+                  style={{ paddingLeft: pxPhone(18) }}
+                  name={'menu'}
+                  size={pxPhone(30)}
+                  color={'black'}
+                />
+              );
+            },
           }}
         />
         <Stack.Screen

@@ -1,8 +1,20 @@
 export const menuItems = [
-    'Dashboard',
-    'Reports',
-    'Employees',
-    'Setting',
+    {
+        name: 'Dashboard',
+        iconName: 'dashboard'
+    },
+    {
+        name: 'Reports',
+        iconName: 'sticky-note'
+    },
+    {
+        name: 'Employees',
+        iconName: 'users'
+    },
+    {
+        name: 'Setting',
+        iconName: 'wrench'
+    },
 ];
 
 export const leaveTypes = {
