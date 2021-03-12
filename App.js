@@ -36,6 +36,7 @@ import { clearTokens } from '@okta/okta-react-native';
 import { onSetUser } from './core/store/reducer/user/actions';
 import Spinner from 'react-native-loading-spinner-overlay';
 import CreatePolicyScreen from './app/CreatePolicyScreen.js';
+import ProfileScreen from './app/ProfileScreen.js';
 
 LogBox.ignoreAllLogs()
 
@@ -105,6 +106,7 @@ const App = () => {
           icon={() => myButton('user-circle-o')}
           label={'Profile'}
           onPress={() => {
+            props.navigation.navigate("Profile");
           }}
         />
         <View style={{ width: '100%', height: pxPhone(1), backgroundColor: '#F7F9FC' }} />
@@ -165,6 +167,13 @@ const App = () => {
                 />
               );
             },
+          }}
+        />
+        <Stack.Screen
+          name="Profile"
+          component={ProfileScreen}
+          options={{
+            title: 'Profile',
           }}
         />
         <Stack.Screen
