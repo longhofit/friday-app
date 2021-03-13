@@ -82,3 +82,10 @@ export const IconDownArrow = (style) => {
 
   return Icon(source, style);
 };
+export const IconDeletePolicy = (style) => {
+  const source = {
+    imageSource: require('./other/delete-participants.png'),
+  };
+
+  return Icon(source, style);
+};

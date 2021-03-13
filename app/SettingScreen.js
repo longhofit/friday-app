@@ -18,6 +18,7 @@ import {
   IconEdit,
   IconUpArrow,
   IconDownArrow,
+  IconDeletePolicy,
 } from './assets/icons';
 import {pxPhone} from '../core/utils/utils';
 export default SettingScreen = (props) => {
@@ -83,8 +84,8 @@ export default SettingScreen = (props) => {
           )}
           <TouchableOpacity onPress={showModalUpdate}>
             {IconEdit({
-              width: pxPhone(25),
-              height: pxPhone(25),
+              width: pxPhone(20),
+              height: pxPhone(20),
               marginRight: pxPhone(5),
             })}
           </TouchableOpacity>
@@ -157,7 +158,7 @@ export default SettingScreen = (props) => {
               Days / Yearly
             </Text>
           </View>
-          <View style={{flexDirection: 'row-reverse', marginTop: pxPhone(20)}}>
+          <View style={{flexDirection: 'row-reverse', marginTop: pxPhone(20), marginBottom: pxPhone(10)}}>
             <TouchableOpacity onPress={handleSaveDayOff}>
               <Text style={{marginRight: pxPhone(5), color: '#fac046'}}>SAVE</Text>
             </TouchableOpacity>
@@ -235,7 +236,11 @@ export default SettingScreen = (props) => {
         <TouchableOpacity
           style={styles.buttonDelete}
           onPress={(column) => showModalDelete(item)}>
-          <Text>X</Text>
+          {IconDeletePolicy({
+              width: pxPhone(20),
+              height: pxPhone(20),
+              marginRight: pxPhone(5),
+          })}
         </TouchableOpacity>
       </View>
     );
@@ -271,7 +276,7 @@ export default SettingScreen = (props) => {
           <Text style={[styles.textModal, {marginTop: pxPhone(20),}]}>
             Are you sure want to delete this Holiday
           </Text>
-          <View style={{flexDirection: 'row-reverse', marginTop: pxPhone(20)}}>
+          <View style={{flexDirection: 'row-reverse', marginTop: pxPhone(20), marginBottom: pxPhone(10)}}>
             <TouchableOpacity onPress={handleRemoveHoliday}>
               <Text style={{marginRight: pxPhone(5)}}>DELETE</Text>
             </TouchableOpacity>
@@ -315,7 +320,7 @@ export default SettingScreen = (props) => {
         <FlatList
           data={leaveType}
           extraData={leaveType}
-          style={{marginTop: pxPhone(20)}}
+          style={{marginTop: pxPhone(20), padding: pxPhone(5)}}
           renderItem={(item) => {
             return renderLeaveTypes(item);
           }}
@@ -324,7 +329,7 @@ export default SettingScreen = (props) => {
         <FlatList
           data={listHoliday}
           extraData={listHoliday}
-          style={{marginTop: pxPhone(20), marginBottom: pxPhone(20)}}
+          style={{marginTop: pxPhone(20), marginBottom: pxPhone(20), paddingHorizontal: pxPhone(5)}}
           renderItem={(item) => {
             return renderListHolidays(item);
           }}
@@ -342,34 +347,56 @@ export default SettingScreen = (props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // flexDirection: 'column',
-    // backgroundColor: '#FFFFFF',
-    // paddingBottom: 50,
     backgroundColor: '#fafbfc',
   },
   textHeader: {
     fontSize: pxPhone(20),
     marginTop: pxPhone(20),
+    fontWeight: 'bold',
+    borderWidth: pxPhone(1),
+    borderColor: 'white',
+    borderBottomColor: 'darkgray',
+    padding: pxPhone(8),
   },
   leaveDayItem: {
-    backgroundColor: '#9AC4F8',
-    paddingHorizontal: pxPhone(10),
-    paddingVertical: pxPhone(10),
-    marginTop: pxPhone(10),
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    backgroundColor: 'white',
     borderRadius: pxPhone(6),
+    paddingVertical: pxPhone(22.5),
+    paddingHorizontal: pxPhone(10),
+    marginTop: pxPhone(10),
+    marginBottom: pxPhone(5),
+    flexDirection: 'row',
+    shadowColor: '#000',
+    justifyContent: 'space-between',
     alignItems: 'center',
+    shadowOffset: {
+      width: pxPhone(3),
+      height: pxPhone(4),
+    },
+    shadowOpacity: pxPhone(0.25),
+    shadowRadius: pxPhone(6),
+    borderWidth: pxPhone(0.3), 
+    elevation: 8,
   },
   holidaysItem: {
-    backgroundColor: '#9AC4F8',
-    paddingHorizontal: pxPhone(10),
+    backgroundColor: 'white',
+    borderRadius: pxPhone(6),
     paddingVertical: pxPhone(10),
+    paddingHorizontal: pxPhone(10),
     marginTop: pxPhone(10),
+    marginBottom: pxPhone(5),
     flexDirection: 'row',
+    shadowColor: '#000',
     justifyContent: 'space-between',
-    borderRadius: pxPhone(8),
     alignItems: 'center',
+    shadowOffset: {
+      width: pxPhone(3),
+      height: pxPhone(4),
+    },
+    shadowOpacity: pxPhone(0.25),
+    shadowRadius: pxPhone(6),
+    borderWidth: pxPhone(0.3), 
+    elevation: 8,
   },
   textDayOff: {
     color: '#0052cc',
@@ -391,6 +418,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: pxPhone(20),
     paddingVertical: pxPhone(10),
     marginBottom: pxPhone(20),
+    borderRadius: pxPhone(10),
   },
   textButton:{
     color:'white',

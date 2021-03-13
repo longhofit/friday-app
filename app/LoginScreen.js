@@ -98,6 +98,11 @@ export default LoginScreen = (props) => {
       });
   }
 
+  const onPressForgotPassword = () => {
+    const { navigation } = props;
+    navigation.navigate('Forgot password');
+  }
+
   return (
     <>
       <StatusBar barStyle="dark-content" />
@@ -188,9 +193,12 @@ export default LoginScreen = (props) => {
                 {'LOGIN'}
               </Text>
             </TouchableOpacity>
-            <Text style={{ textAlign: 'center', color: '#0052CC', fontSize: pxPhone(15), marginTop: pxPhone(18) }}>
-              {'Forgot Password?'}
-            </Text>
+            <TouchableOpacity onPress={onPressForgotPassword}>
+              <Text style={{ textAlign: 'center', color: '#0052CC', fontSize: pxPhone(15), marginTop: pxPhone(18) }}>
+                {'Forgot Password?'}
+              </Text>
+            </TouchableOpacity>
+            
           </View>
         </ScrollView>
       </SafeAreaView>

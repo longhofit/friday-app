@@ -83,23 +83,49 @@ export default EmployeesScreen = (props) => {
     })
   }
   const renderColumnEmployee = (column) => {
-    return (<View style={styles.viewItem}>
-      <Text style={styles.number}>{column.index + 1}</Text>
-      <Text style={styles.employee}>{column.item.name}</Text>
-      <TextInput style={styles.slackId} value={column.item.slackId} onChangeText={text => onChangeSlackID(column.item.id, text)}/>
-    </View>
-    );
+    if (column.index % 2 == 0) {
+      return (
+        <View style={styles.viewItem}>
+          <Text style={styles.number}>{column.index + 1}</Text>
+          <Text style={styles.employee}>{column.item.name}</Text>
+          {column.item.slackId == null ? <TextInput
+            style={styles.slackId}
+            value={"Enter slackID"}
+            onChangeText={(text) => onChangeSlackID(column.item.id, text)}
+          />:<TextInput
+          style={styles.slackId}
+          value={column.item.slackId}
+          onChangeText={(text) => onChangeSlackID(column.item.id, text)}
+        />}
+        </View>
+      );
+    } else {
+      return (
+        <View style={styles.viewItem2}>
+          <Text style={styles.number}>{column.index + 1}</Text>
+          <Text style={styles.employee}>{column.item.name}</Text>
+          {column.item.slackId === null ? <TextInput
+            style={styles.slackId}
+            value={"Enter slackID"}
+            onChangeText={(text) => onChangeSlackID(column.item.id, text)}
+          />:<TextInput
+          style={styles.slackId}
+          value={column.item.slackId}
+          onChangeText={(text) => onChangeSlackID(column.item.id, text)}
+        />}
+        </View>
+      );
+    }
   };
   return (
     <ScrollView style = {styles.container}>
       <StatusBar barStyle="dark-content" />
       <Text style={styles.textHeader}>Manage Employee</Text>
-      
       <View style={styles.viewTable}>
         <View style={styles.viewItemHeader}>
-          <Text style={styles.number}>Num</Text>
-          <Text style={styles.employee}>Employee</Text>
-          <Text style={styles.slackId}>SlackID</Text>
+          <Text style={[styles.number,{fontWeight: 'bold',}]}>Num</Text>
+          <Text style={[styles.employee, {fontWeight: 'bold',}]}>Employee</Text>
+          <Text style={[styles.slackId,{fontWeight: 'bold',}]}>SlackID</Text>
         </View>
         <FlatList 
           data={data}
@@ -120,20 +146,21 @@ export default EmployeesScreen = (props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // flexDirection: 'column',
-    // backgroundColor: '#FFFFFF',
-    // paddingBottom: 50,
     backgroundColor: '#fafbfc'
   },
   textHeader: {
     fontSize: pxPhone(20),
     marginTop: pxPhone(30),
-    marginLeft: pxPhone(20),
+    marginHorizontal: pxPhone(20),
+    fontWeight: 'bold',
+    borderWidth: pxPhone(1),
+    borderColor: 'white',
+    borderBottomColor: 'darkgray',
+    padding: pxPhone(8),
   },
   viewTable:{
     borderRadius: pxPhone(7),
     paddingVertical: pxPhone(10),
-    paddingHorizontal: pxPhone(10),
     backgroundColor: 'white',
     shadowColor: '#000',
     shadowOffset: {
@@ -141,21 +168,37 @@ const styles = StyleSheet.create({
       height: pxPhone(4),
     },
     shadowOpacity: pxPhone(0.25),
-    shadowRadius: pxPhone(7),
-    borderWidth: pxPhone(0.1),
+    shadowRadius: pxPhone(4),
+    borderWidth: pxPhone(0.3),
     marginHorizontal: pxPhone(20),
     marginTop: pxPhone(30),
     marginBottom: pxPhone(20),
+    elevation: 8,
   },
+
   viewItemHeader:{
     flexDirection: 'row',
     alignItems: 'center',
+    paddingHorizontal: pxPhone(10),
+    
   },
   viewItem:{
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: pxPhone(0.1),
-    paddingVertical: pxPhone(10),
+    paddingVertical: pxPhone(5),
+    backgroundColor: 'white',
+    borderWidth: pxPhone(0.3),
+    borderBottomColor: 'white',
+    borderTopColor: 'white',
+  },
+  viewItem2:{
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: pxPhone(5),
+    backgroundColor: '#e5e6d9',
+    borderWidth: pxPhone(0.3),
+    borderBottomColor: 'white',
+    borderTopColor: 'white',
   },
   number:{
     width: '15%',
@@ -178,6 +221,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: pxPhone(20),
     paddingVertical: pxPhone(10),
     marginBottom: pxPhone(20),
+    borderRadius: pxPhone(10),
   },
   textButton:{
     color:'white',
