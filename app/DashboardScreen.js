@@ -130,7 +130,24 @@ export default DashboardScreen = (props) => {
         />
         <Error error={error} />
         {(
-          <View style={{ paddingLeft: pxPhone(12), marginTop: pxPhone(15) }}>
+          <View style={{
+            paddingLeft: pxPhone(12),
+            marginTop: pxPhone(25),
+            justifyContent: 'center',
+            backgroundColor: 'white',
+            width: '90%',
+            borderRadius: pxPhone(6),
+            shadowColor: '#000',
+            shadowOffset: {
+              width: pxPhone(3),
+              height: pxPhone(4),
+            },
+            shadowOpacity: pxPhone(0.25),
+            shadowRadius: pxPhone(6),
+            elevation: 8,
+            alignSelf: 'center',
+            padding: pxPhone(20),
+          }}>
             <Text style={styles.titleHello}>
               <Text style={{ color: 'black' }}>
                 {'Hello '}

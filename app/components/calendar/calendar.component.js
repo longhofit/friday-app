@@ -154,15 +154,31 @@ export default CalendarComponent = (props) => {
   };
 
   return (
-    <View style={{ width: '100%', flex: 1, backgroundColor: '#9AC4F8', justifyContent: 'center', marginTop: pxPhone(30) }}>
+    <View style={{
+      justifyContent: 'center',
+      marginTop: pxPhone(30),
+      backgroundColor: 'white',
+      width: '90%',
+      borderRadius: pxPhone(6),
+      shadowColor: '#000',
+      shadowOffset: {
+        width: pxPhone(3),
+        height: pxPhone(4),
+      },
+      shadowOpacity: pxPhone(0.25),
+      shadowRadius: pxPhone(6),
+      elevation: 8,
+      alignSelf: 'center',
+      padding: pxPhone(20),
+    }}>
       <Calendar
         markingType={'period'}
         style={{
-          height: pxPhone(400),
+          width: '100%',
         }}
         markedDates={selectDay}
         theme={{
-          calendarBackground: '#9AC4F8',
+          calendarBackground: 'white',
           textSectionTitleColor: 'black',
           textSectionTitleDisabledColor: '#9AC4F8',
           selectedDayBackgroundColor: 'blue',
