@@ -38,7 +38,7 @@ export default DashboardScreen = (props) => {
     requests.forEach(request => {
       const dateBw = getDatesBetweenDates(request.startDate, request.endDate).map(date => { return yyyMMddFormatter(date) });
       const { type } = request;
-      const color = type === 'unpaid' ? '#1d0f52' : type === 'remote' ? '#b54b04' : '#1e8f18';
+      const color = type === 'unpaid' ? '#7E57C2' : type === 'remote' ? '#FF7043' : '#43A047';
 
       dateBw.forEach((item, index) => {
         dateTemps.push({
@@ -81,7 +81,7 @@ export default DashboardScreen = (props) => {
   const getAllRequestLeave = () => {
     setProgress(true);
     const homeService = new HomeService();
-    homeService.getAllRequest()
+    homeService.getAllMyRequest()
       .then(data => {
         setRequests(data);
       })

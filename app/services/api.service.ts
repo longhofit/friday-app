@@ -84,7 +84,6 @@ export default class ApiService {
     };
 
     if (hasToken) {
-      console.log(accessToken, 'accessToken');
       headers.Authorization = `Bearer ${accessToken}`;
     }
 

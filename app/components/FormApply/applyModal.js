@@ -5,11 +5,9 @@ import React, {
 import { View, Text, TouchableOpacity, TextInput, ToastAndroid } from 'react-native';
 import Modal from 'react-native-modal';
 import { pxPhone } from '../../../core/utils/utils'
-import { yyyMMddFormatter, getDatesBetweenDates } from '../../../core/formatters';
 import { leaveTypes, shift } from '../../../core/constant/menuSideBarConstant'
 import {
   IconClose,
-  IconDelete,
   IconWork,
   IconCalendar,
   IconNote,
@@ -19,8 +17,6 @@ import { Picker } from '@react-native-picker/picker'
 import HomeService from '../../services/home.service';
 import { Calendar } from 'react-native-calendars';
 
-
-//props: 
 
 export default ApplyForm = (props) => {
   const { isShow, onClose, dateSelect } = props;
