@@ -29,8 +29,8 @@ export default ProfileScreen = (props) => {
   }, []);
   const onPressSaveChanges = () => {
     const profileService = new ProfileService();
-    console.log('userInfo.slackId:', userInfo.slackId);
-    const response = profileService.updateMySlackID(JSON.stringify({slackId: userInfo.slackId}));
+    const newSlackId = userInfo.slackId;
+    const response = profileService.updateMySlackID(JSON.stringify({"slackId" : newSlackId}));
     response.then((res) => {
         Alert.alert("Update profile successfully!");
       })
