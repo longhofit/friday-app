@@ -23,20 +23,20 @@ export default EmployeesScreen = (props) => {
       response.then(res => {
         console.log("res:", res);
         const reqDataArray = [];
-          res.map((item) => 
-            reqDataArray.push(
-              {
-                "employee" : item.id,
-                "slackId" : item.slackId
-              }
-            )
+        res.map((item) =>
+          reqDataArray.push(
+            {
+              "employee": item.id,
+              "slackId": item.slackId
+            }
           )
+        )
         setData(res);
         setReqData(reqDataArray);
       })
-      .catch(e => {
-        console.log("error:",e);
-      })
+        .catch(e => {
+          console.log("error:", e);
+        })
     }
     fetchData();
   }, [])
@@ -45,42 +45,42 @@ export default EmployeesScreen = (props) => {
     let count = 0;
     const reqDataArray = [];
     newReqData.map((item) => {
-      if(item.id === id){
+      if (item.id === id) {
         item.slackId = slackId.length > 0 ? slackId : null;
       }
       reqDataArray.push(
         {
-          "employee" : item.id,
-          "slackId" : item.slackId
+          "employee": item.id,
+          "slackId": item.slackId
         }
       )
       count++;
     })
     setData(newReqData);
-    setReqData(reqDataArray);  
-    if(count === newReqData.length) setIsSaveChanges(true);
-        else setIsSaveChanges(false);
+    setReqData(reqDataArray);
+    if (count === newReqData.length) setIsSaveChanges(true);
+    else setIsSaveChanges(false);
   }
   const onPressSaveChanges = () => {
     const employeesService = new EmployeesService();
     const response = employeesService.updateSlackID(JSON.stringify(reqData));
-    response.then(res=>{
+    response.then(res => {
       const reqDataArray = [];
-          res.map((item) => 
-            reqDataArray.push(
-              {
-                "employee" : item.id,
-                "slackId" : item.slackId
-              }
-            )
-          )
-        setData(res);
-        setReqData(reqDataArray);
+      res.map((item) =>
+        reqDataArray.push(
+          {
+            "employee": item.id,
+            "slackId": item.slackId
+          }
+        )
+      )
+      setData(res);
+      setReqData(reqDataArray);
       setIsSaveChanges(false);
     })
-    .catch(e =>{
-      console.log("error:",e);
-    })
+      .catch(e => {
+        console.log("error:", e);
+      })
   }
   const renderColumnEmployee = (column) => {
     if (column.index % 2 == 0) {
@@ -92,11 +92,11 @@ export default EmployeesScreen = (props) => {
             style={styles.slackId}
             value={"Enter slackID"}
             onChangeText={(text) => onChangeSlackID(column.item.id, text)}
-          />:<TextInput
-          style={styles.slackId}
-          value={column.item.slackId}
-          onChangeText={(text) => onChangeSlackID(column.item.id, text)}
-        />}
+          /> : <TextInput
+              style={styles.slackId}
+              value={column.item.slackId}
+              onChangeText={(text) => onChangeSlackID(column.item.id, text)}
+            />}
         </View>
       );
     } else {
@@ -108,26 +108,44 @@ export default EmployeesScreen = (props) => {
             style={styles.slackId}
             value={"Enter slackID"}
             onChangeText={(text) => onChangeSlackID(column.item.id, text)}
-          />:<TextInput
-          style={styles.slackId}
-          value={column.item.slackId}
-          onChangeText={(text) => onChangeSlackID(column.item.id, text)}
-        />}
+          /> : <TextInput
+              style={styles.slackId}
+              value={column.item.slackId}
+              onChangeText={(text) => onChangeSlackID(column.item.id, text)}
+            />}
         </View>
       );
     }
   };
   return (
-    <ScrollView style = {styles.container}>
+    <ScrollView style={styles.container}>
       <StatusBar barStyle="dark-content" />
-      <Text style={styles.textHeader}>Manage Employee</Text>
+      <View style={{
+        marginTop: pxPhone(20),
+        paddingVertical: pxPhone(18),
+        width: '90%',
+        backgroundColor: 'white',
+        borderRadius: pxPhone(6),
+        shadowColor: '#000',
+        paddingLeft:pxPhone(20),
+        shadowOffset: {
+          width: pxPhone(3),
+          height: pxPhone(4),
+        },
+        shadowOpacity: pxPhone(0.25),
+        shadowRadius: pxPhone(6),
+        elevation: 8,
+        alignSelf: 'center',
+      }}>
+        <Text style={styles.textHeader}>Manage Employee</Text>
+      </View>
       <View style={styles.viewTable}>
         <View style={styles.viewItemHeader}>
-          <Text style={[styles.number,{fontWeight: 'bold',}]}>Num</Text>
-          <Text style={[styles.employee, {fontWeight: 'bold',}]}>Employee</Text>
-          <Text style={[styles.slackId,{fontWeight: 'bold',}]}>SlackID</Text>
+          <Text style={[styles.number, { fontWeight: 'bold', }]}>Num</Text>
+          <Text style={[styles.employee, { fontWeight: 'bold', }]}>Employee</Text>
+          <Text style={[styles.slackId, { fontWeight: 'bold', }]}>SlackID</Text>
         </View>
-        <FlatList 
+        <FlatList
           data={data}
           extraData={data}
           renderItem={(item) => {
@@ -138,7 +156,7 @@ export default EmployeesScreen = (props) => {
           <Text style={styles.textButton}>SAVE CHANGES</Text>
         </TouchableOpacity> : null}
       </View>
-      
+
     </ScrollView>
   );
 }
@@ -150,15 +168,9 @@ const styles = StyleSheet.create({
   },
   textHeader: {
     fontSize: pxPhone(20),
-    marginTop: pxPhone(30),
-    marginHorizontal: pxPhone(20),
     fontWeight: 'bold',
-    borderWidth: pxPhone(1),
-    borderColor: 'white',
-    borderBottomColor: 'darkgray',
-    padding: pxPhone(8),
   },
-  viewTable:{
+  viewTable: {
     borderRadius: pxPhone(7),
     paddingVertical: pxPhone(10),
     backgroundColor: 'white',
@@ -169,53 +181,50 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: pxPhone(0.25),
     shadowRadius: pxPhone(4),
-    borderWidth: pxPhone(0.3),
     marginHorizontal: pxPhone(20),
     marginTop: pxPhone(30),
     marginBottom: pxPhone(20),
     elevation: 8,
   },
 
-  viewItemHeader:{
+  viewItemHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: pxPhone(10),
-    
+
   },
-  viewItem:{
+  viewItem: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: pxPhone(5),
     backgroundColor: 'white',
-    borderWidth: pxPhone(0.3),
     borderBottomColor: 'white',
     borderTopColor: 'white',
   },
-  viewItem2:{
+  viewItem2: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: pxPhone(5),
     backgroundColor: '#e5e6d9',
-    borderWidth: pxPhone(0.3),
     borderBottomColor: 'white',
     borderTopColor: 'white',
   },
-  number:{
+  number: {
     width: '15%',
     textAlign: 'center',
     fontSize: pxPhone(15),
   },
-  employee:{
+  employee: {
     width: '45%',
     textAlign: 'center',
     fontSize: pxPhone(15),
   },
-  slackId:{
+  slackId: {
     width: '50%',
     textAlign: 'center',
     fontSize: pxPhone(15),
   },
-  buttonSave:{
+  buttonSave: {
     backgroundColor: "#0052cc",
     alignSelf: 'center',
     paddingHorizontal: pxPhone(20),
@@ -223,8 +232,8 @@ const styles = StyleSheet.create({
     marginBottom: pxPhone(20),
     borderRadius: pxPhone(10),
   },
-  textButton:{
-    color:'white',
+  textButton: {
+    color: 'white',
     fontSize: pxPhone(17),
   }
 });

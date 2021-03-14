@@ -57,8 +57,8 @@ const App = () => {
   const Drawer = createDrawerNavigator();
   const Stack = createStackNavigator();
 
-  const myButton = (name, color) => {
-    return <Icon name={name} size={pxPhone(22)} color={color} />;
+  const myButton = (name, color, isEmploy) => {
+    return <Icon name={name} size={isEmploy ? pxPhone(18) : pxPhone(22)} />;
   };
 
   const DrawerContent = (props) => {
@@ -84,9 +84,9 @@ const App = () => {
     };
 
     return (
-      <DrawerContentScrollView style={{ backgroundColor: '#9AC4F8' }}>
+      <DrawerContentScrollView style={{}}>
         <DrawerItem
-          labelStyle={{ fontWeight: 'bold', fontSize: pxPhone(25) }}
+          labelStyle={{ fontWeight: 'bold', fontSize: pxPhone(18) }}
           icon={() => myButton('user-circle-o')}
           label={'Profile'}
           onPress={() => {
@@ -106,7 +106,7 @@ const App = () => {
               <React.Fragment>
                 <DrawerItem
                   labelStyle={{ fontWeight: 'bold', fontSize: pxPhone(18) }}
-                  icon={() => myButton(item.iconName)}
+                  icon={() => myButton(item.iconName, null, item.name === 'Employees')}
                   key={index}
                   label={item.name}
                   onPress={() => {

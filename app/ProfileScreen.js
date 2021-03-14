@@ -74,7 +74,7 @@ export default ProfileScreen = (props) => {
         </View>
       </View>
       <TouchableOpacity style={styles.buttonSave} onPress={onPressSaveChanges}>
-        <Text style={styles.textButton}>SAVE</Text>
+        <Text style={styles.textButton}>Save</Text>
       </TouchableOpacity>
     </ScrollView>
   );
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     marginTop: pxPhone(5),
     borderWidth: pxPhone(1),
     borderColor: 'white',
-    borderBottomColor: 'black',
+    borderBottomColor: 'gray',
   },
   buttonSave: {
     marginBottom: pxPhone(30),
@@ -124,10 +124,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: pxPhone(20),
     paddingVertical: pxPhone(8),
     borderWidth: 1,
-    borderColor: 'black',
+    borderColor: 'gray',
+    backgroundColor:'#3753C7',
+    borderRadius:pxPhone(5),
   },
   textButton: {
     fontWeight: 'bold',
     fontSize: pxPhone(20),
+    color:'white',
   },
 });

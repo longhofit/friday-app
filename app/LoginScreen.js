@@ -16,7 +16,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import Error from './components/Error';
 import { imageBackground2, logo } from './assets/images';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-import { Sae } from 'react-native-textinput-effects';
+import { Sae, Hideo } from 'react-native-textinput-effects';
 import { pxPhone } from '../core/utils/utils';
 import { clearTokens, signIn } from '@okta/okta-react-native';
 import { useSelector, useDispatch } from 'react-redux';
@@ -34,7 +34,7 @@ export default LoginScreen = (props) => {
   });
   const [isUserNameFocus, setIsUserNameFocus] = useState(false);
   const [isPasswordFocus, setIsPasswordFocus] = useState(false)
-  const supportedURL = "https://dev.retrospective.ai/login";
+  const supportedURL = "https://dev-7931343.okta.com/signin/forgot-password";
   const dispatch = useDispatch();
 
   const showToastWithGravityAndOffset = (text) => {
@@ -131,34 +131,26 @@ export default LoginScreen = (props) => {
             <View style={{ alignItems: 'center' }}>
               <Image
                 style={{
-                  width: pxPhone(180) * (1346 / 1769),
-                  height: pxPhone(180),
+                  width: pxPhone(90) * (446 / 160),
+                  height: pxPhone(90),
                 }}
                 source={logo.imageSource}
               />
-              <Text style={{
-                marginTop: pxPhone(5),
-                fontWeight: 'normal',
-                // color:'#0052CC',
-                color: '#9AC4F8',
-                fontSize: pxPhone(20)
-              }}>
-                {'Time tracking for better work'}
-              </Text>
             </View>
             <View
-              style={state.username === '' && !isUserNameFocus && {
-                borderBottomWidth: pxPhone(1),
-                borderColor: 'gray',
-                paddingBottom: pxPhone(10),
-                marginTop: pxPhone(60),
+              style={{
+                borderColor: isUserNameFocus ? '#5282C1' : 'gray',
+                marginTop: pxPhone(150),
+                borderWidth: isUserNameFocus ? pxPhone(2) : pxPhone(1),
+                borderRadius:pxPhone(5),
+                padding:pxPhone(1),
               }}>
-              <Sae
+              <Hideo
+                placeholder={'Username'}
                 value={state.username}
-                label={'Username'}
                 iconClass={FontAwesomeIcon}
                 iconName={'user-circle-o'}
-                iconColor={'#0052CC'}
+                iconColor={isUserNameFocus ? '#5282C1' : 'gray'}
                 inputPadding={pxPhone(20)}
                 labelHeight={pxPhone(24)}
                 borderHeight={pxPhone(2)}
@@ -168,21 +160,26 @@ export default LoginScreen = (props) => {
                 onFocus={() => setIsUserNameFocus(true)}
                 onEndEditing={() => setIsUserNameFocus(false)}
                 onChangeText={username => setState({ ...state, username })}
+                iconBackgroundColor={'stranpate'}
+                inputStyle={{ color: '#464949' }}
               />
             </View>
             <View style={
-              state.password === '' && !isPasswordFocus && {
-                borderColor: 'gray',
-                paddingBottom: pxPhone(10),
-                borderBottomWidth: pxPhone(1),
+              {
+                borderColor: isPasswordFocus ? '#5282C1' : 'gray',
+                borderWidth: isPasswordFocus ? pxPhone(2) : pxPhone(1),
+                marginTop: pxPhone(20),
+                borderRadius:pxPhone(5),
+                padding:pxPhone(1),
               }}>
-              <Sae
+              <Hideo
+                placeholder={'Password'}
                 value={state.password}
                 secureTextEntry
                 label={'Password'}
                 iconClass={FontAwesomeIcon}
                 iconName={'lock'}
-                iconColor={'#0052CC'}
+                iconColor={isPasswordFocus ? '#5282C1' : 'gray'}
                 inputPadding={pxPhone(20)}
                 labelHeight={pxPhone(24)}
                 borderHeight={pxPhone(2)}
@@ -191,15 +188,16 @@ export default LoginScreen = (props) => {
                 autoCorrect={false}
                 onFocus={() => setIsPasswordFocus(true)}
                 onEndEditing={() => setIsPasswordFocus(false)}
+                iconBackgroundColor={'stranpate'}
                 onChangeText={password => setState({ ...state, password })}
               />
             </View>
             <TouchableOpacity
               onPress={login}
               activeOpacity={0.75}
-              style={{ marginTop: pxPhone(40), padding: pxPhone(12), backgroundColor: '#0052CC', alignItems: 'center', borderRadius: pxPhone(5) }}>
+              style={{ marginTop: pxPhone(40), padding: pxPhone(12), backgroundColor: '#5282C1', alignItems: 'center', borderRadius: pxPhone(5) }}>
               <Text style={{ color: 'white', fontWeight: 'bold', fontSize: pxPhone(20) }}>
-                {'LOGIN'}
+                {'Sign in'}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={onPressForgotPassword}>
@@ -207,7 +205,7 @@ export default LoginScreen = (props) => {
                 {'Forgot Password?'}
               </Text>
             </TouchableOpacity>
-            
+
           </View>
         </ScrollView>
       </SafeAreaView>
