@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useState, useCallback } from 'react';
 import {
   SafeAreaView,
   Button,
@@ -10,6 +10,7 @@ import {
   ScrollView,
   TouchableOpacity,
   ToastAndroid,
+  Linking,
 } from 'react-native';
 import Spinner from 'react-native-loading-spinner-overlay';
 import Error from './components/Error';
@@ -33,7 +34,7 @@ export default LoginScreen = (props) => {
   });
   const [isUserNameFocus, setIsUserNameFocus] = useState(false);
   const [isPasswordFocus, setIsPasswordFocus] = useState(false)
-
+  const supportedURL = "https://dev.retrospective.ai/login";
   const dispatch = useDispatch();
 
   const showToastWithGravityAndOffset = (text) => {
@@ -97,11 +98,19 @@ export default LoginScreen = (props) => {
         showToastWithGravityAndOffset(e.message);
       });
   }
+  const onPressForgotPassword = useCallback(async () => {
+    // Checking if the link is supported for links with custom URL scheme.
+    const supported = await Linking.canOpenURL(supportedURL);
 
-  const onPressForgotPassword = () => {
-    const { navigation } = props;
-    navigation.navigate('Forgot password');
-  }
+    if (supported) {
+      // Opening the link with some app, if the URL scheme is "http" the web link should be opened
+      // by some browser in the mobile
+      await Linking.openURL(supportedURL);
+    } else {
+      Alert.alert(`Don't know how to open this URL: ${supportedURL}`);
+    }
+  }, [supportedURL]);
+
 
   return (
     <>

@@ -89,3 +89,10 @@ export const IconDeletePolicy = (style) => {
 
   return Icon(source, style);
 };
+export const IconAvatarAnonymous = (style) => {
+  const source = {
+    imageSource: require('./other/avatar-anonymous.png'),
+  };
+
+  return Icon(source, style);
+};

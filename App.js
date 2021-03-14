@@ -25,7 +25,6 @@ import { onSetUser } from './core/store/reducer/user/actions';
 import Spinner from 'react-native-loading-spinner-overlay';
 import CreatePolicyScreen from './app/CreatePolicyScreen.js';
 import ProfileScreen from './app/ProfileScreen.js';
-import ForgotPasswordScreen from './app/ForgotPasswordScreen';
 import ReportsScreen from './app/ReportsScreen.js';
 
 LogBox.ignoreAllLogs();
@@ -236,13 +235,6 @@ const App = () => {
           key={'login'}
           name="Login"
           component={LoginScreen}
-          options={{
-            swipeEnabled: false,
-          }}
-        />
-        <Drawer.Screen
-          name="Forgot password"
-          component={ForgotPasswordScreen}
           options={{
             swipeEnabled: false,
           }}

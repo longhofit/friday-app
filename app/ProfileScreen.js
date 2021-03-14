@@ -7,11 +7,13 @@ import {
   TouchableOpacity,
   ScrollView,
   TextInput,
-  Image,
   Alert,
 } from 'react-native';
 import ProfileService from './services/profile.service';
 import {pxPhone} from '../core/utils/utils';
+import {
+  IconAvatarAnonymous,
+} from './assets/icons';
 export default ProfileScreen = (props) => {
   const [userInfo, setUserInfo] = useState(null);
   useEffect(() => {
@@ -43,8 +45,13 @@ export default ProfileScreen = (props) => {
     <ScrollView style={styles.container}>
       <StatusBar barStyle="dark-content" />
       <View style={styles.viewAvatar}>
-        <TouchableOpacity>
-          <Image style={styles.avatar}></Image>
+        <TouchableOpacity>     
+          {IconAvatarAnonymous({
+            width: pxPhone(150),
+            height: pxPhone(150),
+            borderRadius: pxPhone(75),
+            backgroundColor: 'white',
+          })}
         </TouchableOpacity>
       </View>
       <View style={styles.userInformation}>
@@ -76,9 +83,6 @@ export default ProfileScreen = (props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // flexDirection: 'column',
-    // backgroundColor: '#FFFFFF',
-    // paddingBottom: 50,
     backgroundColor: '#fafbfc',
   },
   viewAvatar: {

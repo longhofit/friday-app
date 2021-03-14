@@ -315,12 +315,12 @@ export default SettingScreen = (props) => {
   return (
     <ScrollView style={styles.container}>
       <StatusBar barStyle="dark-content" />
-      <View style={{marginHorizontal: pxPhone(20)}}>
+      <View style={{marginHorizontal: pxPhone(10)}}>
         <Text style={styles.textHeader}>Leave Types</Text>
         <FlatList
           data={leaveType}
           extraData={leaveType}
-          style={{marginTop: pxPhone(20), padding: pxPhone(5)}}
+          style={{marginTop: pxPhone(20)}}
           renderItem={(item) => {
             return renderLeaveTypes(item);
           }}
@@ -329,7 +329,7 @@ export default SettingScreen = (props) => {
         <FlatList
           data={listHoliday}
           extraData={listHoliday}
-          style={{marginTop: pxPhone(20), marginBottom: pxPhone(20), paddingHorizontal: pxPhone(5)}}
+          style={{marginTop: pxPhone(20), marginBottom: pxPhone(20)}}
           renderItem={(item) => {
             return renderListHolidays(item);
           }}
@@ -365,6 +365,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: pxPhone(10),
     marginTop: pxPhone(10),
     marginBottom: pxPhone(5),
+    marginHorizontal: pxPhone(10),
     flexDirection: 'row',
     shadowColor: '#000',
     justifyContent: 'space-between',
@@ -385,6 +386,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: pxPhone(10),
     marginTop: pxPhone(10),
     marginBottom: pxPhone(5),
+    marginHorizontal: pxPhone(10),
     flexDirection: 'row',
     shadowColor: '#000',
     justifyContent: 'space-between',
