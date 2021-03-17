@@ -5,6 +5,7 @@ import {
   View,
   StatusBar,
   ToastAndroid,
+  ScrollView,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { getUser, clearTokens } from '@okta/okta-react-native';
@@ -15,6 +16,7 @@ import CalendarComponent from './components/calendar/calendar.component';
 import { yyyMMddFormatter, getDatesBetweenDates } from '../core/formatters';
 import { onSetUser } from '../core/store/reducer/user/actions';
 import { pxPhone } from '../core/utils/utils';
+import { leaveTypes } from '../core/constant/menuSideBarConstant';
 
 export default DashboardScreen = (props) => {
   const [progress, setProgress] = useState(true);
@@ -67,8 +69,6 @@ export default DashboardScreen = (props) => {
           sub: user.sub,
           role: '',
         }));
-
-        console.log(user)
       })
       .catch(e => {
         setError(e.message);
@@ -84,6 +84,7 @@ export default DashboardScreen = (props) => {
     homeService.getAllMyRequest()
       .then(data => {
         setRequests(data);
+        console.log('data re', data);
       })
       .catch(e => {
         setError(e.message);
@@ -120,13 +121,13 @@ export default DashboardScreen = (props) => {
   };
 
   return (
-    <>
+    <ScrollView contentContainerStyle={{ paddingBottom: pxPhone(20) }} style={{ flex: 1 }}>
       <StatusBar barStyle="default" />
       <View style={{ flex: 1 }} >
         <Spinner
           visible={progress}
-          textContent={'Loading ...'}
           textStyle={styles.spinnerTextStyle}
+          color={'#0066cc'}
         />
         <Error error={error} />
         {(
@@ -167,8 +168,66 @@ export default DashboardScreen = (props) => {
           requestDates={dates}
           requests={requests}
         />
+        {requests.map((item, index) => {
+          const color = item.type === 'unpaid' ? '#7E57C5' : item.type === 'remote' ? '#FF7043' : '#43A047';
+          const months = [
+            'Jan',
+            'Feb',
+            'Mar.',
+            'Apr.',
+            'May',
+            'Jun.',
+            'Jul.',
+            'Aug.',
+            'Sep.',
+            'Oct.',
+            'Nov.',
+            'Dec.',
+          ]
+          return (
+            <View style={{
+              flexDirection: 'row',
+              marginTop: pxPhone(20),
+              width: '90%',
+              backgroundColor: 'white',
+              borderRadius: pxPhone(6),
+              shadowColor: '#000',
+              shadowOffset: {
+                width: pxPhone(3),
+                height: pxPhone(4),
+              },
+              height: pxPhone(80),
+              shadowOpacity: pxPhone(0.25),
+              shadowRadius: pxPhone(6),
+              elevation: 8,
+              alignSelf: 'center',
+            }}>
+              <View style={{ width: pxPhone(5), height: '100%', backgroundColor: color, borderTopLeftRadius: pxPhone(6), borderBottomLeftRadius: pxPhone(6) }}>
+              </View>
+              <View style={{ flex: 2, justifyContent: 'center', alignItems: 'center', borderRightColor: 'gray', borderRightWidth: pxPhone(0.5) }}>
+                <Text style={{ fontSize: pxPhone(15), fontWeight: 'bold' }}>
+                  {item.startDate !== item.endDate
+                    ? `${new Date(item.startDate).getDate()} - ${new Date(item.endDate).getDate()}`
+                    : `${new Date(item.startDate).getDate()}`}
+                </Text>
+                <Text style={{ fontSize: pxPhone(15), fontWeight: 'bold' }}>
+                  {`${months[new Date(item.startDate).getMonth()]}`}
+                </Text>
+              </View>
+              <View style={{ flex: 6, justifyContent: 'center', alignItems: 'center', paddingHorizontal: pxPhone(15) }}>
+                <Text style={{ fontSize: pxPhone(14), fontWeight: 'bold' }}>
+                  {leaveTypes[`${item.type}`]}
+                </Text>
+                <View style={{ height: pxPhone(0.25), width: '100%', backgroundColor: 'gray', marginVertical: pxPhone(5) }} />
+                <Text style={{ fontSize: pxPhone(15), color: 'gray' }}>
+                  {`${new Date(item.startDate).toDateString()} - ${new Date(item.endDate).toDateString()}`}
+                </Text>
+              </View>
+            </View>
+          )
+        })}
       </View>
-    </>
+    </ScrollView>
   );
 }
 

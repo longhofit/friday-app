@@ -26,10 +26,6 @@ export const userReducer = (state = initialState, action: UserActionTypes): User
     }
 
     case SET_ROLE: {
-      console.log('paaa', {
-        ...state,
-        role: action.payload,
-      });
       return {
         ...state,
         role: action.payload,

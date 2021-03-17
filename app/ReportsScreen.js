@@ -32,7 +32,6 @@ export default Reports = () => {
   };
 
   useEffect(() => {
-    console.log('run');
     const dateArray = [];
     const startDate = new Date(reportDate.start);
     const endDate = new Date(reportDate.end);

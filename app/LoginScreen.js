@@ -13,15 +13,14 @@ import {
   Linking,
 } from 'react-native';
 import Spinner from 'react-native-loading-spinner-overlay';
-import Error from './components/Error';
-import { imageBackground2, logo } from './assets/images';
+import { logo } from './assets/images';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-import { Sae, Hideo } from 'react-native-textinput-effects';
+import {  Hideo } from 'react-native-textinput-effects';
 import { pxPhone } from '../core/utils/utils';
-import { clearTokens, signIn } from '@okta/okta-react-native';
-import { useSelector, useDispatch } from 'react-redux';
+import {  signIn } from '@okta/okta-react-native';
+import {  useDispatch } from 'react-redux';
 import { onSetToken } from '../core/store/reducer/session/actions';
-import { onSetUser, onSetRole } from '../core/store/reducer/user/actions';
+import { onSetRole } from '../core/store/reducer/user/actions';
 import jwt_decode from "jwt-decode";
 import SettingService from './services/setting.service';
 
@@ -55,16 +54,13 @@ export default LoginScreen = (props) => {
       .then((token) => {
         dispatch(onSetToken(token.access_token));
         const decoded = jwt_decode(token.access_token);
-        console.log(decoded);
         const role = decoded.groups.length > 1 ? 'HR' : 'Everyone';
         dispatch(onSetRole(role));
-        console.log("role:", role);
         if (role === 'HR') {
           const settingService = new SettingService();
           const response = settingService.getPolicy();
           response
             .then((res) => {
-              console.log("res:", res);
               setState({
                 progress: false,
                 username: '',
@@ -124,8 +120,8 @@ export default LoginScreen = (props) => {
           }}>
           <Spinner
             visible={state.progress}
-            textContent={'Loading...'}
             textStyle={styles.spinnerTextStyle}
+            color={'#0066cc'}
           />
           <View style={{ padding: pxPhone(30), paddingTop: pxPhone(60) }}>
             <View style={{ alignItems: 'center' }}>

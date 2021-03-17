@@ -35,7 +35,6 @@ export default SettingScreen = (props) => {
       console.log("response.status:", response.status);
       response
         .then((res) => {
-          console.log('res:', res);
           const arrLeaveType = [
             {
               name: 'Annual leave',

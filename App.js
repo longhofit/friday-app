@@ -48,8 +48,8 @@ const App = () => {
     return (
       <Spinner
         visible={progress}
-        textContent={'Loading...'}
         textStyle={{ color: '#FFF' }}
+        color={'#0066cc'}
       />
     );
   }
@@ -228,6 +228,7 @@ const App = () => {
 
     return (
       <Drawer.Navigator
+        initialRouteName={authenticated && 'Main'}
         drawerContent={(props) =>
           DrawerContent({ ...props, dispatch: dispatch })
         }>

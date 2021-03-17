@@ -21,7 +21,6 @@ export default EmployeesScreen = (props) => {
       const employeesService = new EmployeesService();
       const response = employeesService.getAllEmployee();
       response.then(res => {
-        console.log("res:", res);
         const reqDataArray = [];
         res.map((item) =>
           reqDataArray.push(
