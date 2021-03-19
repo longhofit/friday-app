@@ -27,7 +27,8 @@ import CreatePolicyScreen from './app/CreatePolicyScreen.js';
 import ProfileScreen from './app/ProfileScreen.js';
 import ReportsScreen from './app/ReportsScreen.js';
 import { PersistGate } from 'redux-persist/lib/integration/react';
-
+import TimeLogCreateScreen from './app/TimeLog/TimeLogCreateScreen.js';
+import TimeLogScreen from './app/TimeLog/TimeLogScreen.js';
 LogBox.ignoreAllLogs();
 
 const App = () => {
@@ -86,6 +87,14 @@ const App = () => {
 
     return (
       <DrawerContentScrollView style={{}}>
+        <DrawerItem
+          labelStyle={{ fontWeight: 'bold', fontSize: pxPhone(18) }}
+          icon={() => myButton('user-circle-o')}
+          label={'TimeLog'}
+          onPress={() => {
+            props.navigation.navigate('TimeLog');
+          }}
+        />
         <DrawerItem
           labelStyle={{ fontWeight: 'bold', fontSize: pxPhone(18) }}
           icon={() => myButton('user-circle-o')}
@@ -151,18 +160,33 @@ const App = () => {
           headerBackTitle: 'Back',
           headerTitleAlign: 'center',
           headerTitleStyle: { color: 'black', fontWeight: '800' },
-          headerLeft: () => {
-            return (
-              <Icon2
-                onPress={() => props.navigation.openDrawer()}
-                style={{ paddingLeft: pxPhone(18) }}
-                name={'menu'}
-                size={pxPhone(30)}
-                color={'black'}
-              />
-            );
-          },
+          // headerLeft: () => {
+          //   return (
+          //     <Icon2
+          //       onPress={() => props.navigation.openDrawer()}
+          //       style={{ paddingLeft: pxPhone(18) }}
+          //       name={'menu'}
+          //       size={pxPhone(30)}
+          //       color={'black'}
+          //     />
+          //   );
+          // },
         }}>
+        <Stack.Screen
+          name="TimeLog"
+          component={TimeLogScreen}
+          options={{
+            title: 'TimeLog',
+          }}
+        />
+        <Stack.Screen
+          name="TimeLogCreate"
+          component={TimeLogCreateScreen}
+          options={{
+            title: 'Create TimeLog',
+          }}
+          
+        />
         <Stack.Screen
           name="Dashboard"
           component={DashboardScreen}
@@ -177,6 +201,7 @@ const App = () => {
             title: 'Profile',
           }}
         />
+        
         <Stack.Screen
           name="Employees"
           component={EmployeesScreen}

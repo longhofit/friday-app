@@ -96,3 +96,24 @@ export const IconAvatarAnonymous = (style) => {
 
   return Icon(source, style);
 };
+export const IconAdd = (style) => {
+  const source = {
+    imageSource: require('./other/add.png'),
+  };
+
+  return Icon(source, style);
+};
+export const IconClock = (style) => {
+  const source = {
+    imageSource: require('./other/clock.png'),
+  };
+
+  return Icon(source, style);
+};
+export const IconActivity = (style) => {
+  const source = {
+    imageSource: require('./other/activity.png'),
+  };
+
+  return Icon(source, style);
+};
