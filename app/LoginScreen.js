@@ -67,7 +67,7 @@ export default LoginScreen = (props) => {
                 password: '',
                 error: ''
               });
-              navigation.navigate('Main');
+              navigation.navigate('Manage');
             })
             .catch((e) => {
               console.log('error:', e);
@@ -86,7 +86,7 @@ export default LoginScreen = (props) => {
             password: '',
             error: ''
           });
-          navigation.navigate('Main');
+          navigation.navigate('Manage');
         }
       })
       .catch(e => {

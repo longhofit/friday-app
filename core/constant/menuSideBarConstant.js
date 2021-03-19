@@ -1,20 +1,40 @@
 export const menuItems = [
     {
-        name: 'Dashboard',
+        name: 'Manage',
         iconName: 'dashboard'
     },
     {
-        name: 'Reports',
+        name: 'Vacation',
         iconName: 'sticky-note'
     },
     {
-        name: 'Employees',
-        iconName: 'users'
+        name: 'Timelog',
+        iconName: 'sticky-note'
     },
-    {
-        name: 'Setting',
-        iconName: 'wrench'
-    },
+    // {
+    //     name: 'Employees',
+    //     iconName: 'users'
+    // },
+    // {
+    //     name: 'Setting',
+    //     iconName: 'wrench'
+    // },
+    // {
+    //     name: 'Dashboard',
+    //     iconName: 'dashboard'
+    // },
+    // {
+    //     name: 'Reports',
+    //     iconName: 'sticky-note'
+    // },
+    // {
+    //     name: 'Employees',
+    //     iconName: 'users'
+    // },
+    // {
+    //     name: 'Setting',
+    //     iconName: 'wrench'
+    // },
 ];
 
 export const leaveTypes = {

@@ -29,7 +29,32 @@ import ReportsScreen from './app/ReportsScreen.js';
 import { PersistGate } from 'redux-persist/lib/integration/react';
 import TimeLogCreateScreen from './app/TimeLog/TimeLogCreateScreen.js';
 import TimeLogScreen from './app/TimeLog/TimeLogScreen.js';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
 LogBox.ignoreAllLogs();
+
+const screenOptionsDefault = (props) => {
+  return (
+    {
+      headerStyle: {
+        backgroundColor: '#9AC4F8',
+      },
+      headerTitleAlign: 'center',
+      headerTitleStyle: { color: 'black', fontWeight: '800' },
+      headerLeft: () => {
+        return (
+          <Icon2
+            onPress={() => props.navigation.openDrawer()}
+            style={{ paddingLeft: pxPhone(18) }}
+            name={'menu'}
+            size={pxPhone(30)}
+            color={'black'}
+          />
+        );
+      },
+    }
+  )
+}
 
 const App = () => {
   const [progress, setProgress] = useState(false);
@@ -87,14 +112,14 @@ const App = () => {
 
     return (
       <DrawerContentScrollView style={{}}>
-        <DrawerItem
+        {/* <DrawerItem
           labelStyle={{ fontWeight: 'bold', fontSize: pxPhone(18) }}
           icon={() => myButton('user-circle-o')}
           label={'TimeLog'}
           onPress={() => {
             props.navigation.navigate('TimeLog');
           }}
-        />
+        /> */}
         <DrawerItem
           labelStyle={{ fontWeight: 'bold', fontSize: pxPhone(18) }}
           icon={() => myButton('user-circle-o')}
@@ -150,72 +175,94 @@ const App = () => {
     );
   };
 
-  const MainStackNavigator = (props) => {
+  const Tab = createBottomTabNavigator();
+
+  const ManageTabNavigator = () => {
     return (
-      <Stack.Navigator
-        screenOptions={{
-          headerStyle: {
-            backgroundColor: '#9AC4F8',
-          },
-          headerBackTitle: 'Back',
-          headerTitleAlign: 'center',
-          headerTitleStyle: { color: 'black', fontWeight: '800' },
-          // headerLeft: () => {
-          //   return (
-          //     <Icon2
-          //       onPress={() => props.navigation.openDrawer()}
-          //       style={{ paddingLeft: pxPhone(18) }}
-          //       name={'menu'}
-          //       size={pxPhone(30)}
-          //       color={'black'}
-          //     />
-          //   );
-          // },
-        }}>
-        <Stack.Screen
-          name="TimeLog"
-          component={TimeLogScreen}
-          options={{
-            title: 'TimeLog',
-          }}
-        />
-        <Stack.Screen
-          name="TimeLogCreate"
-          component={TimeLogCreateScreen}
-          options={{
-            title: 'Create TimeLog',
-          }}
-          
-        />
-        <Stack.Screen
-          name="Dashboard"
-          component={DashboardScreen}
-          options={{
-            title: 'Dashboard',
-          }}
-        />
-        <Stack.Screen
-          name="Profile"
-          component={ProfileScreen}
-          options={{
-            title: 'Profile',
-          }}
-        />
-        
-        <Stack.Screen
+      <Tab.Navigator screenOptions={{
+      }}>
+        <Tab.Screen
           name="Employees"
           component={EmployeesScreen}
           options={{
             title: 'Employees',
           }}
         />
-        <Stack.Screen
+        <Tab.Screen
           name="Setting"
           component={SettingScreen}
           options={{
             title: 'Setting',
           }}
         />
+      </Tab.Navigator>
+    );
+  };
+
+  const VacationTabNavigator = () => {
+    return (
+      <Tab.Navigator>
+        <Tab.Screen
+          name="Dashboard"
+          component={DashboardScreen}
+          options={{
+            title: 'Dashboard',
+          }}
+        />
+        <Tab.Screen
+          name="Reports"
+          component={ReportsScreen}
+          options={{
+            title: 'Reports',
+          }}
+        />
+      </Tab.Navigator>
+    );
+  };
+
+  const TimelogStack = (props) => {
+    return (
+      <Stack.Navigator
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: '#9AC4F8',
+          },
+          headerTitleAlign: 'center',
+          headerTitleStyle: { color: 'black', fontWeight: '800' },
+        }}>
+        <Stack.Screen
+          name="TimeLog"
+          component={TimeLogScreen}
+          options={{
+            title: 'TimeLog',
+            headerLeft: () => {
+              return (
+                <Icon2
+                  onPress={() => props.navigation.openDrawer()}
+                  style={{ paddingLeft: pxPhone(18) }}
+                  name={'menu'}
+                  size={pxPhone(30)}
+                  color={'black'}
+                />
+              );
+            },
+          }}
+        />
+        <Stack.Screen
+          name="TimeLogCreate"
+          component={TimeLogCreateScreen}
+          options={{
+            title: 'Create Timelog',
+          }}
+        />
+      </Stack.Navigator>
+    );
+  };
+
+  const ReportTimelogStack = (props) => {
+    return (
+      <Stack.Navigator
+        screenOptions={screenOptionsDefault(props)}>
         <Stack.Screen
           name="Reports"
           component={ReportsScreen}
@@ -223,6 +270,59 @@ const App = () => {
             title: 'Reports',
           }}
         />
+      </Stack.Navigator>
+    );
+  }
+
+  const TimelogTabNavigator = () => {
+    return (
+      <Tab.Navigator>
+        <Tab.Screen
+          name="TimeLog"
+          component={TimelogStack}
+        />
+        <Tab.Screen
+          name="Reports"
+          component={ReportTimelogStack}
+        />
+      </Tab.Navigator>
+    );
+  };
+
+  const VacationStack = (props) => {
+    return (
+      <Stack.Navigator
+        screenOptions={screenOptionsDefault(props)}>
+        <Stack.Screen
+          name="Vacation"
+          component={VacationTabNavigator}
+          options={{
+            title: 'Vacation',
+          }}
+        />
+      </Stack.Navigator>
+    );
+  };
+
+  const ManageStack = (props) => {
+    return (
+      <Stack.Navigator
+        screenOptions={screenOptionsDefault(props)}>
+        <Stack.Screen
+          name="Manage"
+          component={ManageTabNavigator}
+          options={{
+            title: 'Manage',
+          }}
+        />
+      </Stack.Navigator>
+    );
+  };
+
+  const MainStackNavigator = (props) => {
+    return (
+      <Stack.Navigator
+        screenOptions={screenOptionsDefault(props)}>
       </Stack.Navigator>
     );
   };
@@ -249,25 +349,42 @@ const App = () => {
     );
   };
 
-  const DrawerNavigator = (props) => {
+  const DrawerNavigator = () => {
     const dispatch = useDispatch();
 
     return (
       <Drawer.Navigator
-        initialRouteName={authenticated ? 'Main' : 'Login'}
+        initialRouteName={authenticated ? 'Manage' : 'login'}
         drawerContent={(props) =>
           DrawerContent({ ...props, dispatch: dispatch })
         }>
         <Drawer.Screen
           key={'login'}
-          name="Login"
+          name={'login'}
           component={LoginScreen}
           options={{
             swipeEnabled: false,
           }}
         />
-        <Drawer.Screen name="Policy" component={PolicyStackNavigator} />
-        <Drawer.Screen name="Main" component={MainStackNavigator} />
+        <Drawer.Screen
+          name="Profile"
+          component={ProfileScreen}
+          options={{
+            title: 'Profile',
+          }}
+        />
+        <Drawer.Screen
+          name="Vacation"
+          component={VacationStack}
+        />
+        <Drawer.Screen
+          name="Manage"
+          component={ManageStack}
+        />
+        <Drawer.Screen
+          name="Timelog"
+          component={TimelogTabNavigator}
+        />
       </Drawer.Navigator>
     );
   };
@@ -276,7 +393,7 @@ const App = () => {
     <Provider store={store}>
       <PersistGate
         persistor={persistor}>
-        <NavigationContainer>
+        <NavigationContainer >
           <DrawerNavigator />
         </NavigationContainer>
       </PersistGate>
