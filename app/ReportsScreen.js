@@ -460,7 +460,7 @@ export default Reports = () => {
             justifyContent: 'space-between',
             width: '100%',
             paddingVertical: pxPhone(12),
-            backgroundColor: '#e5e6d9',
+            backgroundColor: '#E8ECF0',
           }}>
             <View style={{ flex: 1 }}>
               <Text style={{ fontWeight: 'bold', textAlign: 'center' }}>
@@ -489,7 +489,7 @@ export default Reports = () => {
                   justifyContent: 'space-between',
                   width: '100%',
                   paddingVertical: pxPhone(12),
-                  backgroundColor: index % 2 == 1 && '#e5e6d9',
+                  backgroundColor: index % 2 == 1 && '#E8ECF0',
                 }}>
                 <View style={{ flex: 1 }}>
                   <Text style={{ textAlign: 'center' }}>

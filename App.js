@@ -13,7 +13,7 @@ import {
 } from '@react-navigation/drawer';
 import { createStackNavigator } from '@react-navigation/stack';
 import { menuItems } from './core/constant/menuSideBarConstant';
-import { store } from './core/store';
+import { store, persistor } from './core/store';
 import EmployeesScreen from './app/EmployeesScreen.js';
 import SettingScreen from './app/SettingScreen.js';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -26,6 +26,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import CreatePolicyScreen from './app/CreatePolicyScreen.js';
 import ProfileScreen from './app/ProfileScreen.js';
 import ReportsScreen from './app/ReportsScreen.js';
+import { PersistGate } from 'redux-persist/lib/integration/react';
 
 LogBox.ignoreAllLogs();
 
@@ -228,7 +229,7 @@ const App = () => {
 
     return (
       <Drawer.Navigator
-        initialRouteName={authenticated && 'Main'}
+        initialRouteName={authenticated ? 'Main' : 'Login'}
         drawerContent={(props) =>
           DrawerContent({ ...props, dispatch: dispatch })
         }>
@@ -248,9 +249,12 @@ const App = () => {
 
   return (
     <Provider store={store}>
-      <NavigationContainer>
-        <DrawerNavigator />
-      </NavigationContainer>
+      <PersistGate
+        persistor={persistor}>
+        <NavigationContainer>
+          <DrawerNavigator />
+        </NavigationContainer>
+      </PersistGate>
     </Provider>
   );
 };
