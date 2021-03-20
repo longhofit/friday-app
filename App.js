@@ -1,7 +1,7 @@
 import 'react-native-gesture-handler';
 import { Provider } from 'react-redux';
 import React, { useState, useEffect } from 'react';
-import { View, Text, LogBox } from 'react-native';
+import { View, LogBox, Text } from 'react-native';
 import { isAuthenticated } from '@okta/okta-react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import LoginScreen from './app/LoginScreen.js';
@@ -18,6 +18,7 @@ import EmployeesScreen from './app/manage/EmployeesScreen.js';
 import SettingScreen from './app/manage/SettingScreen.js';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/MaterialIcons';
+import Ionicons from 'react-native-vector-icons/Ionicons'
 import { pxPhone } from './core/utils/utils.js';
 import { useDispatch } from 'react-redux';
 import { clearTokens } from '@okta/okta-react-native';
@@ -30,6 +31,7 @@ import { PersistGate } from 'redux-persist/lib/integration/react';
 import TimeLogCreateScreen from './app/timeLog/TimeLogCreateScreen.js';
 import TimeLogScreen from './app/timeLog/TimeLogScreen.js';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import ProjectsScreen from './app/manage/Project.js';
 
 LogBox.ignoreAllLogs();
 
@@ -85,7 +87,7 @@ const App = () => {
   const Stack = createStackNavigator();
 
   const myButton = (name, color, isEmploy) => {
-    return <Icon name={name} size={isEmploy ? pxPhone(18) : pxPhone(22)} />;
+    return <Icon name={name} size={isEmploy ? pxPhone(18) : pxPhone(22)} color={color} />;
   };
 
   const DrawerContent = (props) => {
@@ -179,20 +181,60 @@ const App = () => {
 
   const ManageTabNavigator = () => {
     return (
-      <Tab.Navigator screenOptions={{
-      }}>
+      <Tab.Navigator
+      initialRouteName={'Project'}
+        screenOptions={{
+        }}>
         <Tab.Screen
           name="Employees"
           component={EmployeesScreen}
           options={{
-            title: 'Employees',
+            tabBarIcon: ({ color, focused, size }) => {
+              console.log(color, focused, size);
+              return myButton('users', color)
+            },
+            tabBarLabel: ({ focused, color, position }) => {
+              return <Text style={{ color, fontSize: pxPhone(12) }}>
+                {'Employees'}
+              </Text>
+            },
           }}
         />
         <Tab.Screen
           name="Setting"
           component={SettingScreen}
           options={{
-            title: 'Setting',
+            tabBarIcon: ({ color, focused, size }) => {
+              return <Ionicons
+                name={'md-settings-sharp'}
+                size={size}
+                color={color}
+              />
+            },
+            tabBarLabel: ({ focused, color, position }) => {
+              return <Text style={{ color, fontSize: pxPhone(12) }}>
+                {'Setting'}
+              </Text>
+            },
+          }}
+        />
+        <Tab.Screen
+          name="Project"
+          component={ProjectsScreen}
+          options={{
+            tabBarIcon: ({ color, focused, size }) => {
+              return <Ionicons
+                name={'ios-newspaper-sharp'}
+                size={size}
+                color={color}
+              />
+            },
+            tabBarLabel: ({ focused, color, position }) => {
+              return <Text style={{ color, fontSize: pxPhone(12) }}>
+                {'Projects'}
+              </Text>
+            },
+
           }}
         />
       </Tab.Navigator>
