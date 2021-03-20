@@ -10,12 +10,13 @@ import {
   Alert,
 } from 'react-native';
 import { pxPhone } from '../../core/utils/utils';
-import { IconAdd } from '../assets/icons';
 import Modal from 'react-native-modal';
 import { format } from 'date-fns';
 import TimeLogService from '../services/timelog.service';
 import moment from "moment";
 import _, {groupBy} from "lodash";
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { IconCheck2 } from '../assets/icons';
 export default TimeLogScreen = (props) => {
     const [startDate, setStartDate] = useState(new Date(
       moment().subtract(0, 'weeks').startOf('week').isoWeekday(1).format('YYYY-MM-DD')
@@ -128,10 +129,20 @@ export default TimeLogScreen = (props) => {
       <Text style={{fontSize: pxPhone(14)}}>{item.comment}</Text>
       <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
         <Text style={{fontSize: pxPhone(14)}}>{item.ticket}</Text>
-        <View style={{flexDirection: 'row'}}>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <Text style={{fontSize: pxPhone(14)}}>{item.startFrom}</Text>
           <Text style={{fontSize: pxPhone(14), marginLeft: pxPhone(7)}}>{hours + ' : '}</Text>
           <Text style={{fontSize: pxPhone(14)}}>{minutes}</Text>
+          {item.status === 'NEW' ?
+          <TouchableOpacity onPress={(e) => onPressConfirm(e, item.id)}>
+            {IconCheck2({
+            width: pxPhone(30),
+            height: pxPhone(30),
+            marginLeft: pxPhone(20),
+            tintColor: '#3753C7'
+            })}
+          </TouchableOpacity>
+           : null}
         </View>
       </View>
     </TouchableOpacity>)
@@ -201,6 +212,24 @@ export default TimeLogScreen = (props) => {
     }
     setIsShowModal(false);
   }
+  const onPressConfirm = (e, id) => {
+    e.stopPropagation();
+    const timeLogService = new TimeLogService();
+    const response = timeLogService.ConfirmTimeEntry(JSON.stringify({"timeEntryIds": [id]}));
+    response.then((res) => {
+      Alert.alert(
+        'Confirm successfully!',
+        '',
+        [
+          { text: 'OK', onPress: () => refreshData()}
+        ],
+        { cancelable: false }
+      );
+    })
+    .catch((e) => {
+      console.log('error:', e);
+    });
+  }
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
@@ -212,16 +241,16 @@ export default TimeLogScreen = (props) => {
             return renderItemTimeLogByWeek(item.item);
           }}
       />
-      <TouchableOpacity onPress={() => props.navigation.navigate('TimeLogCreate', {onGoBack:() => refreshData()})}>
-        {IconAdd({
-          width: pxPhone(50),
-          height: pxPhone(50),
-          alignSelf: 'flex-end',
-          marginBottom: pxPhone(30),
-          marginRight: pxPhone(30),
-          tintColor: '#0052CC'
-      })}
-        </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => props.navigation.navigate('TimeLogCreate', {onGoBack:() => refreshData()})}
+        activeOpacity={0.75}
+        style={styles.icon}>
+        <FontAwesome
+          name={'plus'}
+          size={pxPhone(20)}
+          color={'white'}
+        />
+      </TouchableOpacity>
       {renderModalSelect()}
     </View>
   );
@@ -265,5 +294,16 @@ const styles = StyleSheet.create({
     marginBottom: pxPhone(3),
     padding: pxPhone(8),
     marginHorizontal: pxPhone(15),
+  },
+  icon: {
+    position: 'absolute',
+    bottom: pxPhone(20),
+    right: pxPhone(20),
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#3753C7',
+    borderRadius: pxPhone(50 / 2),
+    width: pxPhone(50),
+    height: pxPhone(50),
   },
 });

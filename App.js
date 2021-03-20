@@ -319,7 +319,7 @@ const App = () => {
         }
       }>
         <Tab.Screen
-          name = "TIMELOG"
+          name = "TimeLog"
           component={TimelogStack}
           options={
             {
@@ -331,11 +331,11 @@ const App = () => {
           }
         />
         <Tab.Screen
-          name = "REPORT"
+          name = "Report"
           component={ReportTimelogStack}
           options={
             {
-              title: "Reports",
+              title: "Report",
               tabBarIcon: ({focused, tintColor}) => (
                 <Icon focused={focused} name="line-chart" color={tintColor} size={pxPhone(20)} />
               ),

@@ -15,6 +15,7 @@ import { Calendar } from 'react-native-calendars';
 import TimeLogService from '../services/timelog.service';
 import moment from "moment";
 import _, {groupBy} from "lodash";
+import { IconCheck2 } from '../assets/icons';
 export default TimeLogReportScreen = (props) => {
   const [startDate, setStartDate] = useState(new Date(
     new Date().getFullYear(),
@@ -204,10 +205,20 @@ export default TimeLogReportScreen = (props) => {
         <Text style={{fontSize: pxPhone(14)}}>{item.comment}</Text>
         <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
             <Text style={{fontSize: pxPhone(14)}}>{item.ticket}</Text>
-            <View style={{flexDirection: 'row'}}>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <Text style={{fontSize: pxPhone(14)}}>{item.startFrom}</Text>
                 <Text style={{fontSize: pxPhone(14), marginLeft: pxPhone(7)}}>{hours + ' : '}</Text>
                 <Text style={{fontSize: pxPhone(14)}}>{minutes}</Text>
+                {item.status === 'NEW' ?
+                <TouchableOpacity onPress={(e) => onPressConfirm(e, item.id)}>
+                  {IconCheck2({
+                    width: pxPhone(30),
+                    height: pxPhone(30),
+                    marginLeft: pxPhone(20),
+                    tintColor: '#3753C7'
+                  })}
+                  </TouchableOpacity>
+                : null}
             </View>
         </View>
     </TouchableOpacity>)
@@ -273,6 +284,24 @@ export default TimeLogReportScreen = (props) => {
       }); 
     }
     setIsShowModal(false);
+  }
+  const onPressConfirm = (e, id) => {
+    e.stopPropagation();
+    const timeLogService = new TimeLogService();
+    const response = timeLogService.ConfirmTimeEntry(JSON.stringify({"timeEntryIds": [id]}));
+    response.then((res) => {
+      Alert.alert(
+        'Confirm successfully!',
+        '',
+        [
+          { text: 'OK', onPress: () => onPressShowReport()}
+        ],
+        { cancelable: false }
+      );
+    })
+    .catch((e) => {
+      console.log('error:', e);
+    });
   }
   return (
     <View style={styles.container}>
