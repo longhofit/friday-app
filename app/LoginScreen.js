@@ -54,6 +54,7 @@ export default LoginScreen = (props) => {
       .then((token) => {
         dispatch(onSetToken(token.access_token));
         const decoded = jwt_decode(token.access_token);
+        console.log("token:",token.access_token);
         const role = decoded.groups.length > 1 ? 'HR' : 'Everyone';
         dispatch(onSetRole(role));
         if (role === 'HR') {

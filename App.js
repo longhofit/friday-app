@@ -18,6 +18,7 @@ import EmployeesScreen from './app/manage/EmployeesScreen.js';
 import SettingScreen from './app/manage/SettingScreen.js';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/MaterialIcons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import { pxPhone } from './core/utils/utils.js';
 import { useDispatch } from 'react-redux';
 import { clearTokens } from '@okta/okta-react-native';
@@ -27,9 +28,11 @@ import CreatePolicyScreen from './app/CreatePolicyScreen.js';
 import ProfileScreen from './app/ProfileScreen.js';
 import ReportsScreen from './app/vacation/ReportsScreen.js';
 import { PersistGate } from 'redux-persist/lib/integration/react';
-import TimeLogCreateScreen from './app/timeLog/TimeLogCreateScreen.js';
-import TimeLogScreen from './app/timeLog/TimeLogScreen.js';
+import TimeLogCreateScreen from './app/TimeLog/TimeLogCreateScreen.js';
+import TimeLogScreen from './app/TimeLog/TimeLogScreen.js';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import TimeLogEditScreen from './app/TimeLog/TimeLogEditScreen.js';
+import TimeLogReportScreen from './app/TimeLog/TimeLogReportScreen.js';
 
 LogBox.ignoreAllLogs();
 
@@ -227,6 +230,7 @@ const App = () => {
           headerStyle: {
             backgroundColor: '#9AC4F8',
           },
+          
           headerTitleAlign: 'center',
           headerTitleStyle: { color: 'black', fontWeight: '800' },
         }}>
@@ -255,6 +259,13 @@ const App = () => {
             title: 'Create Timelog',
           }}
         />
+        <Stack.Screen
+          name="TimeLogEdit"
+          component={TimeLogEditScreen}
+          options={{
+            title: 'Edit Timelog',
+          }}
+        />
       </Stack.Navigator>
     );
   };
@@ -262,12 +273,36 @@ const App = () => {
   const ReportTimelogStack = (props) => {
     return (
       <Stack.Navigator
-        screenOptions={screenOptionsDefault(props)}>
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: '#9AC4F8',
+          },
+          headerTitleAlign: 'center',
+          headerTitleStyle: { color: 'black', fontWeight: '800' },
+        }}>
         <Stack.Screen
           name="Reports"
-          component={ReportsScreen}
+          component={TimeLogReportScreen}
           options={{
-            title: 'Reports',
+            title: 'Reports TimeLog',
+            headerLeft: () => {
+              return (
+                <Icon2
+                  onPress={() => props.navigation.openDrawer()}
+                  style={{ paddingLeft: pxPhone(18) }}
+                  name={'menu'}
+                  size={pxPhone(30)}
+                  color={'black'}
+                />
+              );
+            },
+          }}
+        />
+        <Stack.Screen
+          name="TimeLogEdit"
+          component={TimeLogEditScreen}
+          options={{
+            title: 'Edit Timelog',
           }}
         />
       </Stack.Navigator>
@@ -276,14 +311,36 @@ const App = () => {
 
   const TimelogTabNavigator = () => {
     return (
-      <Tab.Navigator>
+    <Tab.Navigator 
+      tabBarOptions={
+        {
+          activeTintColor: '#0052CC',
+          inactiveTintColor: 'black',
+        }
+      }>
         <Tab.Screen
-          name="TimeLog"
+          name = "TIMELOG"
           component={TimelogStack}
+          options={
+            {
+              title: 'TimeLog',
+              tabBarIcon: ({tintColor}) => (
+                <Icon name="clock-o" color={tintColor} size={pxPhone(20)} />
+              ),
+            }
+          }
         />
         <Tab.Screen
-          name="Reports"
+          name = "REPORT"
           component={ReportTimelogStack}
+          options={
+            {
+              title: "Reports",
+              tabBarIcon: ({focused, tintColor}) => (
+                <Icon focused={focused} name="line-chart" color={tintColor} size={pxPhone(20)} />
+              ),
+            }
+          }
         />
       </Tab.Navigator>
     );
@@ -354,7 +411,7 @@ const App = () => {
 
     return (
       <Drawer.Navigator
-        initialRouteName={authenticated ? 'Manage' : 'login'}
+        initialRouteName={'login'}
         drawerContent={(props) =>
           DrawerContent({ ...props, dispatch: dispatch })
         }>

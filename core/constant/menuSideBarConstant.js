@@ -9,7 +9,7 @@ export const menuItems = [
     },
     {
         name: 'Timelog',
-        iconName: 'sticky-note'
+        iconName: 'clock-o'
     },
     // {
     //     name: 'Employees',
