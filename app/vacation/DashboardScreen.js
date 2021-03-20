@@ -10,13 +10,13 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import { getUser, clearTokens } from '@okta/okta-react-native';
 import Spinner from 'react-native-loading-spinner-overlay';
-import Error from './components/Error';
-import HomeService from './services/home.service';
-import CalendarComponent from './components/calendar/calendar.component';
-import { yyyMMddFormatter, getDatesBetweenDates } from '../core/formatters';
-import { onSetUser } from '../core/store/reducer/user/actions';
-import { pxPhone } from '../core/utils/utils';
-import { leaveTypes } from '../core/constant/menuSideBarConstant';
+import Error from '../components/Error';
+import HomeService from '../services/home.service';
+import CalendarComponent from '../components/calendar/calendar.component';
+import { yyyMMddFormatter, getDatesBetweenDates } from '../../core/formatters';
+import { onSetUser } from '../../core/store/reducer/user/actions';
+import { pxPhone } from '../../core/utils/utils';
+import { leaveTypes } from '../../core/constant/menuSideBarConstant';
 
 export default DashboardScreen = (props) => {
   const [progress, setProgress] = useState(true);

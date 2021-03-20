@@ -9,8 +9,8 @@ import {
   ScrollView,
   TextInput,
 } from 'react-native';
-import { pxPhone } from '../core/utils/utils';
-import EmployeesService from './services/employees.service';
+import { pxPhone } from '../../core/utils/utils';
+import EmployeesService from '../services/employees.service';
 
 export default EmployeesScreen = (props) => {
   const [data, setData] = useState(null);

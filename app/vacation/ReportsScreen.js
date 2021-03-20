@@ -1,12 +1,12 @@
 import { ScrollView, Text, View, TouchableOpacity } from "react-native";
 import React, { useState, useEffect } from 'react'
-import { pxPhone } from "../core/utils/utils";
-import HomeService from "./services/home.service";
-import { yyyMMddFormatter } from "../core/formatters";
+import { pxPhone } from "../../core/utils/utils";
+import HomeService from "../services/home.service";
+import { yyyMMddFormatter } from "../../core/formatters";
 import Modal from 'react-native-modal';
 import { Calendar } from 'react-native-calendars';
-import EmployeesService from "./services/employees.service";
-import { IconClose, IconDelete } from "./assets/icons";
+import EmployeesService from "../services/employees.service";
+import { IconClose, IconDelete } from "../assets/icons";
 
 export default Reports = () => {
   const initDateForm = {

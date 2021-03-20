@@ -12,15 +12,15 @@ import {
   Alert,
 } from 'react-native';
 import Modal from 'react-native-modal';
-import SettingService from './services/setting.service';
+import SettingService from '../services/setting.service';
 import {
   IconCalendar,
   IconEdit,
   IconUpArrow,
   IconDownArrow,
   IconDeletePolicy,
-} from './assets/icons';
-import {pxPhone} from '../core/utils/utils';
+} from '../assets/icons';
+import {pxPhone} from '../../core/utils/utils';
 export default SettingScreen = (props) => {
   const [isShowModalUpdate, setIsShowModalUpdate] = useState(false);
   const [newDayOff, setNewDayOff] = useState(0);

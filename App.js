@@ -5,7 +5,7 @@ import { View, Text, LogBox } from 'react-native';
 import { isAuthenticated } from '@okta/okta-react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import LoginScreen from './app/LoginScreen.js';
-import DashboardScreen from './app/DashboardScreen.js';
+import DashboardScreen from './app/vacation/DashboardScreen.js';
 import {
   createDrawerNavigator,
   DrawerItem,
@@ -14,8 +14,8 @@ import {
 import { createStackNavigator } from '@react-navigation/stack';
 import { menuItems } from './core/constant/menuSideBarConstant';
 import { store, persistor } from './core/store';
-import EmployeesScreen from './app/EmployeesScreen.js';
-import SettingScreen from './app/SettingScreen.js';
+import EmployeesScreen from './app/manage/EmployeesScreen.js';
+import SettingScreen from './app/manage/SettingScreen.js';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/MaterialIcons';
 import { pxPhone } from './core/utils/utils.js';
@@ -25,10 +25,10 @@ import { onSetUser } from './core/store/reducer/user/actions';
 import Spinner from 'react-native-loading-spinner-overlay';
 import CreatePolicyScreen from './app/CreatePolicyScreen.js';
 import ProfileScreen from './app/ProfileScreen.js';
-import ReportsScreen from './app/ReportsScreen.js';
+import ReportsScreen from './app/vacation/ReportsScreen.js';
 import { PersistGate } from 'redux-persist/lib/integration/react';
-import TimeLogCreateScreen from './app/TimeLog/TimeLogCreateScreen.js';
-import TimeLogScreen from './app/TimeLog/TimeLogScreen.js';
+import TimeLogCreateScreen from './app/timeLog/TimeLogCreateScreen.js';
+import TimeLogScreen from './app/timeLog/TimeLogScreen.js';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 LogBox.ignoreAllLogs();
