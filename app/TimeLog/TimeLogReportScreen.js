@@ -260,7 +260,6 @@ export default TimeLogReportScreen = (props) => {
         }}
       />
       {renderDatePicker()}
-      {renderModalSelect()}
     </View>
   );
 };

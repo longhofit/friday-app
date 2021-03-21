@@ -348,7 +348,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: pxPhone(6),
     marginHorizontal: pxPhone(15),
-    marginBottom: pxPhone(8),
+    marginBottom: pxPhone(10),
     shadowColor: '#000',
     shadowOffset: {
       width: pxPhone(3),
