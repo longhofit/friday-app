@@ -19,9 +19,11 @@ import { format } from 'date-fns';
 import { Calendar } from 'react-native-calendars';
 import TimeLogService from '../services/timelog.service';
 import DateTimePicker from '@react-native-community/datetimepicker';
-export default TimeLogCreateScreen = (props) => {
+import { split } from 'lodash';
+import moment from 'moment';
+export default TimeLogEditScreen = (props) => {
+  const itemSelect = props.route.params.itemSelect;
   const [isShowModalSelectActivity, setIsShowModalSelectActivity] = useState(false);
-  const [isShowModalSelectProject, setIsShowModalSelectProject] = useState(false);
   const [isShowModalSelectTime, setIsShowModalSelectTime] = useState(false);
   const activitys = [
     {
@@ -57,36 +59,33 @@ export default TimeLogCreateScreen = (props) => {
         value: 'MANAGEMENT'
     }
   ]
-  const [description, setDescription] = useState("");
+  const [description, setDescription] = useState(itemSelect.comment);
   const [isDescriptionFocus, setIsDescriptionFocus] = useState(false);
-  const [projects, setProjects] = useState(null);
-  const [project, setProject] = useState(null);
   const [activity, setActivity] = useState({
     name: '--Select activity--',
-    value: ''
+    value: itemSelect.activity
   });
-  const [headerTicket, setHeaderTicket] = useState("");
-  const [showHeaderTicket, setShowHeaderTicket] = useState(false);
-  const [ticket, setTicket] = useState("");
-  const [startDate, setStartDate] = useState(new Date());
-  const [hours, setHours] = useState(0);
-  const [minutes, setMinutes] = useState(0);
+  const [headerTicket, setHeaderTicket] = useState(itemSelect.projectCode);
+  const [ticket, setTicket] = useState(itemSelect.ticket.replace(`${itemSelect.projectCode}-`, ''));
+  var date = new Date(itemSelect.workDate + 'T' + itemSelect.startFrom);
+  date.setHours(date.getHours() + date.getTimezoneOffset()/60)
+  const [startDate, setStartDate] = useState(date);
+  const [hours, setHours] = useState(parseInt(parseInt(itemSelect.duration) / 60));
+  const [minutes, setMinutes] = useState(parseInt(parseInt(itemSelect.duration) % 60));
   const [showButtonSave, setShowButtonSave] = useState(false);
   useEffect(() => {
-    const fetchData = async() => {
-        const timeLogService = new TimeLogService()
-        const response = timeLogService.getMyProject();
-        response.then((res) => {
-          setProjects(res);
-        })
-        .catch((e) => {
-          console.log('error:', e);
-        }); 
-    }
-    fetchData();
-  }, []);
+    activitys.map((item) => {
+        if(item.value == itemSelect.activity){
+            setActivity(item);
+            return;
+        }
+    })
+    if(hours < 10){setHours('0' + hours);}else{setHours('' + hours);}
+    if(minutes < 10){setMinutes('0' + minutes);}else{setMinutes('' + minutes);}
+  }, [])
+  
   useEffect(() => {
-    if(project == null || (parseInt(hours)*60 + parseInt(minutes)) == 0
+    if((parseInt(hours)*60 + parseInt(minutes)) == 0
      || description == "" || activity.value == "" || ticket == "" || 
      hours.toString().length < 2 || minutes.toString().length < 2){
        setShowButtonSave(false);
@@ -94,7 +93,7 @@ export default TimeLogCreateScreen = (props) => {
      else{
        setShowButtonSave(true);
      }
-  }, [project,hours,minutes,description,activity,ticket])
+  }, [hours,minutes,description,activity,ticket])
   const renderTabSelectActivity = () => {
     return (
         <Modal
@@ -141,53 +140,6 @@ export default TimeLogCreateScreen = (props) => {
         </TouchableOpacity> 
     )
   }
-  const renderTabSelectProject = () => {
-    return (
-        <Modal
-          onBackdropPress={() => setIsShowModalSelectProject(false)}
-          isVisible={isShowModalSelectProject}
-          animationIn="slideInUp"
-          animationOut="slideOutDown"
-          animationInTiming={1}
-          animationOutTiming={1}
-          backdropTransitionInTiming={1}
-          backdropTransitionOutTiming={1}
-          style={{
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-          <View
-            style={{
-              paddingHorizontal: pxPhone(15),
-              borderRadius: pxPhone(8),
-              paddingVertical: pxPhone(20),
-              width: '100%',
-              backgroundColor: 'white',
-            }}>
-            <FlatList
-                data={projects}
-                extraData={projects}
-                renderItem={(items) => {
-                    return renderDataSelectProject(items.item);
-                }}
-            />
-          </View>
-        </Modal>
-      );
-  }
-  const renderDataSelectProject = (item) => {
-    return(
-        <TouchableOpacity style={styles.buttonSelectProject} 
-        onPress={()=>{
-            setProject(item.project);
-            setIsShowModalSelectProject(false);
-            setHeaderTicket(item.project.code + " - ")
-            setShowHeaderTicket(true);
-        }}>
-            <Text style={{fontSize: pxPhone(17), color: '#f6af42'}}>{item.project.name} - {item.project.owner}</Text>
-        </TouchableOpacity> 
-    )
-  }
   const onDatePress = (date) => {
     const newDate = new Date(startDate);
     newDate.setDate(date.day);
@@ -218,19 +170,17 @@ export default TimeLogCreateScreen = (props) => {
   }
   const onPressSaveChange = () => {
     const timeLogService = new TimeLogService();
-    const response = timeLogService.CreateTimeEntry(JSON.stringify({
-      comment: description,
-      projectCode: project.code,
+    const response = timeLogService.UpdateTimeEntry(JSON.stringify({
       workDate: format(startDate, "yyyy-MM-dd"),
       startFrom: format(startDate, "hh:mm:ss"),
       duration: parseInt(hours)*60 + parseInt(minutes),
+      comment: description,
       activity: activity.value,
-      ticket: project.code + '-' + ticket,
-      status: "NEW",
-    }));
+      ticket: headerTicket + '-' + ticket,
+    }), itemSelect.id);
     response.then((res) => {
       Alert.alert(
-        'Create successfully!',
+        'Update successfully!',
         '',
         [
           { text: 'OK', onPress: () => {props.navigation.goBack();
@@ -275,7 +225,7 @@ export default TimeLogCreateScreen = (props) => {
         />
       </View>
         <View style={styles.viewAddProject}>
-          <TouchableOpacity onPress={()=>setIsShowModalSelectProject(true)}>
+          <TouchableOpacity>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 {IconAdd({
                     width: pxPhone(25),
@@ -283,8 +233,7 @@ export default TimeLogCreateScreen = (props) => {
                     marginRight: pxPhone(25),
                     tintColor: '#0052CC'
                 })}
-                {project == null ? <Text style={{fontSize: pxPhone(17), color: '#0052CC'}}>Project</Text>:
-                <Text style={{fontSize: pxPhone(17), color: '#0052CC'}}>{project.name}</Text>}
+                <Text style={{fontSize: pxPhone(17), color: '#0052CC'}}>{itemSelect.name}</Text>
               </View> 
           </TouchableOpacity>
       </View>
@@ -302,18 +251,17 @@ export default TimeLogCreateScreen = (props) => {
             height: pxPhone(25),
             marginRight: pxPhone(25),
           })}
-          {showHeaderTicket==true ? <Text style={styles.textHeader}>{headerTicket}</Text>
-          : null}
-        <TextInput style={[styles.textHeader,{paddingVertical: pxPhone(0)}]} placeholder={'Ticket'} value={ticket} onChangeText={(text) => setTicket(text)}/>
+            <Text style={styles.textHeader}>{headerTicket + ' -'}</Text>
+            <TextInput style={[styles.textHeader,{paddingVertical: pxPhone(0)}]} placeholder={'Ticket'} value={ticket} onChangeText={(text) => setTicket(text)}/>
         </View>
         <TouchableOpacity style={styles.viewStartDate} onPress={() => setIsShowModalSelectTime(true)}>
-        {IconCalendar({
-            width: pxPhone(25),
-            height: pxPhone(25),
-            marginRight: pxPhone(25),
-        })}
-        <Text style={styles.textHeader}>{format(startDate, "yyyy-MM-dd") + "  " + format(startDate, "HH:mm")}</Text>
-      </TouchableOpacity>
+            {IconCalendar({
+                width: pxPhone(25),
+                height: pxPhone(25),
+                marginRight: pxPhone(25),
+            })}
+            <Text style={styles.textHeader}>{format(startDate, "yyyy-MM-dd") + "  " + format(startDate, "HH:mm")}</Text>
+        </TouchableOpacity>
         <View style={styles.viewDuration}>
         {IconClock({
             width: pxPhone(25),
@@ -375,7 +323,6 @@ export default TimeLogCreateScreen = (props) => {
       : null}
       
       {renderTabSelectActivity()}
-      {renderTabSelectProject()}
     </View>
   );
 }
@@ -391,7 +338,6 @@ const styles = StyleSheet.create({
     paddingVertical: pxPhone(10),
     borderWidth: pxPhone(1),
     borderColor: '#f6af42',
-    paddingHorizontal: pxPhone(10),
   },
   viewAddProject:{
     paddingHorizontal: pxPhone(20),

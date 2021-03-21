@@ -10,12 +10,13 @@ import {
   Alert,
 } from 'react-native';
 import { pxPhone } from '../../core/utils/utils';
-import { IconAdd, IconEdit, IconTrash} from '../assets/icons';
 import Modal from 'react-native-modal';
 import { format } from 'date-fns';
 import TimeLogService from '../services/timelog.service';
 import moment from "moment";
 import _, {groupBy} from "lodash";
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { IconCheck2 } from '../assets/icons';
 export default TimeLogScreen = (props) => {
     const [startDate, setStartDate] = useState(new Date(
       moment().subtract(0, 'weeks').startOf('week').isoWeekday(1).format('YYYY-MM-DD')
@@ -58,30 +59,30 @@ export default TimeLogScreen = (props) => {
     ]
     const [resetData, setResetData] = useState(false);
     const [isShowModal, setIsShowModal] = useState(false);
-    const [idDelete, setIdDelete] = useState(-1);
+    const [itemSelect, setItemSelect] = useState(null);
     useEffect(() => {
         const fetchData = async() => {
           setResetData(false);
           const timeLogService = new TimeLogService();
           const response = timeLogService.getTimeEntries(format(startDate, "yyyy-MM-dd"),format(endDate, "yyyy-MM-dd"));
           response.then((result) => {
-            console.log("result:",result);
             result.sort((a, b) => new Date(b.workDate) - new Date(a.workDate));
             const groupByDay = _.groupBy(result, function (item) {
               return moment(item.workDate).startOf("day").format("MM/DD/YYYY");
             });
+                
             const arrayDays = _.map(groupByDay, (data, date) => ({ date, data }));
-            
+            arrayDays.map(item => item.data.sort((a, b) => moment(a.startFrom, 'HH:mm:ss') - moment(b.startFrom, 'HH:mm:ss')));
             const groupByWeek = _.groupBy(arrayDays, function (item) {
-            const startWeek = moment(item.date).startOf("isoweek").startOf("day").format("MMMM D");
-            const endWeek = moment(item.date).endOf("isoweek").startOf("day").format("MMMM D");
-            let format = startWeek + " - " + endWeek;
-            if (moment(item.date).startOf("isoweek").isSame(moment(), "isoweek")) format = "This Week";
+              const startWeek = moment(item.date).startOf("isoweek").startOf("day").format("MMMM D");
+              const endWeek = moment(item.date).endOf("isoweek").startOf("day").format("MMMM D");
+              let format = startWeek + " - " + endWeek;
+              if (moment(item.date).startOf("isoweek").isSame(moment(), "isoweek")) format = "This Week";
               if (moment(item.date).startOf("isoweek").isSame(moment().subtract(7, "d"), "isoweek")) format = "Last Week";
-                return format;
-              });
-              const array =  _.map(groupByWeek, (data, weekName) => ({ weekName, data }));
-              setData(array);
+              return format;
+            });
+            const array = _.map(groupByWeek, (data, weekName) => ({ weekName, data }));
+            setData(array);
           })
           .catch((e) => {
             console.log('error:', e);
@@ -116,19 +117,32 @@ export default TimeLogScreen = (props) => {
     </View>)
   }
   const renderItemTimeLog = (item) => {
-    return(<TouchableOpacity style={styles.viewGroupByDay} onPress={() => {setIsShowModal(true); setIdDelete(item.id)}}>
-      <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-        <Text style={{fontSize: pxPhone(16), fontWeight:'bold'}}>{item.name} - {item.projectOwner}</Text>
-        {activitys.map((itemMap)=>{
+    var hours = parseInt(parseInt(item.duration) / 60);
+    var minutes = parseInt(parseInt(item.duration) % 60);
+    if(hours < 10){hours = '0' + hours;}
+    if(minutes < 10){minutes = '0' + minutes;}
+    return(<TouchableOpacity style={styles.viewGroupByDay} onPress={() => {setIsShowModal(true); setItemSelect(item); }}>
+      <Text style={{fontSize: pxPhone(16), fontWeight:'bold'}}>{item.name} - {item.projectOwner}</Text>
+      {activitys.map((itemMap)=>{
           return renderColorActivity(itemMap, item);
-        })}
-      </View>
+      })}
       <Text style={{fontSize: pxPhone(14)}}>{item.comment}</Text>
       <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
         <Text style={{fontSize: pxPhone(14)}}>{item.ticket}</Text>
-        <View style={{flexDirection: 'row'}}>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <Text style={{fontSize: pxPhone(14)}}>{item.startFrom}</Text>
-          <Text style={{fontSize: pxPhone(14), marginLeft: pxPhone(7)}}>{item.duration}</Text>
+          <Text style={{fontSize: pxPhone(14), marginLeft: pxPhone(7)}}>{hours + ' : '}</Text>
+          <Text style={{fontSize: pxPhone(14)}}>{minutes}</Text>
+          {item.status === 'NEW' ?
+          <TouchableOpacity onPress={(e) => onPressConfirm(e, item.id)}>
+            {IconCheck2({
+            width: pxPhone(30),
+            height: pxPhone(30),
+            marginLeft: pxPhone(20),
+            tintColor: '#3753C7'
+            })}
+          </TouchableOpacity>
+           : null}
         </View>
       </View>
     </TouchableOpacity>)
@@ -164,34 +178,25 @@ export default TimeLogScreen = (props) => {
               width: '60%',
               backgroundColor: 'white',
             }}>
-            <TouchableOpacity style={{alignItems: 'center', marginBottom: pxPhone(15), flexDirection: 'row'}}>
-              {IconEdit({
-                width: pxPhone(25),
-                height: pxPhone(25),
-                marginRight: pxPhone(25),
-                tintColor: 'blue'
-              })}
+            <TouchableOpacity style={{alignSelf: 'center', marginBottom: pxPhone(15), flexDirection: 'row'}} onPress={onPressEditTimeLog}>
               <Text style={{fontSize: pxPhone(20), color: 'blue'}}>Edit</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={{alignItems: 'center', flexDirection: 'row'}} onPress={onPressDeleteTimeLog}>
-              {IconTrash({
-                width: pxPhone(25),
-                height: pxPhone(25),
-                marginRight: pxPhone(25),
-                tintColor: 'red'
-              })}
+            <TouchableOpacity style={{alignSelf: 'center', flexDirection: 'row'}} onPress={onPressDeleteTimeLog}>
               <Text style={{fontSize: pxPhone(20), color: 'red'}}>Delete</Text>
             </TouchableOpacity>
           </View>
         </Modal>
       );
   }
+  const onPressEditTimeLog = () => {
+    props.navigation.navigate('TimeLogEdit', {itemSelect: itemSelect, onGoBack:() => refreshData()});
+    setIsShowModal(false);
+  }
   const onPressDeleteTimeLog = () => {
-    if(idDelete != -1){
+    if(itemSelect != null){
       const timeLogService = new TimeLogService();
-      const response = timeLogService.DeleteTimeEntry(idDelete);
-      response.then((result) => {
-        console.log("result:",result);
+      const response = timeLogService.DeleteTimeEntry(itemSelect.id);
+      response.then((result) => {;
         Alert.alert(
           'Delete successfully!',
           '',
@@ -207,6 +212,24 @@ export default TimeLogScreen = (props) => {
     }
     setIsShowModal(false);
   }
+  const onPressConfirm = (e, id) => {
+    e.stopPropagation();
+    const timeLogService = new TimeLogService();
+    const response = timeLogService.ConfirmTimeEntry(JSON.stringify({"timeEntryIds": [id]}));
+    response.then((res) => {
+      Alert.alert(
+        'Confirm successfully!',
+        '',
+        [
+          { text: 'OK', onPress: () => refreshData()}
+        ],
+        { cancelable: false }
+      );
+    })
+    .catch((e) => {
+      console.log('error:', e);
+    });
+  }
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
@@ -218,16 +241,16 @@ export default TimeLogScreen = (props) => {
             return renderItemTimeLogByWeek(item.item);
           }}
       />
-      <TouchableOpacity onPress={() => props.navigation.push('TimeLogCreate', {onGoBack:() => refreshData()})}>
-        {IconAdd({
-          width: pxPhone(50),
-          height: pxPhone(50),
-          alignSelf: 'flex-end',
-          marginBottom: pxPhone(30),
-          marginRight: pxPhone(30),
-          tintColor: '#0052CC'
-      })}
-        </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => props.navigation.navigate('TimeLogCreate', {onGoBack:() => refreshData()})}
+        activeOpacity={0.75}
+        style={styles.icon}>
+        <FontAwesome
+          name={'plus'}
+          size={pxPhone(20)}
+          color={'white'}
+        />
+      </TouchableOpacity>
       {renderModalSelect()}
     </View>
   );
@@ -271,5 +294,16 @@ const styles = StyleSheet.create({
     marginBottom: pxPhone(3),
     padding: pxPhone(8),
     marginHorizontal: pxPhone(15),
+  },
+  icon: {
+    position: 'absolute',
+    bottom: pxPhone(20),
+    right: pxPhone(20),
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#3753C7',
+    borderRadius: pxPhone(50 / 2),
+    width: pxPhone(50),
+    height: pxPhone(50),
   },
 });

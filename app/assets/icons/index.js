@@ -61,6 +61,13 @@ export const IconCheck = (style) => {
 
   return Icon(source, style);
 };
+export const IconCheck2 = (style) => {
+  const source = {
+    imageSource: require('./other/checked.png'),
+  };
+
+  return Icon(source, style);
+};
 export const IconEdit = (style) => {
   const source = {
     imageSource: require('./other/edit2.png'),

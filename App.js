@@ -34,7 +34,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import ProjectsScreen from './app/manage/Project.js';
 import ProjectAddNew from './app/manage/ProjectAddNew.js';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import TimeLogEditScreen from './app/timeLog/TimeLogEditScreen.js';
+import TimeLogReportScreen from './app/timeLog/TimeLogReportScreen.js';
 
 LogBox.ignoreAllLogs();
 
@@ -174,21 +175,6 @@ const App = () => {
 
   const Tab = createBottomTabNavigator();
 
-  const TimelogTabNavigator = () => {
-    return (
-      <Tab.Navigator>
-        <Tab.Screen
-          name="TimeLog"
-          component={TimelogStack}
-        />
-        <Tab.Screen
-          name="Reports"
-          component={ReportTimelogStack}
-        />
-      </Tab.Navigator>
-    );
-  };
-
   const ManageTabNavigator = () => {
     return (
       <Tab.Navigator initialRouteName={'Project'}>
@@ -271,7 +257,6 @@ const App = () => {
   const ProjectStack = (props) => {
     return (
       <Stack.Navigator
-      // initialRouteName={'ProjectAddNew'}
         screenOptions={{
           headerStyle: {
             backgroundColor: '#9AC4F8',
@@ -338,60 +323,6 @@ const App = () => {
     );
   };
 
-  const TimelogStack = (props) => {
-    return (
-      <Stack.Navigator
-        screenOptions={{
-          headerStyle: {
-            backgroundColor: '#9AC4F8',
-          },
-          headerTitleAlign: 'center',
-          headerTitleStyle: { color: 'black', fontWeight: '800' },
-        }}>
-        <Stack.Screen
-          name="TimeLog"
-          component={TimeLogScreen}
-          options={{
-            title: 'TimeLog',
-            headerLeft: () => {
-              return (
-                <Icon2
-                  onPress={() => props.navigation.openDrawer()}
-                  style={{ paddingLeft: pxPhone(18) }}
-                  name={'menu'}
-                  size={pxPhone(30)}
-                  color={'black'}
-                />
-              );
-            },
-          }}
-        />
-        <Stack.Screen
-          name="TimeLogCreate"
-          component={TimeLogCreateScreen}
-          options={{
-            title: 'Create Timelog',
-          }}
-        />
-      </Stack.Navigator>
-    );
-  };
-
-  const ReportTimelogStack = (props) => {
-    return (
-      <Stack.Navigator
-        screenOptions={screenOptionsDefault(props)}>
-        <Stack.Screen
-          name="Reports"
-          component={ReportsScreen}
-          options={{
-            title: 'Reports',
-          }}
-        />
-      </Stack.Navigator>
-    );
-  }
-
   const VacationStack = (props) => {
     return (
       <Stack.Navigator
@@ -423,6 +354,129 @@ const App = () => {
           component={CreatePolicyScreen}
           options={{
             title: 'Policy',
+          }}
+        />
+      </Stack.Navigator>
+    );
+  };
+
+  const TimelogTabNavigator = () => {
+    return (
+      <Tab.Navigator
+        tabBarOptions={
+          {
+            activeTintColor: '#0052CC',
+            inactiveTintColor: 'black',
+          }
+        }>
+        <Tab.Screen
+          name="TimeLog"
+          component={TimelogStack}
+          options={
+            {
+              title: 'TimeLog',
+              tabBarIcon: ({ tintColor }) => (
+                <Icon name="clock-o" color={tintColor} size={pxPhone(20)} />
+              ),
+            }
+          }
+        />
+        <Tab.Screen
+          name="Report"
+          component={ReportTimelogStack}
+          options={
+            {
+              title: "Report",
+              tabBarIcon: ({ focused, tintColor }) => (
+                <Icon focused={focused} name="line-chart" color={tintColor} size={pxPhone(20)} />
+              ),
+            }
+          }
+        />
+      </Tab.Navigator>
+    );
+  };
+
+  const ReportTimelogStack = (props) => {
+    return (
+      <Stack.Navigator
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: '#9AC4F8',
+          },
+          headerTitleAlign: 'center',
+          headerTitleStyle: { color: 'black', fontWeight: '800' },
+        }}>
+        <Stack.Screen
+          name="Reports"
+          component={TimeLogReportScreen}
+          options={{
+            title: 'Reports TimeLog',
+            headerLeft: () => {
+              return (
+                <Icon2
+                  onPress={() => props.navigation.openDrawer()}
+                  style={{ paddingLeft: pxPhone(18) }}
+                  name={'menu'}
+                  size={pxPhone(30)}
+                  color={'black'}
+                />
+              );
+            },
+          }}
+        />
+        <Stack.Screen
+          name="TimeLogEdit"
+          component={TimeLogEditScreen}
+          options={{
+            title: 'Edit Timelog',
+          }}
+        />
+      </Stack.Navigator>
+    );
+  }
+
+  const TimelogStack = (props) => {
+    return (
+      <Stack.Navigator
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: '#9AC4F8',
+          },
+          
+          headerTitleAlign: 'center',
+          headerTitleStyle: { color: 'black', fontWeight: '800' },
+        }}>
+        <Stack.Screen
+          name="TimeLog"
+          component={TimeLogScreen}
+          options={{
+            title: 'TimeLog',
+            headerLeft: () => {
+              return (
+                <Icon2
+                  onPress={() => props.navigation.openDrawer()}
+                  style={{ paddingLeft: pxPhone(18) }}
+                  name={'menu'}
+                  size={pxPhone(30)}
+                  color={'black'}
+                />
+              );
+            },
+          }}
+        />
+        <Stack.Screen
+          name="TimeLogCreate"
+          component={TimeLogCreateScreen}
+          options={{
+            title: 'Create Timelog',
+          }}
+        />
+        <Stack.Screen
+          name="TimeLogEdit"
+          component={TimeLogEditScreen}
+          options={{
+            title: 'Edit Timelog',
           }}
         />
       </Stack.Navigator>
