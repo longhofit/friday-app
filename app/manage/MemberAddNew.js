@@ -23,18 +23,20 @@ import { TextInput } from 'react-native-paper';
 import { Picker } from '@react-native-picker/picker';
 import ProjectService from '../services/project.service';
 import { showToastWithGravityAndOffset } from '../../core/utils/utils'
+import { useSelector } from 'react-redux';
 
-export default ProjectAddNew = ({ route, navigation }) => {
+export default MemberAddNew = ({ route, navigation }) => {
+  const { id } = route.params;
+  const employeeState = useSelector(state => state.employee.employees);
+
   const initForm = {
-    name: '',
-    code: '',
-    owner: '',
-    ticketPrefix: '',
-    projectBase: '',
-    type: 'CUSTOMER',
-    timeLogFrequency: 'EVERYDAY',
-    status: "NEW",
-  }
+    employeeId: employeeState[0].id,
+    role: '',
+    comment: '',
+    onBoardDate: "2021-03-20",
+    offBoardDate: '',
+    active: true,
+  };
 
   const [form, setForm] = useState(initForm);
   const [isUpdate, setIsUpdate] = useState(false);
@@ -58,7 +60,7 @@ export default ProjectAddNew = ({ route, navigation }) => {
           <TouchableOpacity
             disabled={isInvalid()}
             activeOpacity={0.75}
-            onPress={addNewProject}
+            onPress={addNewMember}
             style={{ flex: 1, paddingRight: pxPhone(16), justifyContent: 'center', opacity: isInvalid() && 0.3 }}>
             <Text style={{ fontWeight: 'bold', fontSize: pxPhone(17), }}>
               {'Save'}
@@ -69,8 +71,7 @@ export default ProjectAddNew = ({ route, navigation }) => {
       headerRightContainerStyle: {
         padding: 0,
       },
-      headerTitle: isUpdate ? `Edit project` : 'Add new project',
-
+      headerTitle: isUpdate ? `Update member` : 'Add new member',
     });
   }, [navigation, form]);
 
@@ -90,81 +91,45 @@ export default ProjectAddNew = ({ route, navigation }) => {
   };
 
   const isInvalid = () => {
-    return isEmpty(form.name)
-      || isEmpty(form.owner)
-      || isEmpty(form.code)
-      || isEmpty(form.ticketPrefix)
+    return isEmpty(form.role);
   };
 
-  useEffect(() => {
-    console.log(form)
-  }, [form]);
-
-  const setName = (name) => {
+  const setId = (employeeId) => {
     setForm({
       ...form,
-      name,
+      employeeId,
     });
   };
 
-  const setCode = (code) => {
+  const setRole = (role) => {
     setForm({
       ...form,
-      code,
-      ticketPrefix: code,
+      role,
     });
   };
 
-  const setTicket = (ticketPrefix) => {
+  const setComment = (comment) => {
     setForm({
       ...form,
-      ticketPrefix,
+      comment,
     });
   };
 
-  const setProjectBase = (projectBase) => {
-    setForm({
-      ...form,
-      projectBase,
-    });
-  };
-
-  const setOwner = (owner) => {
-    setForm({
-      ...form,
-      owner,
-    });
-  };
-
-  const setType = (type) => {
-    setForm({
-      ...form,
-      type,
-    });
-  };
-
-  const setFrequency = (timeLogFrequency) => {
-    setForm({
-      ...form,
-      timeLogFrequency,
-    });
-  };
-
-  const addNewProject = async () => {
+  const addNewMember = async () => {
     try {
       const projectService = new ProjectService();
       let data;
       if (isUpdate) {
-        data = await projectService.updateProject(form);
+        // data = await projectService.updateProject(form);
       } else {
-        data = await projectService.createNewProject(form);
+        data = await projectService.addMember(form,id);
       }
 
       if (data) {
-        navigation.navigate('Project');
-        showToastWithGravityAndOffset('Save project successfully.')
+        navigation.navigate('Members');
+        showToastWithGravityAndOffset('Add member successfully.')
       } else {
-        showToastWithGravityAndOffset('Save project not successfully.')
+        showToastWithGravityAndOffset('Add member not successfully.')
       }
     } catch (error) {
       showToastWithGravityAndOffset(error.message)
@@ -174,79 +139,40 @@ export default ProjectAddNew = ({ route, navigation }) => {
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
-      style={{ flex: 1 }}>
+      style={{ flex: 1, backgroundColor: 'white' }}>
       <View style={styles.container}>
+        <View style={styles.picker}>
+          <View style={styles.pickerMask}>
+            <Text style={{ color: '#585858', fontSize: pxPhone(12) }}>
+              {'Employee'}
+            </Text>
+          </View>
+          <Picker
+            style={{ flex: 1 }}
+            selectedValue={form.employeeId}
+            onValueChange={setId}>
+            {employeeState.map((item, index) => {
+              return (
+                <Picker.Item label={item.name} value={item.id} />
+              )
+            })}
+          </Picker>
+        </View>
         <TextInput
           style={styles.input}
-          underlineColorAndroid={'red'}
           mode={'outlined'}
-          label={'Project name'}
-          value={form.name}
-          onChangeText={setName}
+          label={'Role'}
+          value={form.role}
+          onChangeText={setRole}
         />
         <TextInput
           disabled={isUpdate}
           style={styles.input}
-          underlineColorAndroid={'red'}
           mode={'outlined'}
-          label={'Project code'}
-          value={form.code}
-          onChangeText={setCode}
+          label={'Comment'}
+          value={form.comment}
+          onChangeText={setComment}
         />
-        <TextInput
-          style={styles.input}
-          underlineColorAndroid={'red'}
-          mode={'outlined'}
-          label={'Base'}
-          value={form.projectBase}
-          onChangeText={setProjectBase}
-        />
-        <TextInput
-          style={styles.input}
-          underlineColorAndroid={'red'}
-          mode={'outlined'}
-          label={'Owner'}
-          value={form.owner}
-          onChangeText={setOwner}
-        />
-        <TextInput
-          style={styles.input}
-          underlineColorAndroid={'red'}
-          mode={'outlined'}
-          label={'Ticket prefix'}
-          value={form.ticketPrefix}
-          onChangeText={setTicket}
-        />
-        <View style={styles.picker}>
-          <View style={styles.pickerMask}>
-            <Text style={{ color: '#585858', fontSize: pxPhone(12) }}>
-              {'Type'}
-            </Text>
-          </View>
-          <Picker
-            style={{ flex: 1 }}
-            selectedValue={form.type}
-            onValueChange={setType}>
-            <Picker.Item label={'Customer'} value={'CUSTOMER'} />
-            <Picker.Item label={'Internal'} value="INTERNAL" />
-          </Picker>
-        </View>
-        <View style={styles.picker}>
-          <View style={styles.pickerMask}>
-            <Text style={{ color: '#585858', fontSize: pxPhone(12) }}>
-              {'Time Log Frequency'}
-            </Text>
-          </View>
-          <Picker
-            style={{ flex: 1 }}
-            selectedValue={form.timeLogFrequency}
-            onValueChange={setFrequency}
-          >
-            <Picker.Item label={'Everyday'} value={'EVERYDAY'} />
-            <Picker.Item label={'Weekly'} value="WEEKLY" />
-            <Picker.Item label={'Monthly'} value="MONTHLY" />
-          </Picker>
-        </View>
       </View>
     </ScrollView>
   );

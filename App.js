@@ -36,6 +36,8 @@ import ProjectAddNew from './app/manage/ProjectAddNew.js';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import TimeLogEditScreen from './app/timeLog/TimeLogEditScreen.js';
 import TimeLogReportScreen from './app/timeLog/TimeLogReportScreen.js';
+import ProjectMemberScreen from './app/manage/ProjectMemberScreen.js';
+import MemberAddNew from './app/manage/MemberAddNew.js';
 
 LogBox.ignoreAllLogs();
 
@@ -289,6 +291,22 @@ const App = () => {
             title: 'Add new project',
           }}
         />
+
+        <Stack.Screen
+          name="Members"
+          component={ProjectMemberScreen}
+          options={{
+            title: 'Project members',
+          }}
+        />
+
+        <Stack.Screen
+          name="MemberAddNew"
+          component={MemberAddNew}
+          options={{
+            title: 'Add new member',
+          }}
+        />
       </Stack.Navigator>
     );
   };
@@ -443,7 +461,7 @@ const App = () => {
           headerStyle: {
             backgroundColor: '#9AC4F8',
           },
-          
+
           headerTitleAlign: 'center',
           headerTitleStyle: { color: 'black', fontWeight: '800' },
         }}>

@@ -15,14 +15,16 @@ import {
 import Spinner from 'react-native-loading-spinner-overlay';
 import { logo } from './assets/images';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-import {  Hideo } from 'react-native-textinput-effects';
+import { Hideo } from 'react-native-textinput-effects';
 import { pxPhone } from '../core/utils/utils';
-import {  signIn } from '@okta/okta-react-native';
-import {  useDispatch } from 'react-redux';
+import { signIn } from '@okta/okta-react-native';
+import { useDispatch } from 'react-redux';
 import { onSetToken } from '../core/store/reducer/session/actions';
 import { onSetRole } from '../core/store/reducer/user/actions';
 import jwt_decode from "jwt-decode";
 import SettingService from './services/setting.service';
+import EmployeesService from './services/employees.service';
+import { onGetEmployees } from '../core/store/reducer/employee/actions';
 
 export default LoginScreen = (props) => {
   const [state, setState] = useState({
@@ -53,6 +55,10 @@ export default LoginScreen = (props) => {
     signIn({ username: state.username, password: state.password })
       .then((token) => {
         dispatch(onSetToken(token.access_token));
+        const employeesService = new EmployeesService();
+        employeesService.getAllEmployee().then(data => {
+          dispatch(onGetEmployees(data));
+        })
         const decoded = jwt_decode(token.access_token);
         const role = decoded.groups.length > 1 ? 'HR' : 'Everyone';
         dispatch(onSetRole(role));
@@ -138,8 +144,8 @@ export default LoginScreen = (props) => {
                 borderColor: isUserNameFocus ? '#5282C1' : 'gray',
                 marginTop: pxPhone(150),
                 borderWidth: isUserNameFocus ? pxPhone(2) : pxPhone(1),
-                borderRadius:pxPhone(5),
-                padding:pxPhone(1),
+                borderRadius: pxPhone(5),
+                padding: pxPhone(1),
               }}>
               <Hideo
                 placeholder={'Username'}
@@ -165,8 +171,8 @@ export default LoginScreen = (props) => {
                 borderColor: isPasswordFocus ? '#5282C1' : 'gray',
                 borderWidth: isPasswordFocus ? pxPhone(2) : pxPhone(1),
                 marginTop: pxPhone(20),
-                borderRadius:pxPhone(5),
-                padding:pxPhone(1),
+                borderRadius: pxPhone(5),
+                padding: pxPhone(1),
               }}>
               <Hideo
                 placeholder={'Password'}

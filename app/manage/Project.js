@@ -86,6 +86,10 @@ export default ProjectsScreen = (props) => {
     }
   };
 
+  const onProjectPress = (id) => {
+    props.navigation.navigate('Members', { id });
+  };
+
   return (
     <View style={{ flex: 1 }}>
       <ScrollView style={styles.container}>
@@ -114,7 +118,9 @@ export default ProjectsScreen = (props) => {
               style={[styles.viewProject, (index === projects.length - 1) && { marginBottom: pxPhone(80) }]}>
               <View style={[styles.vertical, { backgroundColor: color }]}>
               </View>
-              <View style={{ flex: 1, padding: pxPhone(12), }}>
+              <TouchableOpacity
+                onPress={() => onProjectPress(item.code)}
+                style={{ flex: 1, padding: pxPhone(12), }}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', zIndex: 1, }}>
                   <View style={{ width: '75%' }}>
                     <Text style={styles.name}>
@@ -205,7 +211,7 @@ export default ProjectsScreen = (props) => {
                     {item.timeLogFrequency}
                   </Text>
                 </View>
-              </View>
+              </TouchableOpacity>
             </View>
           );
         })}
