@@ -380,36 +380,42 @@ const App = () => {
 
   const TimelogTabNavigator = () => {
     return (
-      <Tab.Navigator
-        tabBarOptions={
-          {
-            activeTintColor: '#0052CC',
-            inactiveTintColor: 'black',
-          }
-        }>
+      <Tab.Navigator>
         <Tab.Screen
           name="TimeLog"
           component={TimelogStack}
-          options={
-            {
-              title: 'TimeLog',
-              tabBarIcon: ({ tintColor }) => (
-                <Icon name="clock-o" color={tintColor} size={pxPhone(20)} />
-              ),
-            }
-          }
+          options={{
+            tabBarIcon: ({ color, focused, size }) => {
+              return <Icon
+                name={'clock-o'}
+                size={size}
+                color={color}
+              />
+            },
+            tabBarLabel: ({ focused, color, position }) => {
+              return <Text style={{ color, fontSize: pxPhone(12) }}>
+                {'TimeLog'}
+              </Text>
+            },
+          }}
         />
         <Tab.Screen
           name="Report"
           component={ReportTimelogStack}
-          options={
-            {
-              title: "Report",
-              tabBarIcon: ({ focused, tintColor }) => (
-                <Icon focused={focused} name="line-chart" color={tintColor} size={pxPhone(20)} />
-              ),
-            }
-          }
+          options={{
+            tabBarIcon: ({ color, focused, size }) => {
+              return <Icon
+                name={'line-chart'}
+                size={size}
+                color={color}
+              />
+            },
+            tabBarLabel: ({ focused, color, position }) => {
+              return <Text style={{ color, fontSize: pxPhone(12) }}>
+                {'Report'}
+              </Text>
+            },
+          }}
         />
       </Tab.Navigator>
     );
@@ -506,7 +512,7 @@ const App = () => {
 
     return (
       <Drawer.Navigator
-        initialRouteName={authenticated ? 'Manage' : 'login'}
+        initialRouteName={'login'}
         drawerContent={(props) =>
           DrawerContent({ ...props, dispatch: dispatch })
         }>
