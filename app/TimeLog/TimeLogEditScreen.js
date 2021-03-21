@@ -190,6 +190,14 @@ export default TimeLogEditScreen = (props) => {
       );
     })
     .catch((e) => {
+      Alert.alert(
+        'Can not Update!',
+        '',
+        [
+          { text: 'OK'}
+        ],
+        { cancelable: false }
+      );
       console.log('error:', e);
     });
     

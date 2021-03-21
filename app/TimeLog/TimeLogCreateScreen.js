@@ -240,6 +240,14 @@ export default TimeLogCreateScreen = (props) => {
       );
     })
     .catch((e) => {
+      Alert.alert(
+        'Can not Create!',
+        '',
+        [
+          { text: 'OK'}
+        ],
+        { cancelable: false }
+      );
       console.log('error:', e);
     });
     
