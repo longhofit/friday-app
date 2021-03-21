@@ -38,10 +38,22 @@ export default ProjectAddNew = ({ route, navigation }) => {
   }
 
   const [form, setForm] = useState(initForm);
+  const [isUpdate, setIsUpdate] = useState(false);
 
   useLayoutEffect(() => {
-    console.log(isInvalid())
     navigation.setOptions({
+      headerLeft: () => {
+        return (
+          <TouchableOpacity
+            activeOpacity={0.75}
+            onPress={() => navigation.goBack()}
+            style={{ flex: 1, paddingLeft: pxPhone(16), justifyContent: 'center' }}>
+            <Text style={{ fontWeight: 'bold', fontSize: pxPhone(17), }}>
+              {'Cancel'}
+            </Text>
+          </TouchableOpacity>
+        );
+      },
       headerRight: () => {
         return (
           <TouchableOpacity
@@ -50,7 +62,7 @@ export default ProjectAddNew = ({ route, navigation }) => {
             onPress={addNewProject}
             style={{ flex: 1, paddingRight: pxPhone(16), justifyContent: 'center', opacity: isInvalid() && 0.3 }}>
             <Text style={{ fontWeight: 'bold', fontSize: pxPhone(17), }}>
-              {'Create'}
+              {'Save'}
             </Text>
           </TouchableOpacity>
         );
@@ -58,8 +70,21 @@ export default ProjectAddNew = ({ route, navigation }) => {
       headerRightContainerStyle: {
         padding: 0,
       },
+      headerTitle: isUpdate ? `Edit project` : 'Add new project',
+
     });
   }, [navigation, form]);
+
+  useEffect(() => {
+    if (route.params) {
+      const { project } = route.params;
+
+      if (project) {
+        setIsUpdate(true);
+        setForm(project);
+      };
+    }
+  }, [navigation])
 
   const isEmpty = (value) => {
     return value === '';
@@ -69,8 +94,7 @@ export default ProjectAddNew = ({ route, navigation }) => {
     return isEmpty(form.name)
       || isEmpty(form.owner)
       || isEmpty(form.code)
-      || isEmpty(form.ticket)
-      || isEmpty(form.projectBase);
+      || isEmpty(form.ticketPrefix)
   };
 
   useEffect(() => {
@@ -130,12 +154,18 @@ export default ProjectAddNew = ({ route, navigation }) => {
   const addNewProject = async () => {
     try {
       const projectService = new ProjectService();
-      const data = await projectService.createNewProject(form);
+      let data;
+      if (isUpdate) {
+        data = await projectService.updateProject(form);
+      } else {
+        data = await projectService.createNewProject(form);
+      }
+
       if (data) {
         navigation.navigate('Project');
-        showToastWithGravityAndOffset('Create project successfully.')
+        showToastWithGravityAndOffset('Save project successfully.')
       } else {
-        showToastWithGravityAndOffset('Create project not successfully.')
+        showToastWithGravityAndOffset('Save project not successfully.')
       }
     } catch (error) {
       showToastWithGravityAndOffset(error.message)
@@ -156,6 +186,7 @@ export default ProjectAddNew = ({ route, navigation }) => {
           onChangeText={setName}
         />
         <TextInput
+          disabled={isUpdate}
           style={styles.input}
           underlineColorAndroid={'red'}
           mode={'outlined'}

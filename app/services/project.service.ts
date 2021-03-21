@@ -20,4 +20,8 @@ export default class ProjectService extends ApiService {
   public createNewProject(body: AddNewProjectReq) {
     return this.apiPost<any>('/project/', body, null, true);
   }
+
+  public updateProject(body: AddNewProjectReq) {
+    return this.apiPut<any>(`/project/${body.code}`, body, null, true);
+  }
 }

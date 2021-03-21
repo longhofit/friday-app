@@ -5,39 +5,85 @@ import {
   View,
   StatusBar,
   TouchableOpacity,
-  FlatList,
   ScrollView,
-  TextInput,
-  Image,
-  Alert,
 } from 'react-native';
-import Modal from 'react-native-modal';
-import SettingService from '../services/setting.service';
-import {
-  IconCalendar,
-  IconEdit,
-  IconUpArrow,
-  IconDownArrow,
-  IconDeletePolicy,
-} from '../assets/icons';
-import { pxPhone } from '../../core/utils/utils';
+import { pxPhone, showToastWithGravityAndOffset } from '../../core/utils/utils';
 import ProjectService from '../services/project.service';
 import Entypo from 'react-native-vector-icons/Entypo'
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 import { useIsFocused } from '@react-navigation/native';
+import { TouchableOpacity as Touch } from 'react-native-gesture-handler'
 
 export default ProjectsScreen = (props) => {
   const [projects, setProjects] = useState([]);
   const isFocused = useIsFocused();
+  const [projectSelected, setProjectSelected] = useState();
 
   useEffect(() => {
     getProjects();
+
+    return () => {
+      setProjectSelected(undefined);
+    }
   }, [isFocused]);
 
   const getProjects = async () => {
     const projectService = new ProjectService();
     const data = await projectService.getProjects();
     setProjects(data.content);
+  };
+
+  const onAddNewPress = () => {
+    props.navigation.navigate('ProjectAddNew', {
+      project: projectSelected,
+    });
+  };
+
+  const onAddNewIconPress = () => {
+    props.navigation.navigate('ProjectAddNew');
+    setProjectSelected(undefined);
+  };
+
+  const onArchived = async () => {
+    try {
+      const body = { ...projectSelected, status: 'ARCHIVED' }
+
+      const projectService = new ProjectService();
+      const data = await projectService.updateProject(body);
+
+      getProjects();
+      setProjectSelected(undefined);
+    } catch (error) {
+      showToastWithGravityAndOffset(error.message);
+    }
+  };
+
+  const onSuspend = async () => {
+    try {
+      const body = { ...projectSelected, status: 'SUSPEND' }
+
+      const projectService = new ProjectService();
+      const data = await projectService.updateProject(body);
+
+      getProjects();
+      setProjectSelected(undefined);
+    } catch (error) {
+      showToastWithGravityAndOffset(error.message);
+    }
+  };
+
+  const onRunning = async () => {
+    try {
+      const body = { ...projectSelected, status: 'RUNNING' }
+
+      const projectService = new ProjectService();
+      const data = await projectService.updateProject(body);
+
+      getProjects();
+      setProjectSelected(undefined);
+    } catch (error) {
+      showToastWithGravityAndOffset(error.message);
+    }
   };
 
   return (
@@ -68,18 +114,48 @@ export default ProjectsScreen = (props) => {
               style={[styles.viewProject, (index === projects.length - 1) && { marginBottom: pxPhone(80) }]}>
               <View style={[styles.vertical, { backgroundColor: color }]}>
               </View>
-              <View style={{ flex: 1, padding: pxPhone(12) }}>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+              <View style={{ flex: 1, padding: pxPhone(12), }}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', zIndex: 1, }}>
                   <View style={{ width: '75%' }}>
                     <Text style={styles.name}>
                       {item.name}
                     </Text>
                   </View>
-                  <Entypo
+                  {item.status !== 'ARCHIVED' && <Entypo
+                    onPress={() => setProjectSelected(item)}
                     name={'dots-three-vertical'}
                     size={pxPhone(15)}
                     color={'gray'}
-                  />
+                  />}
+                  {projectSelected && (item.code === projectSelected.code) && <View style={styles.option}>
+                    <Touch onPress={onAddNewPress}>
+                      <Text
+                        style={[styles.txtOption, { color: 'red' }]}>
+                        {'Edit'}
+                      </Text>
+                    </Touch>
+                    {item.status !== 'SUSPEND' && <Touch
+                      onPress={onSuspend}
+                      style={{ paddingTop: pxPhone(7) }}>
+                      <Text style={[styles.txtOption, { color: '#7D61C8' }]}>
+                        {'Suspend'}
+                      </Text>
+                    </Touch>}
+                    <Touch
+                      onPress={onArchived}
+                      style={{ paddingTop: pxPhone(7) }}>
+                      <Text style={[styles.txtOption, { color: '#D86667' }]}>
+                        {'Archive'}
+                      </Text>
+                    </Touch>
+                    {item.status !== 'RUNNING' && <Touch
+                      onPress={onRunning}
+                      style={{ paddingTop: pxPhone(7) }}>
+                      <Text style={[styles.txtOption, { color: 'green' }]}>
+                        {'Running'}
+                      </Text>
+                    </Touch>}
+                  </View>}
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: pxPhone(11) }}>
                   <View style={{ flex: 1 }}>
@@ -135,9 +211,7 @@ export default ProjectsScreen = (props) => {
         })}
       </ScrollView>
       <TouchableOpacity
-        onPress={() => props.navigation.navigate('ProjectAddNew', {
-          getProjects,
-        })}
+        onPress={onAddNewIconPress}
         activeOpacity={0.75}
         style={styles.icon}>
         <FontAwesome5
@@ -201,5 +275,26 @@ const styles = StyleSheet.create({
     borderRadius: pxPhone(50 / 2),
     width: pxPhone(50),
     height: pxPhone(50),
+  },
+  option: {
+    position: 'absolute',
+    padding: pxPhone(12),
+    right: 0,
+    top: pxPhone(18),
+    backgroundColor: 'white',
+    borderRadius: pxPhone(6),
+    shadowColor: '#000',
+    shadowOffset: {
+      width: pxPhone(3),
+      height: pxPhone(4),
+    },
+    shadowOpacity: pxPhone(0.25),
+    shadowRadius: pxPhone(6),
+    elevation: 8,
+    alignSelf: 'center',
+  },
+  txtOption: {
+    fontSize: pxPhone(14),
+    textAlign: 'center',
   },
 });
