@@ -124,3 +124,10 @@ export const IconActivity = (style) => {
 
   return Icon(source, style);
 };
+export const IconTicket = (style) => {
+  const source = {
+    imageSource: require('./other/ticket.png'),
+  };
+
+  return Icon(source, style);
+};

@@ -13,7 +13,7 @@ import {
 import { Hideo } from 'react-native-textinput-effects';
 import { pxPhone } from '../../core/utils/utils';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-import { IconAdd, IconCalendar, IconClock, IconActivity} from '../assets/icons';
+import { IconAdd, IconCalendar, IconClock, IconActivity, IconTicket} from '../assets/icons';
 import Modal from 'react-native-modal';
 import { format } from 'date-fns';
 import { Calendar } from 'react-native-calendars';
@@ -305,7 +305,7 @@ export default TimeLogCreateScreen = (props) => {
         <Text style={styles.textHeader}>{activity.name}</Text>
       </TouchableOpacity>
         <View style={styles.viewTicket}>
-          {IconClock({
+          {IconTicket({
             width: pxPhone(25),
             height: pxPhone(25),
             marginRight: pxPhone(25),
