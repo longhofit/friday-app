@@ -32,6 +32,9 @@ import TimeLogCreateScreen from './app/timeLog/TimeLogCreateScreen.js';
 import TimeLogScreen from './app/timeLog/TimeLogScreen.js';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import ProjectsScreen from './app/manage/Project.js';
+import ProjectAddNew from './app/manage/ProjectAddNew.js';
+import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 LogBox.ignoreAllLogs();
 
@@ -114,14 +117,6 @@ const App = () => {
 
     return (
       <DrawerContentScrollView style={{}}>
-        {/* <DrawerItem
-          labelStyle={{ fontWeight: 'bold', fontSize: pxPhone(18) }}
-          icon={() => myButton('user-circle-o')}
-          label={'TimeLog'}
-          onPress={() => {
-            props.navigation.navigate('TimeLog');
-          }}
-        /> */}
         <DrawerItem
           labelStyle={{ fontWeight: 'bold', fontSize: pxPhone(18) }}
           icon={() => myButton('user-circle-o')}
@@ -179,15 +174,27 @@ const App = () => {
 
   const Tab = createBottomTabNavigator();
 
+  const TimelogTabNavigator = () => {
+    return (
+      <Tab.Navigator>
+        <Tab.Screen
+          name="TimeLog"
+          component={TimelogStack}
+        />
+        <Tab.Screen
+          name="Reports"
+          component={ReportTimelogStack}
+        />
+      </Tab.Navigator>
+    );
+  };
+
   const ManageTabNavigator = () => {
     return (
-      <Tab.Navigator
-      initialRouteName={'Project'}
-        screenOptions={{
-        }}>
+      <Tab.Navigator initialRouteName={'Project'}>
         <Tab.Screen
           name="Employees"
-          component={EmployeesScreen}
+          component={EmployeesStack}
           options={{
             tabBarIcon: ({ color, focused, size }) => {
               console.log(color, focused, size);
@@ -201,8 +208,8 @@ const App = () => {
           }}
         />
         <Tab.Screen
-          name="Setting"
-          component={SettingScreen}
+          name="Settings"
+          component={SettingStack}
           options={{
             tabBarIcon: ({ color, focused, size }) => {
               return <Ionicons
@@ -220,7 +227,7 @@ const App = () => {
         />
         <Tab.Screen
           name="Project"
-          component={ProjectsScreen}
+          component={ProjectStack}
           options={{
             tabBarIcon: ({ color, focused, size }) => {
               return <Ionicons
@@ -234,7 +241,6 @@ const App = () => {
                 {'Projects'}
               </Text>
             },
-
           }}
         />
       </Tab.Navigator>
@@ -259,6 +265,76 @@ const App = () => {
           }}
         />
       </Tab.Navigator>
+    );
+  };
+
+  const ProjectStack = (props) => {
+    return (
+      <Stack.Navigator
+      // initialRouteName={'ProjectAddNew'}
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: '#9AC4F8',
+          },
+          headerTitleAlign: 'center',
+          headerTitleStyle: { color: 'black', fontWeight: '800' },
+        }}>
+        <Stack.Screen
+          name="Project"
+          component={ProjectsScreen}
+          options={{
+            title: 'Projects',
+            headerLeft: () => {
+              return (
+                <Icon2
+                  onPress={() => props.navigation.openDrawer()}
+                  style={{ paddingLeft: pxPhone(18) }}
+                  name={'menu'}
+                  size={pxPhone(30)}
+                  color={'black'}
+                />
+              );
+            },
+          }}
+        />
+        <Stack.Screen
+          name="ProjectAddNew"
+          component={ProjectAddNew}
+          options={{
+            title: 'Add new project',
+          }}
+        />
+      </Stack.Navigator>
+    );
+  };
+
+  const SettingStack = (props) => {
+    return (
+      <Stack.Navigator
+        screenOptions={screenOptionsDefault(props)}>
+        <Stack.Screen
+          name="Settings"
+          component={SettingScreen}
+          options={{
+            title: 'Settings',
+          }}
+        />
+      </Stack.Navigator>
+    );
+  };
+
+  const EmployeesStack = (props) => {
+    return (
+      <Stack.Navigator
+        screenOptions={screenOptionsDefault(props)}>
+        <Stack.Screen
+          name="Employees"
+          component={EmployeesScreen}
+          options={{
+            title: 'Employees',
+          }}
+        />
+      </Stack.Navigator>
     );
   };
 
@@ -316,21 +392,6 @@ const App = () => {
     );
   }
 
-  const TimelogTabNavigator = () => {
-    return (
-      <Tab.Navigator>
-        <Tab.Screen
-          name="TimeLog"
-          component={TimelogStack}
-        />
-        <Tab.Screen
-          name="Reports"
-          component={ReportTimelogStack}
-        />
-      </Tab.Navigator>
-    );
-  };
-
   const VacationStack = (props) => {
     return (
       <Stack.Navigator
@@ -342,29 +403,6 @@ const App = () => {
             title: 'Vacation',
           }}
         />
-      </Stack.Navigator>
-    );
-  };
-
-  const ManageStack = (props) => {
-    return (
-      <Stack.Navigator
-        screenOptions={screenOptionsDefault(props)}>
-        <Stack.Screen
-          name="Manage"
-          component={ManageTabNavigator}
-          options={{
-            title: 'Manage',
-          }}
-        />
-      </Stack.Navigator>
-    );
-  };
-
-  const MainStackNavigator = (props) => {
-    return (
-      <Stack.Navigator
-        screenOptions={screenOptionsDefault(props)}>
       </Stack.Navigator>
     );
   };
@@ -421,7 +459,7 @@ const App = () => {
         />
         <Drawer.Screen
           name="Manage"
-          component={ManageStack}
+          component={ManageTabNavigator}
         />
         <Drawer.Screen
           name="Timelog"
@@ -431,14 +469,26 @@ const App = () => {
     );
   };
 
+  const theme = {
+    ...DefaultTheme,
+    roundness: 2,
+    colors: {
+      ...DefaultTheme.colors,
+      primary: '#3753C7',
+      accent: '#f1c40f',
+    },
+  };
+
   return (
     <Provider store={store}>
-      <PersistGate
-        persistor={persistor}>
-        <NavigationContainer >
-          <DrawerNavigator />
-        </NavigationContainer>
-      </PersistGate>
+      <PaperProvider theme={theme}>
+        <PersistGate
+          persistor={persistor}>
+          <NavigationContainer >
+            <DrawerNavigator />
+          </NavigationContainer>
+        </PersistGate>
+      </PaperProvider>
     </Provider>
   );
 };

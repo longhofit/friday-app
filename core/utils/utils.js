@@ -2,7 +2,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import { Dimensions } from 'react-native';
+import { Dimensions, ToastAndroid } from 'react-native';
 
 // ios height: 768
 // ios width: 1024
@@ -60,3 +60,13 @@ export const pxToPercentage = (value) => {
   return percentageWidth * value;
 };
 
+
+export const showToastWithGravityAndOffset = (text) => {
+  ToastAndroid.showWithGravityAndOffset(
+    text,
+    ToastAndroid.LONG,
+    ToastAndroid.BOTTOM,
+    25,
+    50
+  );
+};;

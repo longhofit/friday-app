@@ -23,14 +23,16 @@ import {
 import { pxPhone } from '../../core/utils/utils';
 import ProjectService from '../services/project.service';
 import Entypo from 'react-native-vector-icons/Entypo'
-import AntDesign from 'react-native-vector-icons/AntDesign'
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
+import { useIsFocused } from '@react-navigation/native';
 
 export default ProjectsScreen = (props) => {
   const [projects, setProjects] = useState([]);
+  const isFocused = useIsFocused();
 
   useEffect(() => {
     getProjects();
-  }, []);
+  }, [isFocused]);
 
   const getProjects = async () => {
     const projectService = new ProjectService();
@@ -63,7 +65,7 @@ export default ProjectsScreen = (props) => {
           return (
             <View
               key={index}
-              style={[styles.viewProject,(index===projects.length-1)&&{marginBottom:pxPhone(80)}]}>
+              style={[styles.viewProject, (index === projects.length - 1) && { marginBottom: pxPhone(80) }]}>
               <View style={[styles.vertical, { backgroundColor: color }]}>
               </View>
               <View style={{ flex: 1, padding: pxPhone(12) }}>
@@ -132,12 +134,18 @@ export default ProjectsScreen = (props) => {
           );
         })}
       </ScrollView>
-      <AntDesign
-        style={styles.icon}
-        name={'pluscircle'}
-        size={pxPhone(50)}
-        color={'#3753C7'}
-      />
+      <TouchableOpacity
+        onPress={() => props.navigation.navigate('ProjectAddNew', {
+          getProjects,
+        })}
+        activeOpacity={0.75}
+        style={styles.icon}>
+        <FontAwesome5
+          name={'plus'}
+          size={pxPhone(20)}
+          color={'white'}
+        />
+      </TouchableOpacity>
     </View>
   );
 };
@@ -185,7 +193,13 @@ const styles = StyleSheet.create({
   },
   icon: {
     position: 'absolute',
-    bottom:pxPhone(20),
-    right:pxPhone(20),
+    bottom: pxPhone(10),
+    right: pxPhone(10),
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#3753C7',
+    borderRadius: pxPhone(50 / 2),
+    width: pxPhone(50),
+    height: pxPhone(50),
   },
 });
