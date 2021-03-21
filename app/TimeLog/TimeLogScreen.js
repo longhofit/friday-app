@@ -106,7 +106,7 @@ export default TimeLogScreen = (props) => {
   const renderItemTimeLogByDate = (item) => {
     return (
       <View>
-        <TimeLogSummaryScreen item={item} {...props}/>
+        <TimeLogSummaryScreen item={item} {...props} refreshData={refreshData}/>
       </View>
     );
   };

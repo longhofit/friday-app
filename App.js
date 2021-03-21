@@ -28,14 +28,14 @@ import CreatePolicyScreen from './app/CreatePolicyScreen.js';
 import ProfileScreen from './app/ProfileScreen.js';
 import ReportsScreen from './app/vacation/ReportsScreen.js';
 import { PersistGate } from 'redux-persist/lib/integration/react';
-import TimeLogCreateScreen from './app/timeLog/TimeLogCreateScreen.js';
-import TimeLogScreen from './app/timeLog/TimeLogScreen.js';
+import TimeLogCreateScreen from './app/TimeLog/TimeLogCreateScreen.js';
+import TimeLogScreen from './app/TimeLog/TimeLogScreen.js';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import ProjectsScreen from './app/manage/Project.js';
 import ProjectAddNew from './app/manage/ProjectAddNew.js';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
-import TimeLogEditScreen from './app/timeLog/TimeLogEditScreen.js';
-import TimeLogReportScreen from './app/timeLog/TimeLogReportScreen.js';
+import TimeLogEditScreen from './app/TimeLog/TimeLogEditScreen.js';
+import TimeLogReportScreen from './app/TimeLog/TimeLogReportScreen.js';
 
 LogBox.ignoreAllLogs();
 
@@ -362,36 +362,42 @@ const App = () => {
 
   const TimelogTabNavigator = () => {
     return (
-      <Tab.Navigator
-        tabBarOptions={
-          {
-            activeTintColor: '#0052CC',
-            inactiveTintColor: 'black',
-          }
-        }>
+      <Tab.Navigator>
         <Tab.Screen
           name="TimeLog"
           component={TimelogStack}
-          options={
-            {
-              title: 'TimeLog',
-              tabBarIcon: ({ tintColor }) => (
-                <Icon name="clock-o" color={tintColor} size={pxPhone(20)} />
-              ),
-            }
-          }
+          options={{
+            tabBarIcon: ({ color, focused, size }) => {
+              return <Icon
+                name={'clock-o'}
+                size={size}
+                color={color}
+              />
+            },
+            tabBarLabel: ({ focused, color, position }) => {
+              return <Text style={{ color, fontSize: pxPhone(12) }}>
+                {'TimeLog'}
+              </Text>
+            },
+          }}
         />
         <Tab.Screen
           name="Report"
           component={ReportTimelogStack}
-          options={
-            {
-              title: "Report",
-              tabBarIcon: ({ focused, tintColor }) => (
-                <Icon focused={focused} name="line-chart" color={tintColor} size={pxPhone(20)} />
-              ),
-            }
-          }
+          options={{
+            tabBarIcon: ({ color, focused, size }) => {
+              return <Icon
+                name={'line-chart'}
+                size={size}
+                color={color}
+              />
+            },
+            tabBarLabel: ({ focused, color, position }) => {
+              return <Text style={{ color, fontSize: pxPhone(12) }}>
+                {'Report'}
+              </Text>
+            },
+          }}
         />
       </Tab.Navigator>
     );
@@ -488,7 +494,7 @@ const App = () => {
 
     return (
       <Drawer.Navigator
-        initialRouteName={authenticated ? 'Manage' : 'login'}
+        initialRouteName={'login'}
         drawerContent={(props) =>
           DrawerContent({ ...props, dispatch: dispatch })
         }>

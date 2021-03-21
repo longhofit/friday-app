@@ -3,7 +3,6 @@ import {
   StyleSheet,
   Text,
   View,
-  StatusBar,
   TouchableOpacity,
   FlatList,
   Alert,
@@ -18,9 +17,8 @@ import {IconCheck2} from '../assets/icons';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Checkbox} from 'react-native-paper';
 export default TimeLogSummaryScreen = (props) => {
-//   console.log('props:', props.item);
-//   console.log('props:', props.item.checkTotalBox);
-//   console.log('itemDate:', props.item);
+  const [checked, setChecked] = useState(false);
+  const [checkedExtraData, setCheckedExtraData] = useState(false);
   const newDate = new Date(props.item.date);
   const stringDate =
     moment(newDate).format('dddd') +
@@ -28,10 +26,11 @@ export default TimeLogSummaryScreen = (props) => {
     format(newDate, 'MMM') +
     ' ' +
     newDate.getDate();
-  let totalTime = 0;
-  props.item.data.map((item) => {
-    totalTime += item.duration;
-  });
+    let totalTime = 0;
+    props.item.data.map((item) => {
+      totalTime += item.duration;
+    });
+  
   var hours = parseInt(totalTime / 60);
   var minutes = parseInt(totalTime % 60);
   if (hours < 10) {
@@ -40,13 +39,10 @@ export default TimeLogSummaryScreen = (props) => {
   if (minutes < 10) {
     minutes = '0' + minutes;
   }
-  const [checked, setChecked] = useState(false);
   const [isBulkEdit, setIsBulkEdit] = useState(false);
   const [isShowModal, setIsShowModal] = useState(false);
   const [itemSelect, setItemSelect] = useState(null);
-  const refreshData = () => {
-    setResetData(true);
-  };
+  const [listItemSelect, setListItemSelect] = useState([]);
   const renderItemTimeLog = (item) => {
     var hours = parseInt(parseInt(item.duration) / 60);
     var minutes = parseInt(parseInt(item.duration) % 60);
@@ -85,7 +81,6 @@ export default TimeLogSummaryScreen = (props) => {
       default:
         break;
     }
-    let checkItem = item.checkbox;
     return (
       <TouchableOpacity
         style={styles.viewGroupByDay}
@@ -94,19 +89,29 @@ export default TimeLogSummaryScreen = (props) => {
           setItemSelect(item);
         }}>
         <View style={[styles.vertical, {backgroundColor: color}]}></View>
-        
         {isBulkEdit == true ? (
-          item.checkbox == false ? (
+          item.status == 'NEW' ? (
             <View style={{justifyContent: 'center', marginRight: pxPhone(0), width: '10%'}}>
             <Checkbox
-              status={checkItem ? 'checked' : 'unchecked'}
+              status={item.checkbox ? 'checked' : 'unchecked'}
               onPress={() => {
-                checkItem = !checkItem;
-                console.log(checkItem)
+                item.checkbox = !item.checkbox;
+                setCheckedExtraData(!checkedExtraData);
+                var newArray = listItemSelect;
+                if(item.checkbox == true){
+                  newArray.push(item.id);
+                  setListItemSelect(newArray);
+                }else{
+                  var index = listItemSelect.indexOf(item.id);
+                  if (index > -1) {
+                    newArray.splice(index, 1);
+                  }
+                  setListItemSelect(newArray);
+                }   
               }}
             />
             </View>
-          ) : null
+          ) : (<View style={{justifyContent: 'center', marginRight: pxPhone(0), width: '10%'}}></View>)
         ) : null}
         <View
         {...isBulkEdit == true ?null : null}
@@ -204,7 +209,7 @@ export default TimeLogSummaryScreen = (props) => {
   const onPressEditTimeLog = () => {
     props.navigation.navigate('TimeLogEdit', {
       itemSelect: itemSelect,
-      onGoBack: () => refreshData(),
+      onGoBack: () => props.refreshData(),
     });
     setIsShowModal(false);
   };
@@ -217,11 +222,17 @@ export default TimeLogSummaryScreen = (props) => {
           Alert.alert(
             'Delete successfully!',
             '',
-            [{text: 'OK', onPress: () => refreshData()}],
+            [{text: 'OK', onPress: () => props.refreshData()}],
             {cancelable: false},
           );
         })
         .catch((e) => {
+          Alert.alert(
+            'Can not delete!',
+            '',
+            [{text: 'OK'}],
+            {cancelable: false},
+          );
           console.log('error:', e);
         });
     }
@@ -238,7 +249,7 @@ export default TimeLogSummaryScreen = (props) => {
         Alert.alert(
           'Confirm successfully!',
           '',
-          [{text: 'OK', onPress: () => refreshData()}],
+          [{text: 'OK', onPress: () => props.refreshData()}],
           {cancelable: false},
         );
       })
@@ -246,18 +257,58 @@ export default TimeLogSummaryScreen = (props) => {
         console.log('error:', e);
       });
   };
-
+  const onPressSelectAll = () => {
+    var newArray = [];
+    props.item.data.map(item => {
+      item.checkbox = !checked;
+      if(item.status == "NEW"){
+        newArray.push(item.id);
+      }
+    })
+    if(checked == false){
+      setListItemSelect(newArray);
+    }else{
+      setListItemSelect([]);
+    }
+    setChecked(!checked);
+  }
+  const onPressConfirmAll = () => {
+    const timeLogService = new TimeLogService();
+    const response = timeLogService.ConfirmTimeEntry(
+      JSON.stringify({timeEntryIds: listItemSelect}),
+    );
+    response
+      .then((res) => {
+        Alert.alert(
+          'Confirm successfully!',
+          '',
+          [{text: 'OK', onPress: () => props.refreshData()}],
+          {cancelable: false},
+        );
+      })
+      .catch((e) => {
+        Alert.alert(
+          'Can not confirm!',
+          '',
+          [{text: 'OK'}],
+          {cancelable: false},
+        );
+        console.log('error:', e);
+      });
+  }
   return (
     <View style={styles.container}>
       <View style={styles.viewHeaderGroupByDay}>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Checkbox
+        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+            {isBulkEdit == true ? <Checkbox
             status={checked ? 'checked' : 'unchecked'}
-            onPress={() => {
-              setChecked(!checked);
-            }}
-          />
+            onPress={() => onPressSelectAll()}
+          /> : null}
           <Text style={styles.txtDate}>{stringDate}</Text>
+          {listItemSelect.length == 0 ? null : <TouchableOpacity style={{marginLeft: pxPhone(3), alignItems: 'center'}}
+          onPress={() => onPressConfirmAll()}>
+            <Text style={{color:'#3753C7'}}>CONFIRM</Text>
+          </TouchableOpacity>}
         </View>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <Text style={styles.txtDate}>
@@ -272,7 +323,7 @@ export default TimeLogSummaryScreen = (props) => {
       </View>
       <FlatList
         data={props.item.data}
-        extraData={props.item.data}
+        extraData={checkedExtraData}
         renderItem={(item) => {
           return renderItemTimeLog(item.item);
         }}
@@ -297,7 +348,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: pxPhone(6),
     marginHorizontal: pxPhone(15),
-    marginBottom: pxPhone(5),
+    marginBottom: pxPhone(8),
     shadowColor: '#000',
     shadowOffset: {
       width: pxPhone(3),
