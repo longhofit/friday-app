@@ -1,7 +1,7 @@
 import 'react-native-gesture-handler';
 import { Provider } from 'react-redux';
 import React, { useState, useEffect } from 'react';
-import { View, LogBox, Text } from 'react-native';
+import { View, LogBox, Text,Image } from 'react-native';
 import { isAuthenticated } from '@okta/okta-react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import LoginScreen from './app/LoginScreen.js';
@@ -38,6 +38,7 @@ import TimeLogEditScreen from './app/timeLog/TimeLogEditScreen.js';
 import TimeLogReportScreen from './app/timeLog/TimeLogReportScreen.js';
 import ProjectMemberScreen from './app/manage/ProjectMemberScreen.js';
 import MemberAddNew from './app/manage/MemberAddNew.js';
+import { logo } from './app/assets/images';
 
 LogBox.ignoreAllLogs();
 
@@ -67,6 +68,7 @@ const screenOptionsDefault = (props) => {
 const App = () => {
   const [progress, setProgress] = useState(false);
   const [authenticated, setAuthenticated] = useState(false);
+  const [focusDrawer, setFocusDrawer] = useState('Timelog');
 
   useEffect(() => {
     const checkAuthStatus = async () => {
@@ -82,6 +84,7 @@ const App = () => {
   if (progress) {
     return (
       <Spinner
+        overlayColor={'transparent'}
         visible={progress}
         textStyle={{ color: '#FFF' }}
         color={'#0066cc'}
@@ -110,7 +113,7 @@ const App = () => {
               role: '',
             }),
           );
-          props.navigation.navigate('Login');
+          props.navigation.navigate('login');
         })
         .catch((e) => { })
         .finally(() => {
@@ -119,20 +122,23 @@ const App = () => {
     };
 
     return (
-      <DrawerContentScrollView style={{}}>
+      <DrawerContentScrollView style={{ padding: 0, margin: 0 }}>
+        <Image
+          style={{
+            width: pxPhone(50) * (446 / 160),
+            height: pxPhone(50),
+            alignSelf:'center',
+          }}
+          source={logo.imageSource}
+        />
         <DrawerItem
+          focused={focusDrawer === 'Profile'}
           labelStyle={{ fontWeight: 'bold', fontSize: pxPhone(18) }}
           icon={() => myButton('user-circle-o')}
           label={'Profile'}
           onPress={() => {
+            setFocusDrawer('Profile');
             props.navigation.navigate('Profile');
-          }}
-        />
-        <View
-          style={{
-            width: '100%',
-            height: pxPhone(1),
-            backgroundColor: '#F7F9FC',
           }}
         />
         {menuItems &&
@@ -140,19 +146,15 @@ const App = () => {
             return (
               <React.Fragment>
                 <DrawerItem
+                  pressColor={'#0066cc'}
+                  focused={focusDrawer === item.name}
                   labelStyle={{ fontWeight: 'bold', fontSize: pxPhone(18) }}
-                  icon={() => myButton(item.iconName, null, item.name === 'Employees')}
+                  icon={() => myButton(item.iconName, focusDrawer === item.name ? '#0066cc' : 'black', item.name === 'Employees')}
                   key={index}
                   label={item.name}
                   onPress={() => {
+                    setFocusDrawer(item.name);
                     props.navigation.navigate(item.name);
-                  }}
-                />
-                <View
-                  style={{
-                    width: '100%',
-                    height: pxPhone(1),
-                    backgroundColor: '#F7F9FC',
                   }}
                 />
               </React.Fragment>
@@ -163,13 +165,6 @@ const App = () => {
           icon={() => myButton('power-off')}
           label={'Log out'}
           onPress={logout}
-        />
-        <View
-          style={{
-            width: '100%',
-            height: pxPhone(1),
-            backgroundColor: '#F7F9FC',
-          }}
         />
       </DrawerContentScrollView>
     );
@@ -512,7 +507,7 @@ const App = () => {
 
     return (
       <Drawer.Navigator
-        initialRouteName={'login'}
+        initialRouteName={authenticated ? 'Manage' : 'login'}
         drawerContent={(props) =>
           DrawerContent({ ...props, dispatch: dispatch })
         }>

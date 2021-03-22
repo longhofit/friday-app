@@ -20,13 +20,14 @@ export default ProjectMemberScreen = ({ route, navigation }) => {
   const { id } = route.params;
   const [members, setMembers] = useState([]);
   const employeeState = useSelector(state => state.employee.employees);
-  console.log(employeeState, 'employeeState');
+  const isFocused = useIsFocused();
+  const [memberSelect, setMemberSelect] = useState();
 
   useEffect(() => {
-    getProjects();
-  }, [id])
+    getProjectMembers();
+  }, [id, isFocused])
 
-  const getProjects = async () => {
+  const getProjectMembers = async () => {
     try {
       const projectService = new ProjectService();
 
@@ -47,6 +48,36 @@ export default ProjectMemberScreen = ({ route, navigation }) => {
     }
   };
 
+
+  const onDeleteMember = async () => {
+    try {
+      const projectService = new ProjectService();
+      const data = await projectService.deleteMember(id, [memberSelect.member]);
+      showToastWithGravityAndOffset('Delete successfully')
+      setMemberSelect(undefined);
+      getProjectMembers();
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  const onInactiveMember = async () => {
+    try {
+      const projectService = new ProjectService();
+      let body = memberSelect;
+      body = { ...body, active: !memberSelect.active, offBoardDate: memberSelect.active ? new Date() : '' };
+      console.log(body)
+      data = await projectService.updateMember([body], id);
+
+      navigation.navigate('Members');
+      showToastWithGravityAndOffset('Update member successfully.')
+      setMemberSelect(undefined);
+      getProjectMembers();
+    } catch (error) {
+      showToastWithGravityAndOffset(error.message)
+    }
+  };
+
   const renderMember = (item, index) => {
     return (
       <View
@@ -57,10 +88,26 @@ export default ProjectMemberScreen = ({ route, navigation }) => {
             {item.name}
           </Text>
           <Entypo
+            onPress={() => setMemberSelect(item)}
             name={'dots-three-vertical'}
             size={pxPhone(15)}
             color={'gray'}
           />
+          {memberSelect && memberSelect.member === item.member && <View style={styles.option}>
+            <Touch onPress={onDeleteMember}>
+              <Text
+                style={[styles.txtOption, { color: 'red' }]}>
+                {'Delete'}
+              </Text>
+            </Touch>
+            {<Touch
+              onPress={onInactiveMember}
+              style={{ paddingTop: pxPhone(7) }}>
+              <Text style={[styles.txtOption, { color: '#D86667' }]}>
+                {item.active ? 'Freeze' : 'Unfreeze'}
+              </Text>
+            </Touch>}
+          </View>}
         </View>
         <Text>
           {item.role}
@@ -102,7 +149,7 @@ export default ProjectMemberScreen = ({ route, navigation }) => {
   };
 
   const onAddButtonPress = () => {
-    navigation.navigate('MemberAddNew',{id});
+    navigation.navigate('MemberAddNew', { id });
   };
 
 
@@ -111,6 +158,7 @@ export default ProjectMemberScreen = ({ route, navigation }) => {
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={styles.container}>
+          {members.length===0&&<Text style={{fontWeight:'bold',fontSize:pxPhone(18),marginLeft:pxPhone(15),marginTop:pxPhone(15)}}>{'No members were found, go to adding new member.'}</Text>}
         <View style={{ paddingBottom: pxPhone(70) }}>
           {members.map((item, index) => {
             return renderMember(item, index);
@@ -135,6 +183,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingVertical: pxPhone(2),
+    backgroundColor: 'white',
   },
   icon: {
     position: 'absolute',
@@ -155,5 +204,27 @@ const styles = StyleSheet.create({
   name: {
     fontWeight: 'bold',
     fontSize: pxPhone(18),
-  }
+  },
+  option: {
+    position: 'absolute',
+    padding: pxPhone(12),
+    right: pxPhone(10),
+    top: pxPhone(22),
+    backgroundColor: 'white',
+    borderRadius: pxPhone(6),
+    shadowColor: '#000',
+    shadowOffset: {
+      width: pxPhone(3),
+      height: pxPhone(4),
+    },
+    shadowOpacity: pxPhone(0.25),
+    shadowRadius: pxPhone(6),
+    elevation: 8,
+    alignSelf: 'center',
+    zIndex: 1,
+  },
+  txtOption: {
+    fontSize: pxPhone(14),
+    textAlign: 'center',
+  },
 });

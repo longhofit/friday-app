@@ -32,4 +32,12 @@ export default class ProjectService extends ApiService {
   public addMember(body, id: string) {
     return this.apiPost<any>(`/project/${id}/member`, body, null, true);
   }
+
+  public updateMember(body, id: string) {
+    return this.apiPut<any>(`/project/${id}/participant`, body, null, true);
+  }
+
+  public deleteMember(id: string, memberId) {
+    return this.apiDelete<any>(`/project/${id}/member`, memberId, null, true);
+  }
 }

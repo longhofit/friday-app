@@ -33,7 +33,7 @@ export default MemberAddNew = ({ route, navigation }) => {
     employeeId: employeeState[0].id,
     role: '',
     comment: '',
-    onBoardDate: "2021-03-20",
+    onBoardDate: new Date(),
     offBoardDate: '',
     active: true,
   };
@@ -122,7 +122,7 @@ export default MemberAddNew = ({ route, navigation }) => {
       if (isUpdate) {
         // data = await projectService.updateProject(form);
       } else {
-        data = await projectService.addMember(form,id);
+        data = await projectService.addMember([form], id);
       }
 
       if (data) {

@@ -1,15 +1,15 @@
 export const menuItems = [
     {
-        name: 'Manage',
-        iconName: 'dashboard'
+        name: 'Timelog',
+        iconName: 'clock-o'
     },
     {
         name: 'Vacation',
-        iconName: 'sticky-note'
+        iconName: 'calendar-o'
     },
     {
-        name: 'Timelog',
-        iconName: 'clock-o'
+        name: 'Manage',
+        iconName: 'dashboard'
     },
     // {
     //     name: 'Employees',

@@ -38,10 +38,11 @@ export default class ApiService {
 
   protected apiDelete<T>(
     url: string,
+    body: any = null,
     params: object = {},
     hasToken: boolean = false,
   ): Promise<T> {
-    return this.apiRun<T>('delete', url, null, params, hasToken);
+    return this.apiRun<T>('delete', url, body, params, hasToken);
   }
 
   private apiRun<T>(
@@ -60,6 +61,8 @@ export default class ApiService {
       headers: this.appendHeaders(hasToken),
       withCredentials: true,
     };
+    console.log(requestConfig.data,'requestConfig')
+    console.log(body,'body')
     return new Promise<T>((resolve, reject) => {
       axios(requestConfig)
         .then((a) => {

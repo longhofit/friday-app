@@ -13,11 +13,13 @@ import Entypo from 'react-native-vector-icons/Entypo'
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 import { useIsFocused } from '@react-navigation/native';
 import { TouchableOpacity as Touch } from 'react-native-gesture-handler'
+import Modal from 'react-native-modal';
 
 export default ProjectsScreen = (props) => {
   const [projects, setProjects] = useState([]);
   const isFocused = useIsFocused();
   const [projectSelected, setProjectSelected] = useState();
+  const [isShow, setIsShow] = useState(false);
 
   useEffect(() => {
     getProjects();
@@ -86,9 +88,71 @@ export default ProjectsScreen = (props) => {
     }
   };
 
-  const onProjectPress = (id) => {
+  const onViewPress = (id) => {
+    console.log(id);
+    onCloseModal();
     props.navigation.navigate('Members', { id });
   };
+
+  const onCloseModal = () => {
+    setIsShow(false);
+  };
+
+  const onItemPress = (project) => {
+    setProjectSelected(project)
+    setIsShow(true);
+  };
+
+  const renderModal = () => {
+    return (
+      <Modal
+        onBackdropPress={onCloseModal}
+        isVisible={isShow}
+        animationIn='slideInUp'
+        animationOut='slideOutDown'
+        animationInTiming={1}
+        animationOutTiming={1}
+        backdropTransitionInTiming={1}
+        backdropTransitionOutTiming={1}
+        style={{ alignItems: 'center', justifyContent: 'center' }}>
+        <View style={styles.option}>
+          <TouchableOpacity onPress={() => onViewPress(projectSelected.code)}>
+            <Text
+              style={[styles.txtOption, { color: 'orange' }]}>
+              {'View members'}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={onAddNewPress}>
+            <Text
+              style={[styles.txtOption, { color: 'red' }]}>
+              {'Edit'}
+            </Text>
+          </TouchableOpacity>
+          {projectSelected.status !== 'SUSPEND' && <TouchableOpacity
+            onPress={onSuspend}
+            style={{ paddingTop: pxPhone(7) }}>
+            <Text style={[styles.txtOption, { color: '#7D61C8' }]}>
+              {'Suspend'}
+            </Text>
+          </TouchableOpacity>}
+          {projectSelected.status !== 'ARCHIVED' && <TouchableOpacity
+            onPress={onArchived}
+            style={{ paddingTop: pxPhone(7) }}>
+            <Text style={[styles.txtOption, { color: '#D86667' }]}>
+              {'Archive'}
+            </Text>
+          </TouchableOpacity>}
+          {projectSelected.status !== 'RUNNING' && <TouchableOpacity
+            onPress={onRunning}
+            style={{ paddingTop: pxPhone(7) }}>
+            <Text style={[styles.txtOption, { color: 'green' }]}>
+              {'Running'}
+            </Text>
+          </TouchableOpacity>}
+        </View>
+      </Modal>
+    )
+  }
 
   return (
     <View style={{ flex: 1 }}>
@@ -113,13 +177,14 @@ export default ProjectsScreen = (props) => {
               break;
           }
           return (
-            <View
+            <TouchableOpacity
+              activeOpacity={0.75}
+              onPress={() => onItemPress(item)}
               key={index}
               style={[styles.viewProject, (index === projects.length - 1) && { marginBottom: pxPhone(80) }]}>
               <View style={[styles.vertical, { backgroundColor: color }]}>
               </View>
-              <TouchableOpacity
-                onPress={() => onProjectPress(item.code)}
+              <View
                 style={{ flex: 1, padding: pxPhone(12), }}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', zIndex: 1, }}>
                   <View style={{ width: '75%' }}>
@@ -128,40 +193,11 @@ export default ProjectsScreen = (props) => {
                     </Text>
                   </View>
                   {item.status !== 'ARCHIVED' && <Entypo
-                    onPress={() => setProjectSelected(item)}
                     name={'dots-three-vertical'}
                     size={pxPhone(15)}
                     color={'gray'}
                   />}
-                  {projectSelected && (item.code === projectSelected.code) && <View style={styles.option}>
-                    <Touch onPress={onAddNewPress}>
-                      <Text
-                        style={[styles.txtOption, { color: 'red' }]}>
-                        {'Edit'}
-                      </Text>
-                    </Touch>
-                    {item.status !== 'SUSPEND' && <Touch
-                      onPress={onSuspend}
-                      style={{ paddingTop: pxPhone(7) }}>
-                      <Text style={[styles.txtOption, { color: '#7D61C8' }]}>
-                        {'Suspend'}
-                      </Text>
-                    </Touch>}
-                    <Touch
-                      onPress={onArchived}
-                      style={{ paddingTop: pxPhone(7) }}>
-                      <Text style={[styles.txtOption, { color: '#D86667' }]}>
-                        {'Archive'}
-                      </Text>
-                    </Touch>
-                    {item.status !== 'RUNNING' && <Touch
-                      onPress={onRunning}
-                      style={{ paddingTop: pxPhone(7) }}>
-                      <Text style={[styles.txtOption, { color: 'green' }]}>
-                        {'Running'}
-                      </Text>
-                    </Touch>}
-                  </View>}
+                  {/* {projectSelected && (item.code === projectSelected.code)} */}
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: pxPhone(11) }}>
                   <View style={{ flex: 1 }}>
@@ -211,11 +247,12 @@ export default ProjectsScreen = (props) => {
                     {item.timeLogFrequency}
                   </Text>
                 </View>
-              </TouchableOpacity>
-            </View>
+              </View>
+            </TouchableOpacity>
           );
         })}
       </ScrollView>
+      {projectSelected && renderModal()}
       <TouchableOpacity
         onPress={onAddNewIconPress}
         activeOpacity={0.75}
@@ -233,7 +270,6 @@ export default ProjectsScreen = (props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingVertical: pxPhone(2),
   },
   status: {
     fontWeight: 'normal',
@@ -283,10 +319,8 @@ const styles = StyleSheet.create({
     height: pxPhone(50),
   },
   option: {
-    position: 'absolute',
-    padding: pxPhone(12),
-    right: 0,
-    top: pxPhone(18),
+    paddingLeft: pxPhone(20),
+    width: pxPhone(370),
     backgroundColor: 'white',
     borderRadius: pxPhone(6),
     shadowColor: '#000',
@@ -300,7 +334,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   txtOption: {
-    fontSize: pxPhone(14),
-    textAlign: 'center',
+    margin: pxPhone(10),
+    fontSize: pxPhone(18),
   },
 });
