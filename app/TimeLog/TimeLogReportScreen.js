@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -7,13 +7,13 @@ import {
   TouchableOpacity,
   FlatList,
 } from 'react-native';
-import {pxPhone} from '../../core/utils/utils';
+import { pxPhone } from '../../core/utils/utils';
 import Modal from 'react-native-modal';
-import {format} from 'date-fns';
-import {Calendar} from 'react-native-calendars';
+import { format } from 'date-fns';
+import { Calendar } from 'react-native-calendars';
 import TimeLogService from '../services/timelog.service';
 import moment from 'moment';
-import _, {groupBy} from 'lodash';
+import _, { groupBy } from 'lodash';
 import TimeLogSummaryScreen from './TimeLogSummaryScreen';
 export default TimeLogReportScreen = (props) => {
   const [startDate, setStartDate] = useState(
@@ -42,8 +42,8 @@ export default TimeLogReportScreen = (props) => {
         animationOutTiming={1}
         backdropTransitionInTiming={1}
         backdropTransitionOutTiming={1}
-        style={{alignItems: 'center', justifyContent: 'center'}}>
-        <View style={{paddingTop: pxPhone(10)}}>
+        style={{ alignItems: 'center', justifyContent: 'center' }}>
+        <View style={{ paddingTop: pxPhone(10) }}>
           <Calendar
             current={
               dateType === 'startDate'
@@ -86,17 +86,17 @@ export default TimeLogReportScreen = (props) => {
             markedDates={
               dateType === 'startDate'
                 ? {
-                    [format(startDate, 'yyyy-MM-dd')]: {
-                      selected: true,
-                      selectedColor: '#9AC4F8',
-                    },
-                  }
+                  [format(startDate, 'yyyy-MM-dd')]: {
+                    selected: true,
+                    selectedColor: '#9AC4F8',
+                  },
+                }
                 : {
-                    [format(endDate, 'yyyy-MM-dd')]: {
-                      selected: true,
-                      selectedColor: '#9AC4F8',
-                    },
-                  }
+                  [format(endDate, 'yyyy-MM-dd')]: {
+                    selected: true,
+                    selectedColor: '#9AC4F8',
+                  },
+                }
             }
           />
         </View>
@@ -111,7 +111,7 @@ export default TimeLogReportScreen = (props) => {
     dateType === 'startDate' ? setStartDate(newDate) : setEndDate(newDate);
     setIsShowDatePicker(false);
   };
-  const onMonthChange = () => {};
+  const onMonthChange = () => { };
   const onPressShowReport = () => {
     const timeLogService = new TimeLogService();
     const response = timeLogService.getTimeEntries(
@@ -124,7 +124,7 @@ export default TimeLogReportScreen = (props) => {
         const groupByDay = _.groupBy(result, function (item) {
           return moment(item.workDate).startOf('day').format('MM/DD/YYYY');
         });
-        const arrayDays = _.map(groupByDay, (data, date) => ({date, data}));
+        const arrayDays = _.map(groupByDay, (data, date) => ({ date, data }));
         arrayDays.map((item) =>
           item.data.sort(
             (a, b) =>
@@ -198,7 +198,7 @@ export default TimeLogReportScreen = (props) => {
     }
     return (
       <View>
-        <TimeLogSummaryScreen item={item} {...props}/>
+        <TimeLogSummaryScreen item={item} {...props} refreshData={onPressShowReport} />
       </View>
     );
   };
@@ -213,11 +213,11 @@ export default TimeLogReportScreen = (props) => {
               activeOpacity={0.75}
               style={styles.buttonSelectDateStart}>
               <View style={styles.viewItemDateStart}>
-                <Text style={{color: '#585858', fontSize: pxPhone(12)}}>
+                <Text style={{ color: '#585858', fontSize: pxPhone(12) }}>
                   {'Start Date'}
                 </Text>
               </View>
-              <Text style={{fontSize: pxPhone(16)}}>
+              <Text style={{ fontSize: pxPhone(16) }}>
                 {format(startDate, 'yyyy-MM-dd')}
               </Text>
             </TouchableOpacity>
@@ -228,11 +228,11 @@ export default TimeLogReportScreen = (props) => {
               activeOpacity={0.75}
               style={styles.buttonSelectDateEnd}>
               <View style={styles.viewItemDateEnd}>
-                <Text style={{color: '#585858', fontSize: pxPhone(12)}}>
+                <Text style={{ color: '#585858', fontSize: pxPhone(12) }}>
                   {'End Date'}
                 </Text>
               </View>
-              <Text style={{fontSize: pxPhone(16)}}>
+              <Text style={{ fontSize: pxPhone(16) }}>
                 {format(endDate, 'yyyy-MM-dd')}
               </Text>
             </TouchableOpacity>

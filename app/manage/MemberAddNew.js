@@ -30,7 +30,7 @@ export default MemberAddNew = ({ route, navigation }) => {
   const employeeState = useSelector(state => state.employee.employees);
 
   const initForm = {
-    employeeId: employeeState[0].id,
+    employeeId: employeeState && employeeState[0].id,
     role: '',
     comment: '',
     onBoardDate: new Date(),

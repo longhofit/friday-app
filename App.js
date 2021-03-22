@@ -1,7 +1,7 @@
 import 'react-native-gesture-handler';
 import { Provider } from 'react-redux';
 import React, { useState, useEffect } from 'react';
-import { View, LogBox, Text,Image } from 'react-native';
+import { View, LogBox, Text, Image } from 'react-native';
 import { isAuthenticated } from '@okta/okta-react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import LoginScreen from './app/LoginScreen.js';
@@ -39,6 +39,7 @@ import TimeLogReportScreen from './app/timeLog/TimeLogReportScreen.js';
 import ProjectMemberScreen from './app/manage/ProjectMemberScreen.js';
 import MemberAddNew from './app/manage/MemberAddNew.js';
 import { logo } from './app/assets/images';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 LogBox.ignoreAllLogs();
 
@@ -79,6 +80,10 @@ const App = () => {
 
     setProgress(true);
     checkAuthStatus();
+
+    return () => {
+      logout()
+    };
   }, []);
 
   if (progress) {
@@ -101,6 +106,7 @@ const App = () => {
 
   const DrawerContent = (props) => {
     const logout = () => {
+      console.log('log')
       setProgress(true);
 
       clearTokens()
@@ -127,7 +133,7 @@ const App = () => {
           style={{
             width: pxPhone(50) * (446 / 160),
             height: pxPhone(50),
-            alignSelf:'center',
+            alignSelf: 'center',
           }}
           source={logo.imageSource}
         />
@@ -176,16 +182,19 @@ const App = () => {
     return (
       <Tab.Navigator initialRouteName={'Project'}>
         <Tab.Screen
-          name="Employees"
-          component={EmployeesStack}
+          name="Project"
+          component={ProjectStack}
           options={{
-            tabBarIcon: ({ color, focused, size }) => {
-              console.log(color, focused, size);
-              return myButton('users', color)
+            tabBarIcon: ({ color, size }) => {
+              return <Ionicons
+                name={'ios-newspaper-sharp'}
+                size={size}
+                color={color}
+              />
             },
-            tabBarLabel: ({ focused, color, position }) => {
+            tabBarLabel: ({ color }) => {
               return <Text style={{ color, fontSize: pxPhone(12) }}>
-                {'Employees'}
+                {'Projects'}
               </Text>
             },
           }}
@@ -194,14 +203,14 @@ const App = () => {
           name="Settings"
           component={SettingStack}
           options={{
-            tabBarIcon: ({ color, focused, size }) => {
+            tabBarIcon: ({ color, size }) => {
               return <Ionicons
                 name={'md-settings-sharp'}
                 size={size}
                 color={color}
               />
             },
-            tabBarLabel: ({ focused, color, position }) => {
+            tabBarLabel: ({ color }) => {
               return <Text style={{ color, fontSize: pxPhone(12) }}>
                 {'Setting'}
               </Text>
@@ -209,19 +218,16 @@ const App = () => {
           }}
         />
         <Tab.Screen
-          name="Project"
-          component={ProjectStack}
+          name="Employees"
+          component={EmployeesStack}
           options={{
             tabBarIcon: ({ color, focused, size }) => {
-              return <Ionicons
-                name={'ios-newspaper-sharp'}
-                size={size}
-                color={color}
-              />
+              console.log(color, focused, size);
+              return myButton('users', color)
             },
-            tabBarLabel: ({ focused, color, position }) => {
+            tabBarLabel: ({ color }) => {
               return <Text style={{ color, fontSize: pxPhone(12) }}>
-                {'Projects'}
+                {'Employees'}
               </Text>
             },
           }}
@@ -237,14 +243,36 @@ const App = () => {
           name="Dashboard"
           component={DashboardScreen}
           options={{
-            title: 'Dashboard',
+            tabBarIcon: ({ color, focused, size }) => {
+              return <Icon
+                name={'calendar-o'}
+                size={size}
+                color={color}
+              />
+            },
+            tabBarLabel: ({ focused, color, position }) => {
+              return <Text style={{ color, fontSize: pxPhone(12) }}>
+                {'Absence'}
+              </Text>
+            },
           }}
         />
         <Tab.Screen
           name="Reports"
           component={ReportsScreen}
           options={{
-            title: 'Reports',
+            tabBarIcon: ({ color, focused, size }) => {
+              return <Icon
+                name={'line-chart'}
+                size={size}
+                color={color}
+              />
+            },
+            tabBarLabel: ({ focused, color, position }) => {
+              return <Text style={{ color, fontSize: pxPhone(12) }}>
+                {'Reports'}
+              </Text>
+            },
           }}
         />
       </Tab.Navigator>
@@ -507,7 +535,7 @@ const App = () => {
 
     return (
       <Drawer.Navigator
-        initialRouteName={authenticated ? 'Manage' : 'login'}
+        initialRouteName={'login'}
         drawerContent={(props) =>
           DrawerContent({ ...props, dispatch: dispatch })
         }>
@@ -554,14 +582,16 @@ const App = () => {
 
   return (
     <Provider store={store}>
-      <PaperProvider theme={theme}>
-        <PersistGate
-          persistor={persistor}>
-          <NavigationContainer >
-            <DrawerNavigator />
-          </NavigationContainer>
-        </PersistGate>
-      </PaperProvider>
+      <SafeAreaProvider>
+        <PaperProvider theme={theme}>
+          <PersistGate
+            persistor={persistor}>
+            <NavigationContainer >
+              <DrawerNavigator />
+            </NavigationContainer>
+          </PersistGate>
+        </PaperProvider>
+      </SafeAreaProvider>
     </Provider>
   );
 };

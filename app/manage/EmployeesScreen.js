@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: pxPhone(5),
-    backgroundColor: '#e5e6d9',
+    backgroundColor: '#E8ECF0',
     borderBottomColor: 'white',
     borderTopColor: 'white',
   },

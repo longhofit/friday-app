@@ -73,7 +73,7 @@ export default LoginScreen = (props) => {
                 password: '',
                 error: ''
               });
-              navigation.navigate('Manage');
+              navigation.navigate('Timelog');
             })
             .catch((e) => {
               console.log('error:', e);
@@ -92,7 +92,7 @@ export default LoginScreen = (props) => {
             password: '',
             error: ''
           });
-          navigation.navigate('Manage');
+          navigation.navigate('Timelog');
         }
       })
       .catch(e => {

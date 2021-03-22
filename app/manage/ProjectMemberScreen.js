@@ -25,6 +25,10 @@ export default ProjectMemberScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     getProjectMembers();
+
+    return () => {
+      setMembers([]);
+    }
   }, [id, isFocused])
 
   const getProjectMembers = async () => {
@@ -158,7 +162,7 @@ export default ProjectMemberScreen = ({ route, navigation }) => {
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={styles.container}>
-          {members.length===0&&<Text style={{fontWeight:'bold',fontSize:pxPhone(18),marginLeft:pxPhone(15),marginTop:pxPhone(15)}}>{'No members were found, go to adding new member.'}</Text>}
+        {members.length === 0 && <Text style={{ fontWeight: 'bold', fontSize: pxPhone(18), marginLeft: pxPhone(15), marginTop: pxPhone(15) }}>{'No members were found, go to adding new member.'}</Text>}
         <View style={{ paddingBottom: pxPhone(70) }}>
           {members.map((item, index) => {
             return renderMember(item, index);

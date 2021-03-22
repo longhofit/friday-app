@@ -14,6 +14,7 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 import { useIsFocused } from '@react-navigation/native';
 import { TouchableOpacity as Touch } from 'react-native-gesture-handler'
 import Modal from 'react-native-modal';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default ProjectsScreen = (props) => {
   const [projects, setProjects] = useState([]);
@@ -155,7 +156,7 @@ export default ProjectsScreen = (props) => {
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1 }}>
       <ScrollView style={styles.container}>
         <StatusBar barStyle="dark-content" />
         {projects.map((item, index) => {
@@ -263,7 +264,7 @@ export default ProjectsScreen = (props) => {
           color={'white'}
         />
       </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 };
 
