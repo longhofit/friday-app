@@ -11,7 +11,7 @@ export default class TimeLogService extends ApiService {
     return this.apiGet<any>(`/time-entry?start=${start}&to=${to}`,null, true);
   }
   public DeleteTimeEntry(id: string) {
-    return this.apiDelete<any>(`/time-entry/${id}`,null, true);
+    return this.apiDelete<any>(`/time-entry/${id}`,null,null, true);
   }
   public UpdateTimeEntry(body: any, id: string) {
     return this.apiPut<any>(`/time-entry/${id}`, body, null, true);

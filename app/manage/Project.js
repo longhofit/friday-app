@@ -22,6 +22,18 @@ export default ProjectsScreen = (props) => {
   const [projectSelected, setProjectSelected] = useState();
   const [isShow, setIsShow] = useState(false);
 
+  const typeEnum = {
+    CUSTOMER: 'Customer',
+    INTERNAL: 'Internal',
+  }
+
+  const statusEnum = {
+    NEW: 'New',
+    ARCHIVED: 'Archived',
+    SUSPEND: 'Suspend',
+    RUNNING:'Running'
+  }
+
   useEffect(() => {
     getProjects();
 
@@ -201,41 +213,44 @@ export default ProjectsScreen = (props) => {
                   {/* {projectSelected && (item.code === projectSelected.code)} */}
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: pxPhone(11) }}>
-                  <View style={{ flex: 1 }}>
+                  <View style={{ flex: 3 }}>
                     <View>
-                      <Text style={styles.label}>
+                      <Text
+                        style={styles.label}>
                         {'Status'}
                       </Text>
-                      <Text style={[styles.value, { color }]}>
-                        {item.status}
+                      <Text numberOfLines={1} style={[styles.value, { color }]}>
+                        {statusEnum[item.status]}
                       </Text>
                     </View>
                   </View>
-                  <View style={{ flex: 1, alignItems: 'flex-start' }}>
+                  <View style={{ flex: 3, alignItems: 'flex-start' }}>
                     <View>
-                      <Text style={styles.label}>
+                      <Text style={[styles.label]}>
                         {'Type'}
                       </Text>
-                      <Text style={[styles.value]}>
-                        {item.type}
+                      <Text
+                        numberOfLines={1}
+                        style={[styles.value]}>
+                        {typeEnum[item.type]}
                       </Text>
                     </View>
                   </View>
-                  <View style={{ flex: 1, alignItems: 'center' }}>
+                  <View style={{ flex: 2, alignItems: 'center' }}>
                     <View>
                       <Text style={styles.label}>
                         {'Code'}
                       </Text>
-                      <Text style={[styles.value, { fontWeight: 'bold' }]}>
+                      <Text numberOfLines={1} style={[styles.value, { fontWeight: 'bold' }]}>
                         {item.code}
                       </Text>
                     </View>
                   </View>
-                  <View style={{ flex: 1, alignItems: 'flex-end' }}>
+                  <View style={{ flex: 2, alignItems: 'flex-end' }}>
                     <Text style={styles.label}>
                       {'Prefix'}
                     </Text>
-                    <Text style={[styles.value, { fontWeight: 'bold' }]}>
+                    <Text numberOfLines={1} style={[styles.value, { fontWeight: 'bold' }]}>
                       {item.ticketPrefix}
                     </Text>
                   </View>
@@ -301,6 +316,7 @@ const styles = StyleSheet.create({
   },
   value: {
     marginTop: pxPhone(3),
+
   },
   vertical: {
     width: pxPhone(5),

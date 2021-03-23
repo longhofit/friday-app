@@ -14,6 +14,6 @@ export default class HomeService extends ApiService {
   }
 
   public deleteLeave(id) {
-    return this.apiDelete<any>('/request', { id }, true);
+    return this.apiDelete<any>('/request', null, { id }, true);
   }
 }
