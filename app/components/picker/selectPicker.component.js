@@ -27,17 +27,6 @@ export default SelectPicker = (props) => {
   };
 
   const onButtonPress = () => {
-    // props.navigation.navigate({
-    //   key: navigationKey,
-    //   routeName: 'Picker',
-    //   params: {
-    //     headerTitle: props.title,
-    //     data: props.data,
-    //     selectedValue: props.selectedValue,
-    //     onValueChange,
-    //   },
-    // });
-
     props.navigation.navigate('Picker', {
       headerTitle: props.title,
       data: props.data,

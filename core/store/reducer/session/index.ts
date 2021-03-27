@@ -17,9 +17,9 @@ const initialState: SessionState = {
       status: false,
     },
     filter: {
-      status: statusEnum.ALL,
-      frequency: frequencyEnum.ALL,
-      type: typeEnum.ALL,
+      status: 'ALL',
+      frequency: 'ALL',
+      type: 'ALL',
     },
   },
 

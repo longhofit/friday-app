@@ -37,7 +37,7 @@ export default PickerComponent = ({ navigation, route, headerTitle }) => {
       headerLeft: () => {
         return (
           <Icon
-            style={{paddingLeft:pxPhone(8)}}
+            style={{paddingLeft:pxPhone(12)}}
             onPress={() => navigation.goBack()}
             name={'close'}
             size={pxPhone(22)}

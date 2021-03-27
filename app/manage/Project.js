@@ -15,13 +15,14 @@ import { TouchableOpacity as Touch } from 'react-native-gesture-handler'
 import Modal from 'react-native-modal';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { frequencyEnum, statusEnum, typeEnum } from '../../core/constant/project';
+import { useSelector } from 'react-redux';
 
 export default ProjectsScreen = (props) => {
   const [projects, setProjects] = useState([]);
   const isFocused = useIsFocused();
   const [projectSelected, setProjectSelected] = useState();
   const [isShow, setIsShow] = useState(false);
-
+  const filterAndSortForm = useSelector(state => state.session.projectFilterAndSort);
 
 
   useEffect(() => {
@@ -157,10 +158,16 @@ export default ProjectsScreen = (props) => {
     )
   }
 
+  const filterCondition = (project) => {
+    return (filterAndSortForm.filter.status === 'ALL' || project.status === filterAndSortForm.filter.status)
+      && (filterAndSortForm.filter.type === 'ALL' || project.type === filterAndSortForm.filter.type)
+      && (filterAndSortForm.filter.frequency === 'ALL' || project.timeLogFrequency === filterAndSortForm.filter.frequency);
+  };
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView style={styles.container}>
-        {projects.map((item, index) => {
+        {projects && projects.filter(filterCondition).map((item, index) => {
           let color;
           switch (item.status) {
             case 'NEW':
