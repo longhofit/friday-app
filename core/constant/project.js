@@ -75,3 +75,10 @@ export const frequencyFilterData = [
     value: 'MONTHLY',
   },
 ]
+
+export const sortFieldEnunm = {
+  code: 'code',
+  time: 'time',
+  name: 'name',
+  status: 'status',
+}

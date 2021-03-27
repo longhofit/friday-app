@@ -1,4 +1,4 @@
-import { frequencyEnum, statusEnum, typeEnum } from '../../../constant/project';
+import { frequencyEnum, sortFieldEnunm, statusEnum, typeEnum } from '../../../constant/project';
 import {
   SessionState,
   SessionActionTypes,
@@ -12,10 +12,7 @@ const initialState: SessionState = {
 
   projectFilterAndSort: {
     sort: {
-      code: false,
-      time: true,
-      name: false,
-      status: false,
+      sortField: sortFieldEnunm.time,
     },
     filter: {
       status: ['ALL'],

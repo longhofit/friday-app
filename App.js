@@ -47,6 +47,7 @@ import { DynamicStatusBar } from './app/components/dynamicStatusBar/dynamicStatu
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import Feather from 'react-native-vector-icons/Feather';
 import FilterTimeLog from './app/TimeLog/FilterScreen';
+import SortScreen from './app/manage/SortScreen.js';
 LogBox.ignoreAllLogs();
 
 const screenOptionsDefault = (props) => {
@@ -370,7 +371,7 @@ const App = () => {
           style: { backgroundColor: '#9AC4F8' },
         }}>
         <TabView.Screen name="Filter" component={FilterProject} />
-        <TabView.Screen name="Sort" component={FilterProject} />
+        <TabView.Screen name="Sort" component={SortScreen} />
       </TabView.Navigator>
     );
   }

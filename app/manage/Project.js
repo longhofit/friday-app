@@ -11,11 +11,11 @@ import ProjectService from '../services/project.service';
 import Entypo from 'react-native-vector-icons/Entypo'
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 import { useIsFocused } from '@react-navigation/native';
-import { TouchableOpacity as Touch } from 'react-native-gesture-handler'
 import Modal from 'react-native-modal';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { frequencyEnum, statusEnum, typeEnum } from '../../core/constant/project';
 import { useSelector } from 'react-redux';
+import _ from 'lodash';
 
 export default ProjectsScreen = (props) => {
   const [projects, setProjects] = useState([]);
@@ -24,6 +24,12 @@ export default ProjectsScreen = (props) => {
   const [isShow, setIsShow] = useState(false);
   const filterAndSortForm = useSelector(state => state.session.projectFilterAndSort);
 
+  const orderBy = (array, field) => {
+    if (field === 'time') {
+      return array.reverse();
+    }
+    return _.orderBy(array, [project => project[field].toLowerCase()], ['asc']);
+  };
 
   useEffect(() => {
     getProjects();
@@ -93,7 +99,6 @@ export default ProjectsScreen = (props) => {
   };
 
   const onViewPress = (id) => {
-    console.log(id);
     onCloseModal();
     props.navigation.navigate('Members', { id });
   };
@@ -158,8 +163,6 @@ export default ProjectsScreen = (props) => {
     )
   }
 
-  console.log(filterAndSortForm);
-
   const filterCondition = (project) => {
     return (filterAndSortForm.filter.status.includes('ALL') || filterAndSortForm.filter.status.includes(project.status))
       && (filterAndSortForm.filter.type.includes('ALL') || filterAndSortForm.filter.type.includes(project.type))
@@ -169,7 +172,7 @@ export default ProjectsScreen = (props) => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView style={styles.container}>
-        {projects && projects.filter(filterCondition).map((item, index) => {
+        {projects && orderBy(projects.filter(filterCondition), filterAndSortForm.sort.sortField).map((item, index) => {
           let color;
           switch (item.status) {
             case 'NEW':

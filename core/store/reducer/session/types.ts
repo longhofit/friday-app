@@ -1,14 +1,11 @@
 export interface FilterAndSortProjectForm {
   sort: {
-    name: boolean,
-    time: boolean,
-    status: boolean,
-    code: boolean,
+    sortField: string,
   },
   filter: {
     status: string[],
-    type:  string[],
-    frequency:  string[],
+    type: string[],
+    frequency: string[],
   },
 }
 

@@ -15,7 +15,6 @@ import { ContainerView } from '../containerView/containerView.component';
 import { Hr } from '../hr/hr.component';
 import { textStyle } from '../styles/style';
 import Icon from 'react-native-vector-icons/AntDesign';
-import { el, te } from 'date-fns/locale';
 
 // export interface PickerData {
 //   value: string;
@@ -88,15 +87,14 @@ export default PickerComponent = ({ navigation, route }) => {
   };
 
   const onValuePicker = (value) => {
-    console.log(value, 'sattus')
     if (value === 'ALL') {
       setState({ ...state, selectedValues: ['ALL'] });
     } else {
       let temp = state.selectedValues;
-      temp = temp.filter(item => item != 'ALL')
+      temp = temp && temp.filter(item => item != 'ALL')
 
-      if (temp.includes(value)) {
-        temp = temp.filter(item => item !== value);
+      if (temp && temp.includes(value)) {
+        temp = temp && temp.filter(item => item !== value);
       } else {
         temp.push(value)
       }

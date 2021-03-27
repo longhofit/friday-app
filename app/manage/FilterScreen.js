@@ -28,10 +28,7 @@ import { da } from 'date-fns/locale';
 import { Hr } from '../components/hr/hr.component';
 import { ToggleInput } from '../components/toggleInput/toggleInputV1.component';
 import { frequencyFilterData, statusFilterData, typeFilterData } from '../../core/constant/project';
-import { store } from '../../core/store';
 import { onFilterSortProject } from '../../core/store/reducer/session/actions';
-
-
 
 
 

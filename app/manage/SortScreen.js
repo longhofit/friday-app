@@ -1,18 +1,13 @@
-import React, {
-  useState,
-  useEffect,
-} from 'react';
-import { usePrevious } from '@src/core/utils/hookHelper';
+import React, { useEffect, useState } from 'react';
 import {
+  StyleSheet,
   View,
-  ViewProps,
 } from 'react-native';
-import {
-  Hr,
-  SelectedInputV1,
-} from '@src/components';
-import { PatientSortFormData } from '@src/core/models/filterAndSort/filterAndSort';
-import { SortFieldEnum } from '@src/core/utils/constants';
+import { sortFieldEnunm } from '../../core/constant/project';
+import { useDispatch, useSelector } from 'react-redux';
+import { onFilterSortProject } from '../../core/store/reducer/session/actions';
+import { Hr } from '../components/hr/hr.component';
+import SelectedInput from '../components/selectedInput/selectedInputV1.component';
 
 // interface ComponentProps {
 //   initialSortFormData: PatientSortFormData;
@@ -21,12 +16,21 @@ import { SortFieldEnum } from '@src/core/utils/constants';
 
 // export type PatientSortFormProps = ThemedComponentProps & ViewProps & ComponentProps; 
 
-const SortProject = (props) => {
-  const [sortFormData, setSortFormData] = useState();
+export default SortProject = (props) => {
+  const filterAndSortForm = useSelector(state => state.session.projectFilterAndSort);
+  const dispatch = useDispatch();
+  const [form, setForm] = useState(filterAndSortForm.sort)
 
   const onSelectInputChange = (sortField) => {
-    setSortFormData({ sortField });
+    setForm({ sortField });
   };
+
+  useEffect(() => {
+    dispatch(onFilterSortProject({
+      ...filterAndSortForm,
+      sort: form,
+    }));
+  }, [form]);
 
   const { style, ...restProps } = props;
 
@@ -37,23 +41,46 @@ const SortProject = (props) => {
         style,
       ]}
       {...restProps}>
-      <SelectedInputV1
-        title={I18n.t('patient.phdLastUpdate')}
-        selected={sortFormData.sortField === SortFieldEnum.LastUpdate}
+      <SelectedInput
+        title={'Last Update'}
+        selected={form.sortField === sortFieldEnunm.time}
         onInputPress={() => {
-          onSelectInputChange(SortFieldEnum.LastUpdate);
+          onSelectInputChange(sortFieldEnunm.time);
         }}
       />
       <Hr />
-      <SelectedInputV1
-        title={I18n.t('patient.phdPatientLastName')}
-        selected={sortFormData.sortField === SortFieldEnum.LastName}
+      <SelectedInput
+        title={'Name'}
+        selected={form.sortField === sortFieldEnunm.name}
         onInputPress={() => {
-          onSelectInputChange(SortFieldEnum.LastName);
+          onSelectInputChange(sortFieldEnunm.name);
+        }}
+      />
+      <Hr />
+      <SelectedInput
+        title={'Code'}
+        selected={form.sortField === sortFieldEnunm.code}
+        onInputPress={() => {
+          onSelectInputChange(sortFieldEnunm.code);
+        }}
+      />
+      <Hr />
+      <SelectedInput
+        title={'Status'}
+        selected={form.sortField === sortFieldEnunm.status}
+        onInputPress={() => {
+          onSelectInputChange(sortFieldEnunm.status);
         }}
       />
       <Hr />
     </View>
   );
 };
+
+const themedStyle = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'white',
+  },
+});
 
