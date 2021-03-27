@@ -1,4 +1,4 @@
-﻿import React, { useState, useCallback } from 'react';
+﻿import React, { useState, useCallback, useEffect } from 'react';
 import {
   SafeAreaView,
   Button,
@@ -25,7 +25,8 @@ import jwt_decode from "jwt-decode";
 import SettingService from './services/setting.service';
 import EmployeesService from './services/employees.service';
 import { onGetEmployees } from '../core/store/reducer/employee/actions';
-
+import messaging from '@react-native-firebase/messaging';
+import AsyncStorage from '@react-native-community/async-storage';
 export default LoginScreen = (props) => {
   const [state, setState] = useState({
     username: '',
@@ -48,6 +49,35 @@ export default LoginScreen = (props) => {
     );
   };;
 
+  const getToken = async() => {
+
+    let fcmToken = await AsyncStorage.getItem('fcmToken');
+      if (!fcmToken) {
+        const response = messaging().getToken();
+        response
+          .then(async(result) => {
+            console.log("token = ", result);
+            fcmToken = result;
+            await AsyncStorage.setItem('fcmToken', fcmToken);
+          })
+          .catch((error) => {
+            console.log("error = ", error);
+          })
+    }
+
+    // const response = messaging().getToken();
+    // console.log("response = ", response);
+    // response
+    //     .then((result) => {
+    //       console.log("token = ", result);
+    //     })
+    //     .catch((error) => {
+    //       console.log("error = ", error);
+    //     })
+  }
+  useEffect(() => {
+    getToken();
+  }, [])
   const login = () => {
     setState({ ...state, progress: true });
 
