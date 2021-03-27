@@ -41,7 +41,7 @@ import ProjectMemberScreen from './app/manage/ProjectMemberScreen.js';
 import MemberAddNew from './app/manage/MemberAddNew.js';
 import { logo } from './app/assets/images';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import FilterAndSort from './app/manage/SortAndFilterScreen.js';
+import FilterProject from './app/manage/FilterScreen.js';
 import PickerComponent from './app/components/picker/picker.component.js';
 import { DynamicStatusBar } from './app/components/dynamicStatusBar/dynamicStatusBar.component.js';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
@@ -373,8 +373,8 @@ const App = () => {
         tabBarOptions={{
           style: { backgroundColor: '#9AC4F8' },
         }}>
-        <TabView.Screen name="Filter" component={FilterAndSort} />
-        <TabView.Screen name="Sort" component={FilterAndSort} />
+        <TabView.Screen name="Filter" component={FilterProject} />
+        <TabView.Screen name="Sort" component={FilterProject} />
       </TabView.Navigator>
     );
   }

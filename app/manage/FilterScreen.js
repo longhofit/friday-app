@@ -22,12 +22,17 @@ import { TextInput, ToggleButton } from 'react-native-paper';
 import { Picker } from '@react-native-picker/picker';
 import ProjectService from '../services/project.service';
 import { showToastWithGravityAndOffset } from '../../core/utils/utils'
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import SelectPicker from '../components/picker/selectPicker.component';
 import { da } from 'date-fns/locale';
 import { Hr } from '../components/hr/hr.component';
 import { ToggleInput } from '../components/toggleInput/toggleInputV1.component';
 import { frequencyFilterData, statusFilterData, typeFilterData } from '../../core/constant/project';
+import { store } from '../../core/store';
+import { onFilterSortProject } from '../../core/store/reducer/session/actions';
+
+
+
 
 
 // interface ComponentProps extends TouchableOpacityProps 
@@ -40,25 +45,41 @@ import { frequencyFilterData, statusFilterData, typeFilterData } from '../../cor
 //   onValueChange: (value: string | undefined) => void;
 // }
 
-export default FilterAndSort = ({ route, navigation }) => {
-  const initState = {
-    status: 'All statuses',
-    type: 'All types',
-    frequency: 'All frequencys',
-  }
+export default FilterProject = ({ route, navigation }) => {
+  // let filterAndSortForm = store.getState().session.projectFilterAndSort;
+  const filterAndSortForm = useSelector(state => state.session.projectFilterAndSort);
 
-  const [filterState, setFilterState] = useState(initState);
+  const dispatch = useDispatch();
+
+  const [filterState, setFilterState] = useState(filterAndSortForm.filter);
+
+  console.log(filterState);
 
   const onStatusFilterChange = (status) => {
-    setFilterState({ ...filterState, status });
-  }
+    dispatch(onFilterSortProject({
+      ...filterAndSortForm, filter: {
+        ...filterAndSortForm.filter,
+        status,
+      }
+    }));
+  };
 
   const onTypeFilterChange = (type) => {
-    setFilterState({ ...filterState, type });
+    dispatch(onFilterSortProject({
+      ...filterAndSortForm, filter: {
+        ...filterAndSortForm.filter,
+        type,
+      }
+    }));
   }
 
   const onFrequencyFilterChange = (frequency) => {
-    setFilterState({ ...filterState, frequency });
+    dispatch(onFilterSortProject({
+      ...filterAndSortForm, filter: {
+        ...filterAndSortForm.filter,
+        frequency,
+      }
+    }));
   }
 
   return (
@@ -67,21 +88,21 @@ export default FilterAndSort = ({ route, navigation }) => {
         navigation={navigation}
         onValueChange={onStatusFilterChange}
         data={statusFilterData}
-        selectedValue={filterState.status}
+        selectedValue={filterAndSortForm.filter.status}
         title={'Status'} />
       <Hr />
       <SelectPicker
         navigation={navigation}
         onValueChange={onTypeFilterChange}
         data={typeFilterData}
-        selectedValue={filterState.type}
+        selectedValue={filterAndSortForm.filter.type}
         title={'Type'} />
       <Hr />
       <SelectPicker
         navigation={navigation}
         onValueChange={onFrequencyFilterChange}
         data={frequencyFilterData}
-        selectedValue={filterState.frequency}
+        selectedValue={filterAndSortForm.filter.frequency}
         title={'Frequency'} />
       <Hr />
       {/* <ToggleInput
