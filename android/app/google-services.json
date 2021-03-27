@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "151595470977",
+    "project_id": "friday-app-9550c",
+    "storage_bucket": "friday-app-9550c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:151595470977:android:269ce247caa572d274fd80",
+        "android_client_info": {
+          "package_name": "com.fridayapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "151595470977-p7jshb7dghnghg9na76l0gt4buoe89r1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBz_jjcBM9Hlw3nlyWuGCanROGy4hsVMTM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "151595470977-p7jshb7dghnghg9na76l0gt4buoe89r1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

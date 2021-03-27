@@ -155,10 +155,15 @@ export default TimeLogSummaryScreen = (props) => {
                     width: pxPhone(25),
                     height: pxPhone(25),
                     marginLeft: pxPhone(15),
-                    tintColor: '#3753C7',
+                    tintColor: 'green',
                   })}
                 </TouchableOpacity>
-              ) : null}
+              ) : (IconCheck2({
+                    width: pxPhone(25),
+                    height: pxPhone(25),
+                    marginLeft: pxPhone(15),
+                    tintColor: 'darkgray',
+                  }))}
             </View>
           </View>
         </View>

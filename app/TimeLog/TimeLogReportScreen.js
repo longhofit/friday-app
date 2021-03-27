@@ -127,7 +127,7 @@ export default TimeLogReportScreen = (props) => {
         arrayDays.map((item) =>
           item.data.sort(
             (a, b) =>
-              moment(a.startFrom, 'HH:mm:ss') - moment(b.startFrom, 'HH:mm:ss'),
+              moment(b.startFrom, 'HH:mm:ss') - moment(a.startFrom, 'HH:mm:ss'),
           ),
         );
         const groupByWeek = _.groupBy(arrayDays, function (item) {
@@ -176,25 +176,6 @@ export default TimeLogReportScreen = (props) => {
     );
   };
   const renderItemTimeLogByDate = (item) => {
-    const newDate = new Date(item.date);
-    const stringDate =
-      moment(newDate).format('dddd') +
-      ', ' +
-      format(newDate, 'MMM') +
-      ' ' +
-      newDate.getDate();
-    let totalTime = 0;
-    item.data.map((item) => {
-      totalTime += item.duration;
-    });
-    var hours = parseInt(totalTime / 60);
-    var minutes = parseInt(totalTime % 60);
-    if (hours < 10) {
-      hours = '0' + hours;
-    }
-    if (minutes < 10) {
-      minutes = '0' + minutes;
-    }
     return (
       <View>
         <TimeLogSummaryScreen item={item} {...props} refreshData={onPressShowReport} />

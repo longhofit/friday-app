@@ -50,8 +50,8 @@ export default TimeLogScreen = (props) => {
           arrayDays.map((item) =>
             item.data.sort(
               (a, b) =>
-                moment(a.startFrom, 'HH:mm:ss') -
-                moment(b.startFrom, 'HH:mm:ss'),
+                moment(b.startFrom, 'HH:mm:ss') -
+                moment(a.startFrom, 'HH:mm:ss'),
             ),
           );
           const groupByWeek = _.groupBy(arrayDays, function (item) {
