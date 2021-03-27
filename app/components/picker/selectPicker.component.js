@@ -30,16 +30,21 @@ export default SelectPicker = (props) => {
     props.navigation.navigate('Picker', {
       headerTitle: props.title,
       data: props.data,
-      selectedValue: props.selectedValue,
+      selectedValues: props.selectedValues,
       onValueChange,
     });
   };
 
   const getLabelByValue = () => {
-    console.log(props.selectedValue);
-    const item = props.data.find((dataItem) => dataItem.value === props.selectedValue);
+    const label = [];
 
-    return item ? item.label : '';
+    props.data.forEach(item => {
+      if (props.selectedValues && props.selectedValues.includes(item.value)) {
+        label.push(item.label);
+      }
+    });
+
+    return label.join(', ');
   };
 
   const { style, titleStyle, selectedTextStyle } = props;

@@ -15,6 +15,7 @@ import { ContainerView } from '../containerView/containerView.component';
 import { Hr } from '../hr/hr.component';
 import { textStyle } from '../styles/style';
 import Icon from 'react-native-vector-icons/AntDesign';
+import { el, te } from 'date-fns/locale';
 
 // export interface PickerData {
 //   value: string;
@@ -30,14 +31,19 @@ import Icon from 'react-native-vector-icons/AntDesign';
 
 // type PickerProps = ThemedComponentProps & NavigationInjectedProps;
 
-export default PickerComponent = ({ navigation, route, headerTitle }) => {
+export default PickerComponent = ({ navigation, route }) => {
+  const [state, setState] = useState({
+    headerTitle: undefined,
+    data: undefined,
+    selectedValues: [],
+  });
 
   useLayoutEffect(() => {
     navigation.setOptions({
       headerLeft: () => {
         return (
           <Icon
-            style={{paddingLeft:pxPhone(12)}}
+            style={{ paddingLeft: pxPhone(12) }}
             onPress={() => navigation.goBack()}
             name={'close'}
             size={pxPhone(22)}
@@ -45,23 +51,29 @@ export default PickerComponent = ({ navigation, route, headerTitle }) => {
           />
         );
       },
+      headerRight: () => {
+        return (
+          <Icon
+            style={{ paddingRight: pxPhone(12) }}
+            onPress={onApply}
+            name={'check'}
+            size={pxPhone(22)}
+            color={'black'}
+          />
+        );
+      },
       headerTitle: route.params.headerTitle,
     });
-  }, [navigation, route]);
+  }, [navigation, route, state.selectedValues]);
 
-  const [state, setState] = useState({
-    headerTitle: undefined,
-    data: undefined,
-    selectedValue: undefined,
-  });
 
   useEffect(() => {
-    const { headerTitle, data, selectedValue } = route.params;
+    const { headerTitle, data, selectedValues } = route.params;
 
     setState({
       headerTitle,
       data,
-      selectedValue,
+      selectedValues,
     });
   }, []);
 
@@ -69,18 +81,29 @@ export default PickerComponent = ({ navigation, route, headerTitle }) => {
     navigation.goBack();
   };
 
-  const onValueChanged = (value) => {
-    route.params.onValueChange(value);
+  const onApply = () => {
+    console.log(state.selectedValues, 'selectedValues');
+    route.params.onValueChange(state.selectedValues);
     onBackPress();
   };
 
-  const renderIcon = (value) => {
-    // if (value === state.selectedValue) {
-    //   return IconCheckmark(themedStyle.icon);
-    // }
+  const onValuePicker = (value) => {
+    console.log(value, 'sattus')
+    if (value === 'ALL') {
+      setState({ ...state, selectedValues: ['ALL'] });
+    } else {
+      let temp = state.selectedValues;
+      temp = temp.filter(item => item != 'ALL')
 
-    return null;
-  };
+      if (temp.includes(value)) {
+        temp = temp.filter(item => item !== value);
+      } else {
+        temp.push(value)
+      }
+      setState({ ...state, selectedValues: temp });
+      console.log(temp)
+    }
+  }
 
   const renderItem = () => {
     return state.data.map((dataItem, index) => {
@@ -89,16 +112,16 @@ export default PickerComponent = ({ navigation, route, headerTitle }) => {
           <TouchableOpacity
             style={themedStyle.btnItem}
             onPress={() => {
-              onValueChanged(dataItem.value);
+              onValuePicker(dataItem.value);
             }}>
             <Text
               style={[
                 themedStyle.txtItemTitle,
-                dataItem.value === state.selectedValue && themedStyle.txtItemTitleSelected,
+                state.selectedValues.includes(dataItem.value) && themedStyle.txtItemTitleSelected,
               ]}>
               {dataItem.label}
             </Text>
-            {dataItem.value === state.selectedValue &&
+            {state.selectedValues.includes(dataItem.value) &&
               <Icon
                 name={'check'}
                 size={pxPhone(20)}
@@ -139,6 +162,7 @@ const themedStyle = StyleSheet.create({
   txtItemTitle: {
     fontSize: pxPhone(16),
     ...textStyle.regular,
+    color: 'black',
   },
   txtItemTitleSelected: {
     color: theme["color-active"],

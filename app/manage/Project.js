@@ -158,10 +158,12 @@ export default ProjectsScreen = (props) => {
     )
   }
 
+  console.log(filterAndSortForm);
+
   const filterCondition = (project) => {
-    return (filterAndSortForm.filter.status === 'ALL' || project.status === filterAndSortForm.filter.status)
-      && (filterAndSortForm.filter.type === 'ALL' || project.type === filterAndSortForm.filter.type)
-      && (filterAndSortForm.filter.frequency === 'ALL' || project.timeLogFrequency === filterAndSortForm.filter.frequency);
+    return (filterAndSortForm.filter.status.includes('ALL') || filterAndSortForm.filter.status.includes(project.status))
+      && (filterAndSortForm.filter.type.includes('ALL') || filterAndSortForm.filter.type.includes(project.type))
+      && (filterAndSortForm.filter.frequency.includes('ALL') || filterAndSortForm.filter.frequency.includes(project.timeLogFrequency));
   };
 
   return (

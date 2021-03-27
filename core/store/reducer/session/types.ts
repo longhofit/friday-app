@@ -6,9 +6,9 @@ export interface FilterAndSortProjectForm {
     code: boolean,
   },
   filter: {
-    status: string,
-    type: string,
-    frequency: string,
+    status: string[],
+    type:  string[],
+    frequency:  string[],
   },
 }
 

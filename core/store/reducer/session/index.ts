@@ -18,9 +18,9 @@ const initialState: SessionState = {
       status: false,
     },
     filter: {
-      status: 'ALL',
-      frequency: 'ALL',
-      type: 'ALL',
+      status: ['ALL'],
+      frequency: ['ALL'],
+      type: ['ALL'],
     },
   },
   timeLogFilterAndSort: {

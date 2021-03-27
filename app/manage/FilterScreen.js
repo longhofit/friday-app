@@ -83,21 +83,21 @@ export default FilterProject = ({ route, navigation }) => {
         navigation={navigation}
         onValueChange={onStatusFilterChange}
         data={statusFilterData}
-        selectedValue={filterAndSortForm.filter.status}
+        selectedValues={filterAndSortForm.filter.status}
         title={'Status'} />
       <Hr />
       <SelectPicker
         navigation={navigation}
         onValueChange={onTypeFilterChange}
         data={typeFilterData}
-        selectedValue={filterAndSortForm.filter.type}
+        selectedValues={filterAndSortForm.filter.type}
         title={'Type'} />
       <Hr />
       <SelectPicker
         navigation={navigation}
         onValueChange={onFrequencyFilterChange}
         data={frequencyFilterData}
-        selectedValue={filterAndSortForm.filter.frequency}
+        selectedValues={filterAndSortForm.filter.frequency}
         title={'Frequency'} />
       <Hr />
       {/* <ToggleInput
