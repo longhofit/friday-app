@@ -357,9 +357,6 @@ const App = () => {
         <Stack.Screen
           name="Picker"
           component={PickerComponent}
-          options={{
-            title: 'Picker',
-          }}
         />
       </Stack.Navigator>
     );

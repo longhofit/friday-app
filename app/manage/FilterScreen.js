@@ -46,14 +46,9 @@ import { onFilterSortProject } from '../../core/store/reducer/session/actions';
 // }
 
 export default FilterProject = ({ route, navigation }) => {
-  // let filterAndSortForm = store.getState().session.projectFilterAndSort;
   const filterAndSortForm = useSelector(state => state.session.projectFilterAndSort);
 
   const dispatch = useDispatch();
-
-  const [filterState, setFilterState] = useState(filterAndSortForm.filter);
-
-  console.log(filterState);
 
   const onStatusFilterChange = (status) => {
     dispatch(onFilterSortProject({

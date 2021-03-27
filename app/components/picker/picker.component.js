@@ -1,6 +1,7 @@
 import React, {
   useState,
   useEffect,
+  useLayoutEffect,
 } from 'react';
 import {
   TouchableOpacity,
@@ -29,7 +30,25 @@ import Icon from 'react-native-vector-icons/AntDesign';
 
 // type PickerProps = ThemedComponentProps & NavigationInjectedProps;
 
-export default PickerComponent = (props) => {
+export default PickerComponent = ({ navigation, route, headerTitle }) => {
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerLeft: () => {
+        return (
+          <Icon
+            style={{paddingLeft:pxPhone(8)}}
+            onPress={() => navigation.goBack()}
+            name={'close'}
+            size={pxPhone(22)}
+            color={'black'}
+          />
+        );
+      },
+      headerTitle: route.params.headerTitle,
+    });
+  }, [navigation, route]);
+
   const [state, setState] = useState({
     headerTitle: undefined,
     data: undefined,
@@ -37,7 +56,7 @@ export default PickerComponent = (props) => {
   });
 
   useEffect(() => {
-    const { headerTitle, data, selectedValue } = props.route.params;
+    const { headerTitle, data, selectedValue } = route.params;
 
     setState({
       headerTitle,
@@ -47,11 +66,11 @@ export default PickerComponent = (props) => {
   }, []);
 
   const onBackPress = () => {
-    props.navigation.goBack();
+    navigation.goBack();
   };
 
   const onValueChanged = (value) => {
-    props.route.params.onValueChange(value);
+    route.params.onValueChange(value);
     onBackPress();
   };
 
