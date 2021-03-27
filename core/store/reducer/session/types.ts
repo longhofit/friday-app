@@ -12,13 +12,28 @@ export interface FilterAndSortProjectForm {
   },
 }
 
+export interface FilterAndSortTimeLogForm {
+  sort: {
+    name: boolean,
+    time: boolean,
+    status: boolean,
+    code: boolean,
+  },
+  filter: {
+    project: [],
+    activity: [],
+  },
+}
+
 export interface SessionState {
   accessToken: string;
   projectFilterAndSort: FilterAndSortProjectForm;
+  timeLogFilterAndSort: FilterAndSortTimeLogForm;
 }
 
 export const SET_TOKEN = 'SET_TOKEN';
 export const FILTER_SORT_PROJECT = 'FILTER_SORT_PROJECT';
+export const FILTER_SORT_TIME_LOG = 'FILTER_SORT_TIME_LOG';
 
 export interface SetTokenAction {
   type: typeof SET_TOKEN;
@@ -30,5 +45,10 @@ export interface FilterAndSortProjectAction {
   payload: FilterAndSortProjectForm;
 }
 
+export interface FilterAndSortTimeLogAction {
+  type: typeof FILTER_SORT_TIME_LOG;
+  payload: FilterAndSortTimeLogForm;
+}
 
-export type SessionActionTypes = SetTokenAction | FilterAndSortProjectAction;
+
+export type SessionActionTypes = SetTokenAction | FilterAndSortProjectAction | FilterAndSortTimeLogAction;

@@ -4,6 +4,7 @@ import {
   SessionActionTypes,
   SET_TOKEN,
   FILTER_SORT_PROJECT,
+  FILTER_SORT_TIME_LOG,
 } from './types';
 
 const initialState: SessionState = {
@@ -22,7 +23,18 @@ const initialState: SessionState = {
       type: 'ALL',
     },
   },
-
+  timeLogFilterAndSort: {
+    sort: {
+      code: false,
+      time: true,
+      name: false,
+      status: false,
+    },
+    filter: {
+      project: [],
+      activity: [],
+    },
+  },
 };
 
 export const sessionReducer = (state = initialState, action: SessionActionTypes): SessionState => {
@@ -39,6 +51,13 @@ export const sessionReducer = (state = initialState, action: SessionActionTypes)
       return {
         ...state,
         projectFilterAndSort: action.payload,
+      };
+    }
+
+    case FILTER_SORT_TIME_LOG: {
+      return {
+        ...state,
+        timeLogFilterAndSort: action.payload,
       };
     }
 

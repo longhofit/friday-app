@@ -46,7 +46,7 @@ import PickerComponent from './app/components/picker/picker.component.js';
 import { DynamicStatusBar } from './app/components/dynamicStatusBar/dynamicStatusBar.component.js';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import Feather from 'react-native-vector-icons/Feather';
-
+import FilterTimeLog from './app/TimeLog/FilterScreen';
 LogBox.ignoreAllLogs();
 
 const screenOptionsDefault = (props) => {
@@ -375,6 +375,18 @@ const App = () => {
     );
   }
 
+  const FilterAndSortTabTimeLog = () => {
+    return (
+      <TabView.Navigator
+        tabBarOptions={{
+          style: { backgroundColor: '#9AC4F8' },
+        }}>
+        <TabView.Screen name="Filter" component={FilterTimeLog} />
+        <TabView.Screen name="Sort" component={FilterTimeLog} />
+      </TabView.Navigator>
+    );
+  }
+
   const SettingStack = (props) => {
     return (
       <Stack.Navigator
@@ -511,6 +523,17 @@ const App = () => {
                 />
               );
             },
+            headerRight: () => {
+              return (
+                <Feather
+                  onPress={() => props.navigation.navigate('FilterAndSortTimeLog')}
+                  style={{ paddingRight: pxPhone(18) }}
+                  name={'filter'}
+                  size={pxPhone(25)}
+                  color={'black'}
+                />
+              );
+            },
           }}
         />
         <Stack.Screen
@@ -518,6 +541,13 @@ const App = () => {
           component={TimeLogEditScreen}
           options={{
             title: 'Edit Timelog',
+          }}
+        />
+        <Stack.Screen
+          name="FilterAndSortTimeLog"
+          component={FilterAndSortTabTimeLog}
+          options={{
+            title: 'Filter and Sort',
           }}
         />
       </Stack.Navigator>
