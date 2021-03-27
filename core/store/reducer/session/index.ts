@@ -21,15 +21,13 @@ const initialState: SessionState = {
     },
   },
   timeLogFilterAndSort: {
-    sort: {
-      code: false,
-      time: true,
-      name: false,
-      status: false,
-    },
     filter: {
-      project: [],
-      activity: [],
+      project: ['ALL'],
+      activity: ['ALL'],
+    },
+    menuFilter:{
+      project: [{label: 'ALL', value: 'ALL'}],
+      activity: [{label: 'ALL', value: 'ALL'}],
     },
   },
 };

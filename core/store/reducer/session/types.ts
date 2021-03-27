@@ -10,13 +10,11 @@ export interface FilterAndSortProjectForm {
 }
 
 export interface FilterAndSortTimeLogForm {
-  sort: {
-    name: boolean,
-    time: boolean,
-    status: boolean,
-    code: boolean,
-  },
   filter: {
+    project: string[],
+    activity: string[],
+  },
+  menuFilter:{
     project: [],
     activity: [],
   },

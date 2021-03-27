@@ -49,6 +49,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import FilterTimeLog from './app/TimeLog/FilterScreen';
 import SortScreen from './app/manage/SortScreen.js';
 import { textStyle } from './app/components/styles/style.js';
+import SortTimeLog from './app/TimeLog/SortScreen.js';
 LogBox.ignoreAllLogs();
 
 const screenOptionsDefault = (props) => {
@@ -384,7 +385,7 @@ const App = () => {
           style: { backgroundColor: '#9AC4F8' },
         }}>
         <TabView.Screen name="Filter" component={FilterTimeLog} />
-        <TabView.Screen name="Sort" component={FilterTimeLog} />
+        <TabView.Screen name="Sort" component={SortTimeLog} />
       </TabView.Navigator>
     );
   }
@@ -551,6 +552,10 @@ const App = () => {
           options={{
             title: 'Filter and Sort',
           }}
+        />
+        <Stack.Screen
+          name="Picker"
+          component={PickerComponent}
         />
       </Stack.Navigator>
     );

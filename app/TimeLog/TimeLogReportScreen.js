@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -14,7 +14,26 @@ import TimeLogService from '../services/timelog.service';
 import moment from 'moment';
 import _, { groupBy } from 'lodash';
 import TimeLogSummaryScreen from './TimeLogSummaryScreen';
+import { useDispatch, useSelector } from 'react-redux';
+import { onFilterSortTimeLog } from '../../core/store/reducer/session/actions';
+import Feather from 'react-native-vector-icons/Feather';
 export default TimeLogReportScreen = (props) => {
+  const filterAndSortForm = useSelector(state => state.session.timeLogFilterAndSort);
+  const dispatch = useDispatch();
+  const initState = {
+    filter: {
+      project: ['ALL'],
+      activity: ['ALL'],
+    },
+    menuFilter: {
+      project: [{label: 'ALL', value: 'ALL'}],
+      activity: [{label: 'ALL', value: 'ALL'}],
+    },
+  }
+  useEffect(() => {
+    dispatch(onFilterSortTimeLog(initState));
+  }, [])
+  
   const [startDate, setStartDate] = useState(
     new Date(
       new Date().getFullYear(),
@@ -26,6 +45,7 @@ export default TimeLogReportScreen = (props) => {
   const [dateType, setDateType] = useState('');
   const [isShowDatePicker, setIsShowDatePicker] = useState(false);
   const [data, setData] = useState(null);
+  const [raw, setRaw] = useState(null);
   const onOpenDatePicker = (type) => {
     setDateType(type);
     setIsShowDatePicker(true);
@@ -111,14 +131,42 @@ export default TimeLogReportScreen = (props) => {
     setIsShowDatePicker(false);
   };
   const onMonthChange = () => { };
-  const onPressShowReport = () => {
+  const onPressShowReport = async() => {
+    dispatch(onFilterSortTimeLog(initState));
     const timeLogService = new TimeLogService();
     const response = timeLogService.getTimeEntries(
       format(startDate, 'yyyy-MM-dd'),
       format(endDate, 'yyyy-MM-dd'),
     );
-    response
+    await response
       .then((result) => {
+        setRaw(result);
+        let arrayP = [];
+        arrayP.push({label: 'ALL', value: 'ALL'});
+        let arrayA = [];
+        arrayA.push({label: 'ALL', value: 'ALL'});
+        result.map((item) => {
+          var indexP = arrayP.map(function(e) { return e.label; }).indexOf(item.name);
+          if (indexP <= 0) {
+            arrayP.push({label: item.name, value: item.name});
+          }
+
+          var indexA = arrayA.map(function(e) { return e.label; }).indexOf(item.activity);
+          if (indexA <= 0) {
+            arrayA.push({label: item.activity, value: item.activity});
+          }
+        })
+        const initState = {
+          filter: {
+            project: ['ALL'],
+            activity: ['ALL'],
+          },
+          menuFilter: {
+            project: arrayP,
+            activity: arrayA,
+          },
+        }
+        dispatch(onFilterSortTimeLog(initState));
         result.sort((a, b) => new Date(b.workDate) - new Date(a.workDate));
         const groupByDay = _.groupBy(result, function (item) {
           return moment(item.workDate).startOf('day').format('MM/DD/YYYY');
@@ -160,6 +208,7 @@ export default TimeLogReportScreen = (props) => {
       .catch((e) => {
         console.log('error:', e);
       });
+    
   };
   const renderItemTimeLogByWeek = (item) => {
     return (
@@ -182,6 +231,55 @@ export default TimeLogReportScreen = (props) => {
       </View>
     );
   };
+  const handleFilter = async () => {
+    const result = _.filter(raw, (item) => {
+      return (
+        (filterAndSortForm.filter.activity.includes('ALL') ||
+          filterAndSortForm.filter.activity.includes(item.activity))
+          && (filterAndSortForm.filter.project.includes('ALL') || filterAndSortForm.filter.project.includes(item.name)
+      ));
+    });
+    const array = await groupingData(result);
+    setData(array);
+  };
+  const groupingData = (array) => {
+    array.sort((a, b) => new Date(b.workDate) - new Date(a.workDate));
+    const groupByDay = _.groupBy(array, function (item) {
+      return moment(item.workDate).startOf('day').format('MM/DD/YYYY');
+    });
+    const arrayDays = _.map(groupByDay, (data, date) => ({date, data}));
+    arrayDays.map((item) =>
+      item.data.sort(
+        (a, b) =>
+          moment(b.startFrom, 'HH:mm:ss') - moment(a.startFrom, 'HH:mm:ss'),
+      ),
+    );
+    const groupByWeek = _.groupBy(arrayDays, function (item) {
+      const startWeek = moment(item.date)
+        .startOf('isoweek')
+        .startOf('day')
+        .format('MMMM D');
+      const endWeek = moment(item.date)
+        .endOf('isoweek')
+        .startOf('day')
+        .format('MMMM D');
+      let format = startWeek + ' - ' + endWeek;
+      if (moment(item.date).startOf('isoweek').isSame(moment(), 'isoweek'))
+        format = 'This Week';
+      if (
+        moment(item.date)
+          .startOf('isoweek')
+          .isSame(moment().subtract(7, 'd'), 'isoweek')
+      )
+        format = 'Last Week';
+      return format;
+    });
+    const result = _.map(groupByWeek, (data, weekName) => ({weekName, data}));
+    return result;
+  };
+  useEffect(() => {
+    handleFilter();
+  }, [filterAndSortForm])
   return (
     <View style={styles.container}>
       <View style={styles.viewHeader}>
@@ -192,11 +290,11 @@ export default TimeLogReportScreen = (props) => {
               activeOpacity={0.75}
               style={styles.buttonSelectDateStart}>
               <View style={styles.viewItemDateStart}>
-                <Text style={{ color: '#585858', fontSize: pxPhone(12) }}>
+                <Text style={{color: '#585858', fontSize: pxPhone(12)}}>
                   {'Start Date'}
                 </Text>
               </View>
-              <Text style={{ fontSize: pxPhone(16) }}>
+              <Text style={{fontSize: pxPhone(16)}}>
                 {format(startDate, 'yyyy-MM-dd')}
               </Text>
             </TouchableOpacity>
@@ -207,11 +305,11 @@ export default TimeLogReportScreen = (props) => {
               activeOpacity={0.75}
               style={styles.buttonSelectDateEnd}>
               <View style={styles.viewItemDateEnd}>
-                <Text style={{ color: '#585858', fontSize: pxPhone(12) }}>
+                <Text style={{color: '#585858', fontSize: pxPhone(12)}}>
                   {'End Date'}
                 </Text>
               </View>
-              <Text style={{ fontSize: pxPhone(16) }}>
+              <Text style={{fontSize: pxPhone(16)}}>
                 {format(endDate, 'yyyy-MM-dd')}
               </Text>
             </TouchableOpacity>
