@@ -3,7 +3,6 @@ import {
   StyleSheet,
   Text,
   View,
-  StatusBar,
   TouchableOpacity,
   FlatList,
   ScrollView,
@@ -118,7 +117,6 @@ export default EmployeesScreen = (props) => {
   };
   return (
     <ScrollView style={styles.container}>
-      <StatusBar barStyle="dark-content" />
       <View style={{
         marginTop: pxPhone(20),
         paddingVertical: pxPhone(18),

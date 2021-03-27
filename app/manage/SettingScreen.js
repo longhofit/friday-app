@@ -3,7 +3,6 @@ import {
   StyleSheet,
   Text,
   View,
-  StatusBar,
   TouchableOpacity,
   FlatList,
   ScrollView,
@@ -313,7 +312,6 @@ export default SettingScreen = (props) => {
   }
   return (
     <ScrollView style={styles.container}>
-      <StatusBar barStyle="dark-content" />
       <View style={{marginHorizontal: pxPhone(10)}}>
         <Text style={styles.textHeader}>Leave Types</Text>
         <FlatList

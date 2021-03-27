@@ -3,7 +3,6 @@ import {
   StyleSheet,
   Text,
   View,
-  StatusBar,
   TouchableOpacity,
   FlatList,
   ScrollView,
@@ -353,7 +352,6 @@ export default CreatePolicyScreen = (props) => {
   };
   return (
     <ScrollView style={styles.container}>
-      <StatusBar barStyle="dark-content" />
       <View style={{marginHorizontal: pxPhone(20)}}>
         <Text style={styles.textHeader}>Leave Types</Text>
         <FlatList

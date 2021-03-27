@@ -3,7 +3,6 @@ import {
   StyleSheet,
   Text,
   View,
-  StatusBar,
   TouchableOpacity,
   ScrollView,
   TextInput,
@@ -43,7 +42,6 @@ export default ProfileScreen = (props) => {
   };
   return (
     <ScrollView style={styles.container}>
-      <StatusBar barStyle="dark-content" />
       <View style={styles.viewAvatar}>
         <TouchableOpacity>     
           {IconAvatarAnonymous({

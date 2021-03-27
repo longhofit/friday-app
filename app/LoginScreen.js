@@ -5,7 +5,6 @@ import {
   StyleSheet,
   Text,
   View,
-  StatusBar,
   Image,
   ScrollView,
   TouchableOpacity,
@@ -116,7 +115,6 @@ export default LoginScreen = (props) => {
 
   return (
     <>
-      <StatusBar barStyle="dark-content" />
       <SafeAreaView style={styles.container}>
         <ScrollView
           style={{

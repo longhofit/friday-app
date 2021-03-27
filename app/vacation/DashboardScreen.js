@@ -3,7 +3,6 @@ import {
   StyleSheet,
   Text,
   View,
-  StatusBar,
   ToastAndroid,
   ScrollView,
   TouchableOpacity,
@@ -127,7 +126,6 @@ export default DashboardScreen = (props) => {
   return (
     <React.Fragment>
       <ScrollView contentContainerStyle={{ paddingBottom: pxPhone(70) }} style={{ flex: 1 }}>
-        <StatusBar barStyle="default" />
         <View style={{ flex: 1 }} >
           <Spinner
             visible={progress}

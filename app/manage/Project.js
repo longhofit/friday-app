@@ -3,7 +3,6 @@ import {
   StyleSheet,
   Text,
   View,
-  StatusBar,
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
@@ -15,6 +14,7 @@ import { useIsFocused } from '@react-navigation/native';
 import { TouchableOpacity as Touch } from 'react-native-gesture-handler'
 import Modal from 'react-native-modal';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { frequencyEnum, statusEnum, typeEnum } from '../../core/constant/project';
 
 export default ProjectsScreen = (props) => {
   const [projects, setProjects] = useState([]);
@@ -22,17 +22,7 @@ export default ProjectsScreen = (props) => {
   const [projectSelected, setProjectSelected] = useState();
   const [isShow, setIsShow] = useState(false);
 
-  const typeEnum = {
-    CUSTOMER: 'Customer',
-    INTERNAL: 'Internal',
-  }
 
-  const statusEnum = {
-    NEW: 'New',
-    ARCHIVED: 'Archived',
-    SUSPEND: 'Suspend',
-    RUNNING:'Running'
-  }
 
   useEffect(() => {
     getProjects();
@@ -170,7 +160,6 @@ export default ProjectsScreen = (props) => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView style={styles.container}>
-        <StatusBar barStyle="dark-content" />
         {projects.map((item, index) => {
           let color;
           switch (item.status) {
@@ -260,7 +249,7 @@ export default ProjectsScreen = (props) => {
                     {`${item.owner}`}
                   </Text>
                   <Text>
-                    {item.timeLogFrequency}
+                    {frequencyEnum[item.timeLogFrequency]}
                   </Text>
                 </View>
               </View>

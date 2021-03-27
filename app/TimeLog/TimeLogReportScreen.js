@@ -3,7 +3,6 @@ import {
   StyleSheet,
   Text,
   View,
-  StatusBar,
   TouchableOpacity,
   FlatList,
 } from 'react-native';
@@ -204,7 +203,6 @@ export default TimeLogReportScreen = (props) => {
   };
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" />
       <View style={styles.viewHeader}>
         <View style={styles.viewHeader2}>
           <View style={styles.viewDateStart}>

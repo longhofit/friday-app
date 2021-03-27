@@ -19,6 +19,7 @@ import SettingScreen from './app/manage/SettingScreen.js';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons'
+import AntDesign from 'react-native-vector-icons/AntDesign'
 import { pxPhone } from './core/utils/utils.js';
 import { useDispatch } from 'react-redux';
 import { clearTokens } from '@okta/okta-react-native';
@@ -40,6 +41,11 @@ import ProjectMemberScreen from './app/manage/ProjectMemberScreen.js';
 import MemberAddNew from './app/manage/MemberAddNew.js';
 import { logo } from './app/assets/images';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import FilterAndSort from './app/manage/SortAndFilterScreen.js';
+import PickerComponent from './app/components/picker/picker.component.js';
+import { DynamicStatusBar } from './app/components/dynamicStatusBar/dynamicStatusBar.component.js';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import Feather from 'react-native-vector-icons/Feather';
 
 LogBox.ignoreAllLogs();
 
@@ -81,9 +87,9 @@ const App = () => {
     setProgress(true);
     checkAuthStatus();
 
-    return () => {
-      logout()
-    };
+    // return () => {
+    //   logout()
+    // };
   }, []);
 
   if (progress) {
@@ -305,6 +311,17 @@ const App = () => {
                 />
               );
             },
+            headerRight: () => {
+              return (
+                <Feather
+                  onPress={() => props.navigation.navigate('FilterAndSort')}
+                  style={{ paddingRight: pxPhone(18) }}
+                  name={'filter'}
+                  size={pxPhone(25)}
+                  color={'black'}
+                />
+              );
+            },
           }}
         />
         <Stack.Screen
@@ -330,9 +347,37 @@ const App = () => {
             title: 'Add new member',
           }}
         />
+        <Stack.Screen
+          name="FilterAndSort"
+          component={FilterAndSortTab}
+          options={{
+            title: 'Filter and Sort',
+          }}
+        />
+        <Stack.Screen
+          name="Picker"
+          component={PickerComponent}
+          options={{
+            title: 'Picker',
+          }}
+        />
       </Stack.Navigator>
     );
   };
+
+  const TabView = createMaterialTopTabNavigator();
+
+  const FilterAndSortTab = () => {
+    return (
+      <TabView.Navigator
+        tabBarOptions={{
+          style: { backgroundColor: '#9AC4F8' },
+        }}>
+        <TabView.Screen name="Filter" component={FilterAndSort} />
+        <TabView.Screen name="Sort" component={FilterAndSort} />
+      </TabView.Navigator>
+    );
+  }
 
   const SettingStack = (props) => {
     return (
@@ -535,7 +580,7 @@ const App = () => {
 
     return (
       <Drawer.Navigator
-        initialRouteName={'login'}
+        initialRouteName={!authenticated ? 'login' : 'Manage'}
         drawerContent={(props) =>
           DrawerContent({ ...props, dispatch: dispatch })
         }>
@@ -586,6 +631,7 @@ const App = () => {
         <PaperProvider theme={theme}>
           <PersistGate
             persistor={persistor}>
+            <DynamicStatusBar barStyle='light-content' />
             <NavigationContainer >
               <DrawerNavigator />
             </NavigationContainer>

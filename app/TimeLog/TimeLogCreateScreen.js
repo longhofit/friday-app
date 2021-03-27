@@ -3,7 +3,6 @@ import {
   StyleSheet,
   Text,
   View,
-  StatusBar,
   TouchableOpacity,
   FlatList,
   ScrollView,
@@ -254,7 +253,6 @@ export default TimeLogCreateScreen = (props) => {
   }
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" />
       <ScrollView>
         <View
           style={{
