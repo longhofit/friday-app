@@ -62,13 +62,11 @@ export default ProjectsScreen = (props) => {
     filterAndSortForm.sort.sortField === 'time' && scrollViewProject.current?.scrollTo({ x: 0 });
   };
 
-  const onAddNewPress = () => {
-    onCloseModal();
+  const onAddNewPress = (project) => {
     props.navigation.navigate('ProjectAddNew', {
-      project: projectSelected,
-      onUpdateProjectSuccess: projectSelected ? onUpdateProjectSuccess : onAddNewProjectSuccess,
+      project,
+      onUpdateProjectSuccess: project ? onUpdateProjectSuccess : onAddNewProjectSuccess,
     });
-    setProjectSelected(undefined);
   };
 
   const onArchived = async () => {
@@ -113,9 +111,10 @@ export default ProjectsScreen = (props) => {
     }
   };
 
-  const onViewPress = (id) => {
+  const onViewPress = (id, projectName) => {
+    console.log('projectName', projectName)
     onCloseModal();
-    props.navigation.navigate('Members', { id });
+    props.navigation.navigate('Members', { id, projectName });
   };
 
   const onCloseModal = () => {
@@ -123,8 +122,11 @@ export default ProjectsScreen = (props) => {
   };
 
   const onItemPress = (project) => {
-    setProjectSelected(project)
-    setIsShow(true);
+    const onAddOrEditProject = () => {
+      onAddNewPress(project);
+    };
+
+    props.navigation.navigate('Members', { project, onAddOrEditProject });
   };
 
   const renderModal = () => {
@@ -140,7 +142,7 @@ export default ProjectsScreen = (props) => {
         backdropTransitionOutTiming={1}
         style={{ alignItems: 'center', justifyContent: 'center' }}>
         <View style={styles.option}>
-          <TouchableOpacity onPress={() => onViewPress(projectSelected.code)}>
+          <TouchableOpacity onPress={() => onViewPress(projectSelected.code, projectSelected.name)}>
             <Text
               style={[styles.txtOption, { color: 'orange' }]}>
               {'View members'}
@@ -299,7 +301,7 @@ export default ProjectsScreen = (props) => {
                 <Text style={styles.label}>
                   {'Code'}
                 </Text>
-                <Text numberOfLines={1} style={[styles.value, {...textStyle.semibold}]}>
+                <Text numberOfLines={1} style={[styles.value, { ...textStyle.semibold }]}>
                   {item.code}
                 </Text>
               </View>
@@ -308,7 +310,7 @@ export default ProjectsScreen = (props) => {
               <Text style={styles.label}>
                 {'Prefix'}
               </Text>
-              <Text numberOfLines={1} style={[styles.value, {...textStyle.semibold}]}>
+              <Text numberOfLines={1} style={[styles.value, { ...textStyle.semibold }]}>
                 {item.ticketPrefix}
               </Text>
             </View>
@@ -345,7 +347,7 @@ export default ProjectsScreen = (props) => {
   const renderAddButton = () => {
     return (
       <TouchableOpacity
-        onPress={onAddNewPress}
+        onPress={() => onAddNewPress()}
         activeOpacity={0.75}
         style={styles.icon}>
         <FontAwesome5
