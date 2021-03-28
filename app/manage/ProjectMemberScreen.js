@@ -5,8 +5,9 @@ import {
   View,
   TouchableOpacity,
   ScrollView,
+  RefreshControl,
 } from 'react-native';
-import { pxPhone, showToastWithGravityAndOffset } from '../../core/utils/utils';
+import { isEmpty, pxPhone, showToastWithGravityAndOffset } from '../../core/utils/utils';
 import ProjectService from '../services/project.service';
 import Entypo from 'react-native-vector-icons/Entypo'
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
@@ -14,12 +15,14 @@ import AntDesign from 'react-native-vector-icons/AntDesign'
 import { useIsFocused } from '@react-navigation/native';
 import { TouchableOpacity as Touch } from 'react-native-gesture-handler'
 import { useSelector, useDispatch } from 'react-redux';
+import { SearchInput } from '../components/input/inputV1.component';
+import _, { set } from 'lodash'
+import { yyyMMddFormatter } from '../../core/formatters';
 
 export default ProjectMemberScreen = ({ route, navigation }) => {
   const { id } = route.params;
   const [members, setMembers] = useState([]);
   const employeeState = useSelector(state => state.employee.employees);
-  const isFocused = useIsFocused();
   const [memberSelect, setMemberSelect] = useState();
 
   useEffect(() => {
@@ -28,7 +31,7 @@ export default ProjectMemberScreen = ({ route, navigation }) => {
     return () => {
       setMembers([]);
     }
-  }, [id, isFocused])
+  }, [id])
 
   const getProjectMembers = async () => {
     try {
@@ -48,36 +51,6 @@ export default ProjectMemberScreen = ({ route, navigation }) => {
       setMembers(membersTemp);
     } catch (error) {
       console.log(error.message);
-    }
-  };
-
-
-  const onDeleteMember = async () => {
-    try {
-      const projectService = new ProjectService();
-      const data = await projectService.deleteMember(id, [memberSelect.member]);
-      showToastWithGravityAndOffset('Delete successfully')
-      setMemberSelect(undefined);
-      getProjectMembers();
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
-
-  const onInactiveMember = async () => {
-    try {
-      const projectService = new ProjectService();
-      let body = memberSelect;
-      body = { ...body, active: !memberSelect.active, offBoardDate: memberSelect.active ? new Date() : '' };
-      console.log(body)
-      data = await projectService.updateMember([body], id);
-
-      navigation.navigate('Members');
-      showToastWithGravityAndOffset('Update member successfully.')
-      setMemberSelect(undefined);
-      getProjectMembers();
-    } catch (error) {
-      showToastWithGravityAndOffset(error.message)
     }
   };
 
@@ -152,18 +125,86 @@ export default ProjectMemberScreen = ({ route, navigation }) => {
   };
 
   const onAddButtonPress = () => {
-    navigation.navigate('MemberAddNew', { id });
+    navigation.navigate('MemberAddNew', { id, onAddMemmberSuccess });
   };
 
+  const onAddMemmberSuccess = (member) => {
+    setMembers([member, ...members]);
+    setTimeout(() => {
+      scrollView.current?.scrollTo({ x: 0 })
+    }, 500);
+  };
+
+  const onRefresh = () => {
+    getProjectMembers();
+  };
+
+  const onDeleteMember = async () => {
+    try {
+      const projectService = new ProjectService();
+      const data = await projectService.deleteMember(id, [memberSelect.member]);
+      showToastWithGravityAndOffset('Delete successfully')
+      setMemberSelect(undefined);
+      const newMembers = members.filter(item => item.member !== memberSelect.member)
+      setMembers(newMembers);
+    } catch (error) {
+      showToastWithGravityAndOffset(error.message);
+    }
+  };
+
+  const onInactiveMember = async () => {
+    try {
+      const projectService = new ProjectService();
+      let body = memberSelect;
+      body = { ...body, active: !memberSelect.active, offBoardDate: memberSelect.active ? yyyMMddFormatter(new Date()) : '' };
+      data = await projectService.updateMember([body], id);
+
+      let newMembers = members.filter(item => item.member !== body.member);
+      setMembers([body, ...newMembers]);
+      scrollView.current?.scrollTo({ x: 0 })
+      // navigation.navigate('Members');
+      showToastWithGravityAndOffset('Update member successfully.')
+      setMemberSelect(undefined);
+    } catch (error) {
+      showToastWithGravityAndOffset(error.message)
+    }
+  };
+
+  const orderByDate = (members) => {
+    // return _.orderBy(members, ['member'], ['desc']);
+    return members.reverse();
+  };
+
+  const searchCondition = (member) => {
+    return isEmpty(keyword)
+      || member.name.toLowerCase().includes(keyword.toLowerCase())
+      || member.role.toLowerCase().includes(keyword.toLowerCase());
+  };
+
+  const [keyword, setKeyword] = useState('');
+
+  const scrollView = React.useRef(undefined);
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: 'white' }}>
+      <SearchInput
+        style={styles.searchInput}
+        keyword={keyword}
+        placeholder={'Search by Name, Role'}
+        onChangeText={setKeyword}
+        onRemovePress={() => setKeyword('')}
+      />
       <ScrollView
+        ref={scrollView}
+        refreshControl={<RefreshControl
+          refreshing={false}
+          onRefresh={onRefresh}
+        />}
         showsVerticalScrollIndicator={false}
         style={styles.container}>
         {members.length === 0 && <Text style={{ fontWeight: 'bold', fontSize: pxPhone(18), marginLeft: pxPhone(15), marginTop: pxPhone(15) }}>{'No members were found, go to adding new member.'}</Text>}
         <View style={{ paddingBottom: pxPhone(70) }}>
-          {members.map((item, index) => {
+          {members.filter(searchCondition).map((item, index) => {
             return renderMember(item, index);
           })}
         </View>
@@ -229,5 +270,9 @@ const styles = StyleSheet.create({
   txtOption: {
     fontSize: pxPhone(14),
     textAlign: 'center',
+  },
+  searchInput: {
+    width: '95%',
+    alignSelf: 'center',
   },
 });

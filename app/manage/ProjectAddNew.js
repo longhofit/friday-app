@@ -160,6 +160,7 @@ export default ProjectAddNew = ({ route, navigation }) => {
       }
 
       if (data) {
+        route.params.onUpdateProjectSuccess(form);
         navigation.navigate('Project');
         showToastWithGravityAndOffset('Save project successfully.')
       } else {

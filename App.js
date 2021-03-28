@@ -1,7 +1,7 @@
 import 'react-native-gesture-handler';
 import { Provider } from 'react-redux';
 import React, { useState, useEffect } from 'react';
-import { View, LogBox, Text, Image } from 'react-native';
+import { View, LogBox, Text, Image, StyleSheet } from 'react-native';
 import { isAuthenticated } from '@okta/okta-react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import LoginScreen from './app/LoginScreen.js';
@@ -48,6 +48,7 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import Feather from 'react-native-vector-icons/Feather';
 import FilterTimeLog from './app/TimeLog/FilterScreen';
 import SortScreen from './app/manage/SortScreen.js';
+import { textStyle } from './app/components/styles/style.js';
 LogBox.ignoreAllLogs();
 
 const screenOptionsDefault = (props) => {
@@ -57,7 +58,7 @@ const screenOptionsDefault = (props) => {
         backgroundColor: '#9AC4F8',
       },
       headerTitleAlign: 'center',
-      headerTitleStyle: { color: 'black', fontWeight: '800' },
+      headerTitleStyle: styles.txtTitle,
       headerLeft: () => {
         return (
           <Icon2
@@ -156,7 +157,7 @@ const App = () => {
         {menuItems &&
           menuItems.map((item, index) => {
             return (
-              <React.Fragment>
+              <React.Fragment key={index}>
                 <DrawerItem
                   pressColor={'#0066cc'}
                   focused={focusDrawer === item.name}
@@ -293,7 +294,7 @@ const App = () => {
             backgroundColor: '#9AC4F8',
           },
           headerTitleAlign: 'center',
-          headerTitleStyle: { color: 'black', fontWeight: '800' },
+          headerTitleStyle: styles.txtTitle,
         }}>
         <Stack.Screen
           name="Project"
@@ -506,7 +507,7 @@ const App = () => {
             backgroundColor: '#9AC4F8',
           },
           headerTitleAlign: 'center',
-          headerTitleStyle: { color: 'black', fontWeight: '800' },
+          headerTitleStyle: styles.txtTitle,
         }}>
         <Stack.Screen
           name="Reports"
@@ -564,7 +565,7 @@ const App = () => {
           },
 
           headerTitleAlign: 'center',
-          headerTitleStyle: { color: 'black', fontWeight: '800' },
+          headerTitleStyle: styles.txtTitle,
         }}>
         <Stack.Screen
           name="TimeLog"
@@ -668,5 +669,13 @@ const App = () => {
     </Provider>
   );
 };
+
+const styles = StyleSheet.create({
+  txtTitle: {
+    fontSize: pxPhone(18),
+    ...textStyle.bold,
+    color: 'black',
+  },
+});
 
 export default App;

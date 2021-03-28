@@ -41,27 +41,30 @@ export default PickerComponent = ({ navigation, route }) => {
     navigation.setOptions({
       headerLeft: () => {
         return (
-          <Icon
-            style={{ paddingLeft: pxPhone(12) }}
+          <TouchableOpacity
+            activeOpacity={0.75}
             onPress={() => navigation.goBack()}
-            name={'close'}
-            size={pxPhone(22)}
-            color={'black'}
-          />
+            style={{ flex: 1, paddingLeft: pxPhone(16), justifyContent: 'center' }}>
+            <Text style={themedStyle.txtButton}>
+              {'Cancel'}
+            </Text>
+          </TouchableOpacity>
         );
       },
       headerRight: () => {
         return (
-          <Icon
-            style={{ paddingRight: pxPhone(12) }}
+          <TouchableOpacity
+            activeOpacity={0.75}
             onPress={onApply}
-            name={'check'}
-            size={pxPhone(22)}
-            color={'black'}
-          />
+            style={{ flex: 1, paddingRight: pxPhone(16), justifyContent: 'center' }}>
+            <Text style={themedStyle.txtButton}>
+              {'Save'}
+            </Text>
+          </TouchableOpacity>
         );
       },
       headerTitle: route.params.headerTitle,
+      headerTitleStyle: themedStyle.txtTitle,
     });
   }, [navigation, route, state.selectedValues]);
 
@@ -169,5 +172,15 @@ const themedStyle = StyleSheet.create({
     width: pxPhone(30),
     height: pxPhone(30),
     tintColor: theme['color-custom-200'],
+  },
+  txtButton: {
+    fontSize: pxPhone(16),
+    ...textStyle.semibold,
+    color: 'black',
+  },
+  txtTitle: {
+    fontSize: pxPhone(18),
+    ...textStyle.bold,
+    color: 'black',
   },
 })

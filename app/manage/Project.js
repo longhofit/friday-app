@@ -5,7 +5,6 @@ import {
   View,
   TouchableOpacity,
   ScrollView,
-  TextInput,
 } from 'react-native';
 import { isEmpty, pxPhone, showToastWithGravityAndOffset } from '../../core/utils/utils';
 import ProjectService from '../services/project.service';
@@ -21,10 +20,10 @@ import _ from 'lodash';
 import { theme } from '../theme/appTheme';
 import { textStyle } from '../components/styles/style';
 import { onFilterSortProject } from '../../core/store/reducer/session/actions';
+import { SearchInput } from '../components/input/inputV1.component';
 
 export default ProjectsScreen = (props) => {
   const [projects, setProjects] = useState([]);
-  const isFocused = useIsFocused();
   const [projectSelected, setProjectSelected] = useState();
   const [isShow, setIsShow] = useState(false);
   const filterAndSortForm = useSelector(state => state.session.projectFilterAndSort);
@@ -33,7 +32,7 @@ export default ProjectsScreen = (props) => {
 
   const orderBy = (array, field) => {
     if (field === 'time') {
-      return array.reverse();
+      return array;
     }
     return _.orderBy(array, [project => project[field].toLowerCase()], ['asc']);
   };
@@ -44,24 +43,31 @@ export default ProjectsScreen = (props) => {
     return () => {
       setProjectSelected(undefined);
     }
-  }, [isFocused]);
+  }, []);
 
   const getProjects = async () => {
     const projectService = new ProjectService();
     const data = await projectService.getProjects();
     setProjects(data.content);
+  };
 
-    console.log(data)
+  const onUpdateProjectSuccess = (newProject) => {
+    let newProjects = projects.filter(item => item.code !== newProject.code);
+    setProjects([newProject, ...newProjects])
+    filterAndSortForm.sort.sortField === 'time' && scrollViewProject.current?.scrollTo({ x: 0 });
+  };
+
+  const onAddNewProjectSuccess = (newProject) => {
+    setProjects([newProject, ...projects])
+    filterAndSortForm.sort.sortField === 'time' && scrollViewProject.current?.scrollTo({ x: 0 });
   };
 
   const onAddNewPress = () => {
+    onCloseModal();
     props.navigation.navigate('ProjectAddNew', {
       project: projectSelected,
+      onUpdateProjectSuccess: projectSelected ? onUpdateProjectSuccess : onAddNewProjectSuccess,
     });
-  };
-
-  const onAddNewIconPress = () => {
-    props.navigation.navigate('ProjectAddNew');
     setProjectSelected(undefined);
   };
 
@@ -72,7 +78,7 @@ export default ProjectsScreen = (props) => {
       const projectService = new ProjectService();
       const data = await projectService.updateProject(body);
 
-      getProjects();
+      onUpdateProjectSuccess(body)
       setProjectSelected(undefined);
     } catch (error) {
       showToastWithGravityAndOffset(error.message);
@@ -86,7 +92,7 @@ export default ProjectsScreen = (props) => {
       const projectService = new ProjectService();
       const data = await projectService.updateProject(body);
 
-      getProjects();
+      onUpdateProjectSuccess(body);
       setProjectSelected(undefined);
     } catch (error) {
       showToastWithGravityAndOffset(error.message);
@@ -100,7 +106,7 @@ export default ProjectsScreen = (props) => {
       const projectService = new ProjectService();
       const data = await projectService.updateProject(body);
 
-      getProjects();
+      onUpdateProjectSuccess(body)
       setProjectSelected(undefined);
     } catch (error) {
       showToastWithGravityAndOffset(error.message);
@@ -192,6 +198,7 @@ export default ProjectsScreen = (props) => {
   };
 
   const scrollView = React.useRef(undefined);
+  const scrollViewProject = React.useRef(undefined);
 
   const onRemoveFilter = (key) => {
     dispatch(onFilterSortProject({
@@ -202,6 +209,7 @@ export default ProjectsScreen = (props) => {
       }
     }))
     scrollView.current?.scrollTo({ x: 0 });
+    scrollViewProject.current?.scrollTo({ x: 0 });
   };
 
   const onRenderFilterOptions = () => {
@@ -231,128 +239,113 @@ export default ProjectsScreen = (props) => {
   };
 
   const searchCondition = (project) => {
-    return isEmpty(keyword) || project.name.toLowerCase().includes(keyword.toLowerCase()) || project.code.toLowerCase().includes(keyword.toLowerCase());
+    return isEmpty(keyword)
+      || project.name.toLowerCase().includes(keyword.toLowerCase())
+      || project.code.toLowerCase().includes(keyword.toLowerCase());
   };
 
-  return (
-    <React.Fragment>
-      <View style={styles.sectionSearch}>
-        <View style={styles.viewSearch}>
-          <AntDesign
-            name={'search1'}
-            size={pxPhone(15)}
-            color={theme["color-dark-100"]}
-          />
-          <TextInput
-            maxLength={256}
-            value={keyword}
-            autoCapitalize='none'
-            style={styles.inputSearch}
-            placeholder={'Search by Name, Code'}
-            placeholderTextColor={theme["color-dark-100"]}
-            onChangeText={text => setKeyword(text)}
-          />
-          {!isEmpty(keyword) &&
-            <AntDesign
-              onPress={() => setKeyword('')}
-              name={'closecircle'}
+  const renderProject = (item, index, color) => {
+    return (
+      <TouchableOpacity
+        activeOpacity={0.75}
+        onPress={() => onItemPress(item)}
+        key={index}
+        style={[
+          styles.viewProject,
+          (index === projects.length - 1) && { marginBottom: pxPhone(80) },
+          (index === 0 && { marginTop: pxPhone(1) })
+        ]}>
+        <View style={[styles.vertical, { backgroundColor: color }]} />
+        <View
+          style={{ flex: 1, padding: pxPhone(12), }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', zIndex: 1, }}>
+            <View style={{ width: '75%' }}>
+              <Text style={styles.name}>
+                {item.name}
+              </Text>
+            </View>
+            {item.status !== 'ARCHIVED' && <Entypo
+              name={'dots-three-vertical'}
               size={pxPhone(15)}
-              color={theme["color-dark-100"]}
+              color={'gray'}
             />}
+          </View>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: pxPhone(11) }}>
+            <View style={{ flex: 3 }}>
+              <View>
+                <Text
+                  style={styles.label}>
+                  {'Status'}
+                </Text>
+                <Text numberOfLines={1} style={[styles.value, { color }]}>
+                  {statusEnum[item.status]}
+                </Text>
+              </View>
+            </View>
+            <View style={{ flex: 3, alignItems: 'flex-start' }}>
+              <View>
+                <Text style={[styles.label]}>
+                  {'Type'}
+                </Text>
+                <Text
+                  numberOfLines={1}
+                  style={[styles.value]}>
+                  {typeEnum[item.type]}
+                </Text>
+              </View>
+            </View>
+            <View style={{ flex: 2, alignItems: 'center' }}>
+              <View>
+                <Text style={styles.label}>
+                  {'Code'}
+                </Text>
+                <Text numberOfLines={1} style={[styles.value, { fontWeight: 'bold' }]}>
+                  {item.code}
+                </Text>
+              </View>
+            </View>
+            <View style={{ flex: 2, alignItems: 'flex-end' }}>
+              <Text style={styles.label}>
+                {'Prefix'}
+              </Text>
+              <Text numberOfLines={1} style={[styles.value, { fontWeight: 'bold' }]}>
+                {item.ticketPrefix}
+              </Text>
+            </View>
+          </View>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            <Text>
+              {`${item.owner}`}
+            </Text>
+            <Text>
+              {frequencyEnum[item.timeLogFrequency]}
+            </Text>
+          </View>
         </View>
-        {onRenderFilterOptions()}
-      </View>
-      <ScrollView style={styles.container}>
+      </TouchableOpacity>
+    )
+  }
+
+  const renderProjects = () => {
+    return (
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        ref={scrollViewProject}
+        style={styles.container}>
         {projects && orderBy(projects.filter(filterCondition), filterAndSortForm.sort.sortField)
           .filter(searchCondition)
           .map((item, index) => {
             let color = theme[item.status];
-            return (
-              <TouchableOpacity
-                activeOpacity={0.75}
-                onPress={() => onItemPress(item)}
-                key={index}
-                style={[
-                  styles.viewProject,
-                  (index === projects.length - 1) && { marginBottom: pxPhone(80) },
-                  (index === 0 && { marginTop: pxPhone(1) })
-                ]}>
-                <View style={[styles.vertical, { backgroundColor: color }]}>
-                </View>
-                <View
-                  style={{ flex: 1, padding: pxPhone(12), }}>
-                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', zIndex: 1, }}>
-                    <View style={{ width: '75%' }}>
-                      <Text style={styles.name}>
-                        {item.name}
-                      </Text>
-                    </View>
-                    {item.status !== 'ARCHIVED' && <Entypo
-                      name={'dots-three-vertical'}
-                      size={pxPhone(15)}
-                      color={'gray'}
-                    />}
-                    {/* {projectSelected && (item.code === projectSelected.code)} */}
-                  </View>
-                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: pxPhone(11) }}>
-                    <View style={{ flex: 3 }}>
-                      <View>
-                        <Text
-                          style={styles.label}>
-                          {'Status'}
-                        </Text>
-                        <Text numberOfLines={1} style={[styles.value, { color }]}>
-                          {statusEnum[item.status]}
-                        </Text>
-                      </View>
-                    </View>
-                    <View style={{ flex: 3, alignItems: 'flex-start' }}>
-                      <View>
-                        <Text style={[styles.label]}>
-                          {'Type'}
-                        </Text>
-                        <Text
-                          numberOfLines={1}
-                          style={[styles.value]}>
-                          {typeEnum[item.type]}
-                        </Text>
-                      </View>
-                    </View>
-                    <View style={{ flex: 2, alignItems: 'center' }}>
-                      <View>
-                        <Text style={styles.label}>
-                          {'Code'}
-                        </Text>
-                        <Text numberOfLines={1} style={[styles.value, { fontWeight: 'bold' }]}>
-                          {item.code}
-                        </Text>
-                      </View>
-                    </View>
-                    <View style={{ flex: 2, alignItems: 'flex-end' }}>
-                      <Text style={styles.label}>
-                        {'Prefix'}
-                      </Text>
-                      <Text numberOfLines={1} style={[styles.value, { fontWeight: 'bold' }]}>
-                        {item.ticketPrefix}
-                      </Text>
-                    </View>
-                  </View>
-                  <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <Text>
-                      {`${item.owner}`}
-                    </Text>
-                    <Text>
-                      {frequencyEnum[item.timeLogFrequency]}
-                    </Text>
-                  </View>
-                </View>
-              </TouchableOpacity>
-            );
+            return renderProject(item, index, color);
           })}
       </ScrollView>
-      {projectSelected && renderModal()}
+    )
+  }
+
+  const renderAddButton = () => {
+    return (
       <TouchableOpacity
-        onPress={onAddNewIconPress}
+        onPress={onAddNewPress}
         activeOpacity={0.75}
         style={styles.icon}>
         <FontAwesome5
@@ -361,6 +354,23 @@ export default ProjectsScreen = (props) => {
           color={'white'}
         />
       </TouchableOpacity>
+    );
+  };
+
+  return (
+    <React.Fragment>
+      <View style={styles.sectionSearch}>
+        <SearchInput
+          keyword={keyword}
+          placeholder={'Search by Name, Code'}
+          onChangeText={setKeyword}
+          onRemovePress={() => setKeyword('')}
+        />
+        {onRenderFilterOptions()}
+      </View>
+      {renderProjects()}
+      {projectSelected && renderModal()}
+      {renderAddButton()}
     </React.Fragment>
   );
 };
@@ -441,26 +451,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
     backgroundColor: 'white',
-  },
-  viewSearch: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '90%',
-    height: pxPhone(40),
-    borderRadius: pxPhone(5),
-    borderWidth: pxPhone(1),
-    marginTop: pxPhone(13),
-    marginBottom: pxPhone(5),
-    paddingHorizontal: pxPhone(10),
-    borderColor: theme["color-dark-100"]
-  },
-  inputSearch: {
-    flex: 1,
-    fontSize: pxPhone(14),
-    marginHorizontal: pxPhone(5),
-    color: theme['color-dark-1000'],
-    ...textStyle.regular,
-    padding: 0,
   },
   viewFilterOption: {
     flexDirection: 'row',

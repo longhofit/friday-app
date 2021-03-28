@@ -4,28 +4,18 @@ import {
   Text,
   View,
   TouchableOpacity,
-  FlatList,
   ScrollView,
-  Alert,
 } from 'react-native';
-import { Hideo } from 'react-native-textinput-effects';
 import { pxPhone } from '../../core/utils/utils';
-import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-import { IconAdd, IconCalendar, IconClock, IconActivity } from '../assets/icons';
-import Modal from 'react-native-modal';
-import { format } from 'date-fns';
-import { Calendar } from 'react-native-calendars';
-import TimeLogService from '../services/timelog.service';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import { Kaede } from 'react-native-textinput-effects';
 import { TextInput } from 'react-native-paper';
 import { Picker } from '@react-native-picker/picker';
 import ProjectService from '../services/project.service';
 import { showToastWithGravityAndOffset } from '../../core/utils/utils'
 import { useSelector } from 'react-redux';
+import { da } from 'date-fns/locale';
 
 export default MemberAddNew = ({ route, navigation }) => {
-  const { id } = route.params;
+  const { id, onAddMemmberSuccess } = route.params;
   const employeeState = useSelector(state => state.employee.employees);
 
   const initForm = {
@@ -35,6 +25,7 @@ export default MemberAddNew = ({ route, navigation }) => {
     onBoardDate: new Date(),
     offBoardDate: '',
     active: true,
+    name: '',
   };
 
   const [form, setForm] = useState(initForm);
@@ -93,10 +84,11 @@ export default MemberAddNew = ({ route, navigation }) => {
     return isEmpty(form.role);
   };
 
-  const setId = (employeeId) => {
+  const setId = (employeeId, index) => {
     setForm({
       ...form,
       employeeId,
+      name: employeeState[index].name,
     });
   };
 
@@ -125,6 +117,9 @@ export default MemberAddNew = ({ route, navigation }) => {
       }
 
       if (data) {
+        let newMember = data[0];
+        newMember = { ...newMember, member: newMember.key.member, name: form.name }
+        onAddMemmberSuccess(newMember)
         navigation.navigate('Members');
         showToastWithGravityAndOffset('Add member successfully.')
       } else {
@@ -149,7 +144,7 @@ export default MemberAddNew = ({ route, navigation }) => {
           <Picker
             style={{ flex: 1 }}
             selectedValue={form.employeeId}
-            onValueChange={setId}>
+            onValueChange={(value, index) => setId(value, index)}>
             {employeeState.map((item, index) => {
               return (
                 <Picker.Item label={item.name} value={item.id} />
