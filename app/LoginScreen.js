@@ -49,27 +49,6 @@ export default LoginScreen = (props) => {
     );
   };;
 
-  const getToken = async() => {
-    let fcmToken = await AsyncStorage.getItem('fcmToken');
-      if (!fcmToken) {
-        const response = messaging().getToken();
-        console.log("response = ", response);
-        response
-          .then(async(result) => {
-            console.log("token = ", result);
-            fcmToken = result;
-            await AsyncStorage.setItem('fcmToken', fcmToken);
-          })
-          .catch((error) => {
-            console.log("error = ", error);
-          })
-      }else{
-        console.log("fcmToken get AsyncStorage = ", fcmToken);
-      }
-  }
-  useEffect(() => {
-    getToken();
-  }, [])
   const login = () => {
     setState({ ...state, progress: true });
 
@@ -77,7 +56,6 @@ export default LoginScreen = (props) => {
     signIn({ username: state.username, password: state.password })
       .then(async(token) => {
         dispatch(onSetToken(token.access_token));
-        console.log("token:",token.access_token);
 
         let fcmToken = await AsyncStorage.getItem('fcmToken');
         if (!fcmToken) {
@@ -103,7 +81,7 @@ export default LoginScreen = (props) => {
               console.log("error = ", error);
             })
         }else{
-          console.log("FcmToken != null")
+          console.log("FcmToken = ", fcmToken);
           var fireBaseService = new FirebaseService();
           const res = fireBaseService.pushNotification(JSON.stringify({
             topicName: "string",
