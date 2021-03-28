@@ -370,7 +370,9 @@ const App = () => {
       <TabView.Navigator
         tabBarOptions={{
           style: { backgroundColor: '#9AC4F8' },
-        }}>
+          labelStyle: styles.txtTitleFilter,
+        }}
+      >
         <TabView.Screen name="Filter" component={FilterProject} />
         <TabView.Screen name="Sort" component={SortScreen} />
       </TabView.Navigator>
@@ -382,6 +384,7 @@ const App = () => {
       <TabView.Navigator
         tabBarOptions={{
           style: { backgroundColor: '#9AC4F8' },
+          labelStyle: styles.txtTitleFilter,
         }}>
         <TabView.Screen name="Filter" component={FilterTimeLog} />
         <TabView.Screen name="Sort" component={FilterTimeLog} />
@@ -676,6 +679,11 @@ const styles = StyleSheet.create({
     ...textStyle.bold,
     color: 'black',
   },
+  txtTitleFilter:{
+    fontSize: pxPhone(16),
+    ...textStyle.semibold,
+    color: 'black',
+  }
 });
 
 export default App;
