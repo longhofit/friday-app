@@ -26,7 +26,12 @@ export const pxPhoneH = (value) => {
 };
 
 export const isEmpty = (value) => {
-  return (value === undefined || value === '');
+  return (
+    value === undefined ||
+    value === '' ||
+    value === null ||
+    value === 'undefined'
+  );
 };
 
 export const fontSize = (value) => {

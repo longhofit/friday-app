@@ -5,17 +5,22 @@ import {
   View,
   TouchableOpacity,
   ScrollView,
+  TextInput,
 } from 'react-native';
-import { pxPhone, showToastWithGravityAndOffset } from '../../core/utils/utils';
+import { isEmpty, pxPhone, showToastWithGravityAndOffset } from '../../core/utils/utils';
 import ProjectService from '../services/project.service';
 import Entypo from 'react-native-vector-icons/Entypo'
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
+import FontAwesome from 'react-native-vector-icons/FontAwesome'
+import AntDesign from 'react-native-vector-icons/AntDesign'
 import { useIsFocused } from '@react-navigation/native';
 import Modal from 'react-native-modal';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { frequencyEnum, statusEnum, typeEnum } from '../../core/constant/project';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import _ from 'lodash';
+import { theme } from '../theme/appTheme';
+import { textStyle } from '../components/styles/style';
+import { onFilterSortProject } from '../../core/store/reducer/session/actions';
 
 export default ProjectsScreen = (props) => {
   const [projects, setProjects] = useState([]);
@@ -23,6 +28,8 @@ export default ProjectsScreen = (props) => {
   const [projectSelected, setProjectSelected] = useState();
   const [isShow, setIsShow] = useState(false);
   const filterAndSortForm = useSelector(state => state.session.projectFilterAndSort);
+  const [keyword, setKeyword] = useState('');
+  const dispatch = useDispatch();
 
   const orderBy = (array, field) => {
     if (field === 'time') {
@@ -43,6 +50,8 @@ export default ProjectsScreen = (props) => {
     const projectService = new ProjectService();
     const data = await projectService.getProjects();
     setProjects(data.content);
+
+    console.log(data)
   };
 
   const onAddNewPress = () => {
@@ -163,111 +172,183 @@ export default ProjectsScreen = (props) => {
     )
   }
 
+  const onRenderFilterOption = (title, onPress) => {
+    return (
+      <View style={styles.viewFilterOption}>
+        <Text style={styles.textFilterOption}>
+          {title}
+        </Text>
+        <TouchableOpacity
+          activeOpacity={0.75}
+          onPress={onPress}>
+          <AntDesign
+            name={'closecircle'}
+            size={pxPhone(12)}
+            color={theme["color-dark-100"]}
+          />
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  const scrollView = React.useRef(undefined);
+
+  const onRemoveFilter = (key) => {
+    dispatch(onFilterSortProject({
+      ...filterAndSortForm,
+      filter: {
+        ...filterAndSortForm.filter,
+        [key]: ['ALL'],
+      }
+    }))
+    scrollView.current?.scrollTo({ x: 0 });
+  };
+
+  const onRenderFilterOptions = () => {
+    return (
+      <ScrollView
+        horizontal
+        ref={scrollView}
+        showsHorizontalScrollIndicator={false}
+        style={styles.sectionFilterOption}>
+        {!filterAndSortForm.filter.status.includes('ALL') && onRenderFilterOption(`${filterAndSortForm.filter.status.join(', ').toLowerCase()}`, () => {
+          onRemoveFilter('status');
+        })}
+        {!filterAndSortForm.filter.type.includes('ALL') && onRenderFilterOption(`${filterAndSortForm.filter.type.join(', ').toLowerCase()}`, () => {
+          onRemoveFilter('type')
+        })}
+        {!filterAndSortForm.filter.frequency.includes('ALL') && onRenderFilterOption(`${filterAndSortForm.filter.frequency.join(', ').toLowerCase()}`, () => {
+          onRemoveFilter('frequency')
+        })}
+      </ScrollView>
+    );
+  };
+
   const filterCondition = (project) => {
     return (filterAndSortForm.filter.status.includes('ALL') || filterAndSortForm.filter.status.includes(project.status))
       && (filterAndSortForm.filter.type.includes('ALL') || filterAndSortForm.filter.type.includes(project.type))
       && (filterAndSortForm.filter.frequency.includes('ALL') || filterAndSortForm.filter.frequency.includes(project.timeLogFrequency));
   };
 
+  const searchCondition = (project) => {
+    return isEmpty(keyword) || project.name.toLowerCase().includes(keyword.toLowerCase()) || project.code.toLowerCase().includes(keyword.toLowerCase());
+  };
+
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <React.Fragment>
+      <View style={styles.sectionSearch}>
+        <View style={styles.viewSearch}>
+          <AntDesign
+            name={'search1'}
+            size={pxPhone(15)}
+            color={theme["color-dark-100"]}
+          />
+          <TextInput
+            maxLength={256}
+            value={keyword}
+            autoCapitalize='none'
+            style={styles.inputSearch}
+            placeholder={'Search by Name, Code'}
+            placeholderTextColor={theme["color-dark-100"]}
+            onChangeText={text => setKeyword(text)}
+          />
+          {!isEmpty(keyword) &&
+            <AntDesign
+              onPress={() => setKeyword('')}
+              name={'closecircle'}
+              size={pxPhone(15)}
+              color={theme["color-dark-100"]}
+            />}
+        </View>
+        {onRenderFilterOptions()}
+      </View>
       <ScrollView style={styles.container}>
-        {projects && orderBy(projects.filter(filterCondition), filterAndSortForm.sort.sortField).map((item, index) => {
-          let color;
-          switch (item.status) {
-            case 'NEW':
-              color = '#5584FF';
-              break;
-            case 'ARCHIVED':
-              color = '#D86667';
-              break;
-            case 'SUSPEND':
-              color = '#7D61C8';
-              break;
-            case 'RUNNING':
-              color = 'green';
-              break;
-            default:
-              break;
-          }
-          return (
-            <TouchableOpacity
-              activeOpacity={0.75}
-              onPress={() => onItemPress(item)}
-              key={index}
-              style={[styles.viewProject, (index === projects.length - 1) && { marginBottom: pxPhone(80) }]}>
-              <View style={[styles.vertical, { backgroundColor: color }]}>
-              </View>
-              <View
-                style={{ flex: 1, padding: pxPhone(12), }}>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', zIndex: 1, }}>
-                  <View style={{ width: '75%' }}>
-                    <Text style={styles.name}>
-                      {item.name}
-                    </Text>
-                  </View>
-                  {item.status !== 'ARCHIVED' && <Entypo
-                    name={'dots-three-vertical'}
-                    size={pxPhone(15)}
-                    color={'gray'}
-                  />}
-                  {/* {projectSelected && (item.code === projectSelected.code)} */}
+        {projects && orderBy(projects.filter(filterCondition), filterAndSortForm.sort.sortField)
+          .filter(searchCondition)
+          .map((item, index) => {
+            let color = theme[item.status];
+            return (
+              <TouchableOpacity
+                activeOpacity={0.75}
+                onPress={() => onItemPress(item)}
+                key={index}
+                style={[
+                  styles.viewProject,
+                  (index === projects.length - 1) && { marginBottom: pxPhone(80) },
+                  (index === 0 && { marginTop: pxPhone(1) })
+                ]}>
+                <View style={[styles.vertical, { backgroundColor: color }]}>
                 </View>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: pxPhone(11) }}>
-                  <View style={{ flex: 3 }}>
-                    <View>
-                      <Text
-                        style={styles.label}>
-                        {'Status'}
-                      </Text>
-                      <Text numberOfLines={1} style={[styles.value, { color }]}>
-                        {statusEnum[item.status]}
+                <View
+                  style={{ flex: 1, padding: pxPhone(12), }}>
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', zIndex: 1, }}>
+                    <View style={{ width: '75%' }}>
+                      <Text style={styles.name}>
+                        {item.name}
                       </Text>
                     </View>
+                    {item.status !== 'ARCHIVED' && <Entypo
+                      name={'dots-three-vertical'}
+                      size={pxPhone(15)}
+                      color={'gray'}
+                    />}
+                    {/* {projectSelected && (item.code === projectSelected.code)} */}
                   </View>
-                  <View style={{ flex: 3, alignItems: 'flex-start' }}>
-                    <View>
-                      <Text style={[styles.label]}>
-                        {'Type'}
-                      </Text>
-                      <Text
-                        numberOfLines={1}
-                        style={[styles.value]}>
-                        {typeEnum[item.type]}
-                      </Text>
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: pxPhone(11) }}>
+                    <View style={{ flex: 3 }}>
+                      <View>
+                        <Text
+                          style={styles.label}>
+                          {'Status'}
+                        </Text>
+                        <Text numberOfLines={1} style={[styles.value, { color }]}>
+                          {statusEnum[item.status]}
+                        </Text>
+                      </View>
                     </View>
-                  </View>
-                  <View style={{ flex: 2, alignItems: 'center' }}>
-                    <View>
+                    <View style={{ flex: 3, alignItems: 'flex-start' }}>
+                      <View>
+                        <Text style={[styles.label]}>
+                          {'Type'}
+                        </Text>
+                        <Text
+                          numberOfLines={1}
+                          style={[styles.value]}>
+                          {typeEnum[item.type]}
+                        </Text>
+                      </View>
+                    </View>
+                    <View style={{ flex: 2, alignItems: 'center' }}>
+                      <View>
+                        <Text style={styles.label}>
+                          {'Code'}
+                        </Text>
+                        <Text numberOfLines={1} style={[styles.value, { fontWeight: 'bold' }]}>
+                          {item.code}
+                        </Text>
+                      </View>
+                    </View>
+                    <View style={{ flex: 2, alignItems: 'flex-end' }}>
                       <Text style={styles.label}>
-                        {'Code'}
+                        {'Prefix'}
                       </Text>
                       <Text numberOfLines={1} style={[styles.value, { fontWeight: 'bold' }]}>
-                        {item.code}
+                        {item.ticketPrefix}
                       </Text>
                     </View>
                   </View>
-                  <View style={{ flex: 2, alignItems: 'flex-end' }}>
-                    <Text style={styles.label}>
-                      {'Prefix'}
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <Text>
+                      {`${item.owner}`}
                     </Text>
-                    <Text numberOfLines={1} style={[styles.value, { fontWeight: 'bold' }]}>
-                      {item.ticketPrefix}
+                    <Text>
+                      {frequencyEnum[item.timeLogFrequency]}
                     </Text>
                   </View>
                 </View>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                  <Text>
-                    {`${item.owner}`}
-                  </Text>
-                  <Text>
-                    {frequencyEnum[item.timeLogFrequency]}
-                  </Text>
-                </View>
-              </View>
-            </TouchableOpacity>
-          );
-        })}
+              </TouchableOpacity>
+            );
+          })}
       </ScrollView>
       {projectSelected && renderModal()}
       <TouchableOpacity
@@ -280,13 +361,14 @@ export default ProjectsScreen = (props) => {
           color={'white'}
         />
       </TouchableOpacity>
-    </SafeAreaView>
+    </React.Fragment>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'white',
   },
   status: {
     fontWeight: 'normal',
@@ -297,7 +379,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   viewProject: {
-    margin: pxPhone(10),
+    margin: pxPhone(7.5),
     flexDirection: 'row',
     width: '90%',
     backgroundColor: 'white',
@@ -354,5 +436,50 @@ const styles = StyleSheet.create({
   txtOption: {
     margin: pxPhone(10),
     fontSize: pxPhone(18),
+  },
+  sectionSearch: {
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    backgroundColor: 'white',
+  },
+  viewSearch: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '90%',
+    height: pxPhone(40),
+    borderRadius: pxPhone(5),
+    borderWidth: pxPhone(1),
+    marginTop: pxPhone(13),
+    marginBottom: pxPhone(5),
+    paddingHorizontal: pxPhone(10),
+    borderColor: theme["color-dark-100"]
+  },
+  inputSearch: {
+    flex: 1,
+    fontSize: pxPhone(14),
+    marginHorizontal: pxPhone(5),
+    color: theme['color-dark-1000'],
+    ...textStyle.regular,
+    padding: 0,
+  },
+  viewFilterOption: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: pxPhone(25),
+    marginRight: pxPhone(10),
+    paddingHorizontal: pxPhone(10),
+    borderRadius: pxPhone(16.25),
+    backgroundColor: theme['color-custom-2100'],
+  },
+  textFilterOption: {
+    fontSize: pxPhone(12),
+    marginRight: pxPhone(5),
+    ...textStyle.regular,
+  },
+  sectionFilterOption: {
+    width: '90%',
+    marginBottom: pxPhone(7),
+    marginTop: pxPhone(3),
   },
 });
