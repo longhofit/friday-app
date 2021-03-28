@@ -123,10 +123,7 @@ export default TimeLogReportScreen = (props) => {
     );
   };
   const onDatePress = (date) => {
-    const newDate = new Date(startDate);
-    newDate.setDate(date.day);
-    newDate.setMonth(date.month - 1);
-    newDate.setFullYear(date.year);
+    const newDate = new Date(date.dateString);
     dateType === 'startDate' ? setStartDate(newDate) : setEndDate(newDate);
     setIsShowDatePicker(false);
   };

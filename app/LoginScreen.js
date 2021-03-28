@@ -26,6 +26,7 @@ import EmployeesService from './services/employees.service';
 import { onGetEmployees } from '../core/store/reducer/employee/actions';
 import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-community/async-storage';
+import FirebaseService from './services/firebase.service';
 export default LoginScreen = (props) => {
   const [state, setState] = useState({
     username: '',
@@ -49,10 +50,10 @@ export default LoginScreen = (props) => {
   };;
 
   const getToken = async() => {
-
     let fcmToken = await AsyncStorage.getItem('fcmToken');
       if (!fcmToken) {
-        const response = messaging().getToken();
+        const response = await messaging().getToken();
+        console.log("response = ", result);
         response
           .then(async(result) => {
             console.log("token = ", result);
@@ -62,17 +63,9 @@ export default LoginScreen = (props) => {
           .catch((error) => {
             console.log("error = ", error);
           })
-    }
-
-    // const response = messaging().getToken();
-    // console.log("response = ", response);
-    // response
-    //     .then((result) => {
-    //       console.log("token = ", result);
-    //     })
-    //     .catch((error) => {
-    //       console.log("error = ", error);
-    //     })
+      }else{
+        console.log("fcmToken get AsyncStorage = ", fcmToken);
+      }
   }
   useEffect(() => {
     getToken();
@@ -82,8 +75,51 @@ export default LoginScreen = (props) => {
 
     const { navigation } = props;
     signIn({ username: state.username, password: state.password })
-      .then((token) => {
+      .then(async(token) => {
         dispatch(onSetToken(token.access_token));
+        console.log("token:",token.access_token);
+
+        let fcmToken = await AsyncStorage.getItem('fcmToken');
+        if (!fcmToken) {
+          const response = await messaging().getToken();
+          response
+            .then(async(result) => {
+              var fireBaseService = new FirebaseService();
+              const res = fireBaseService.pushNotification(JSON.stringify({
+                topicName: "string",
+                tokens: [
+                  result,
+                ]
+              }))
+              res.then((result) => {
+                console.log("result = ", result);
+              }).catch((e) => {
+                console.log("error = ", error);
+              })
+              fcmToken = result;
+              await AsyncStorage.setItem('fcmToken', fcmToken);
+            })
+            .catch((error) => {
+              console.log("error = ", error);
+            })
+        }else{
+          console.log("FcmToken != null")
+          var fireBaseService = new FirebaseService();
+          const res = fireBaseService.pushNotification(JSON.stringify({
+            topicName: "string",
+            tokens: [
+              fcmToken
+            ]
+          }))
+          res.then((result) => {
+            console.log("success");
+            console.log("result = ", result);
+          }).catch((error) => {
+            console.log("fail");
+            console.log("error = ", error);
+          })
+        }
+
         const employeesService = new EmployeesService();
         employeesService.getAllEmployee().then(data => {
           dispatch(onGetEmployees(data));
