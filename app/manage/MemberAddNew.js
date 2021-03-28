@@ -12,7 +12,6 @@ import { Picker } from '@react-native-picker/picker';
 import ProjectService from '../services/project.service';
 import { showToastWithGravityAndOffset } from '../../core/utils/utils'
 import { useSelector } from 'react-redux';
-import { da } from 'date-fns/locale';
 
 export default MemberAddNew = ({ route, navigation }) => {
   const { id, onAddMemmberSuccess } = route.params;
@@ -25,7 +24,7 @@ export default MemberAddNew = ({ route, navigation }) => {
     onBoardDate: new Date(),
     offBoardDate: '',
     active: true,
-    name: '',
+    name: employeeState && employeeState.length > 0 && employeeState[0].name,
   };
 
   const [form, setForm] = useState(initForm);
@@ -63,6 +62,7 @@ export default MemberAddNew = ({ route, navigation }) => {
       },
       headerTitle: isUpdate ? `Update member` : 'Add new member',
     });
+    console.log(form)
   }, [navigation, form]);
 
   useEffect(() => {

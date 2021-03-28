@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import {
   StyleSheet,
   Text,
   View,
   TouchableOpacity,
+  TouchableHighlight,
   ScrollView,
   RefreshControl,
 } from 'react-native';
@@ -12,18 +13,38 @@ import ProjectService from '../services/project.service';
 import Entypo from 'react-native-vector-icons/Entypo'
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 import AntDesign from 'react-native-vector-icons/AntDesign'
-import { useIsFocused } from '@react-navigation/native';
 import { TouchableOpacity as Touch } from 'react-native-gesture-handler'
 import { useSelector, useDispatch } from 'react-redux';
 import { SearchInput } from '../components/input/inputV1.component';
 import _, { set } from 'lodash'
 import { yyyMMddFormatter } from '../../core/formatters';
+import { textStyle } from '../components/styles/style';
 
 export default ProjectMemberScreen = ({ route, navigation }) => {
-  const { id } = route.params;
+  const id = route.params.project.code;
   const [members, setMembers] = useState([]);
   const employeeState = useSelector(state => state.employee.employees);
   const [memberSelect, setMemberSelect] = useState();
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => {
+        return (
+          <TouchableOpacity
+            onPress={onEditPress}
+            style={{ flex: 1, paddingRight: pxPhone(16), justifyContent: 'center' }}>
+            <AntDesign
+              name={'edit'}
+              size={pxPhone(22)}
+              color={'black'}
+            />
+          </TouchableOpacity>
+        );
+      },
+      headerTitle: route.params.project.name,
+    });
+  }, [route]);
+
 
   useEffect(() => {
     getProjectMembers();
@@ -32,6 +53,10 @@ export default ProjectMemberScreen = ({ route, navigation }) => {
       setMembers([]);
     }
   }, [id])
+
+  const onEditPress = () => {
+    route.params.onAddOrEditProject();
+  };
 
   const getProjectMembers = async () => {
     try {
@@ -85,7 +110,7 @@ export default ProjectMemberScreen = ({ route, navigation }) => {
             </Touch>}
           </View>}
         </View>
-        <Text>
+        <Text style={styles.txtRole}>
           {item.role}
         </Text>
         <View style={{ justifyContent: 'space-between', flexDirection: 'row', paddingVertical: pxPhone(5) }}>
@@ -95,11 +120,14 @@ export default ProjectMemberScreen = ({ route, navigation }) => {
               size={pxPhone(15)}
               color={item.active ? 'green' : 'red'}
             />
-            <Text style={{ fontWeight: 'bold', color: item.active ? 'green' : 'red', marginLeft: pxPhone(5) }}>
+            <Text style={[
+              { color: item.active ? 'green' : 'red' },
+              styles.txtStatus,
+            ]}>
               {item.active ? 'Active' : 'Inactive'}
             </Text>
           </View>
-          <Text >
+          <Text style={styles.txtLabel}>
             <Text style={{ color: 'gray' }}>
               {'Comment: '}
             </Text>
@@ -107,15 +135,15 @@ export default ProjectMemberScreen = ({ route, navigation }) => {
           </Text>
         </View>
         <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
-          <Text >
+          <Text style={styles.txtLabel}>
             <Text style={{ color: 'gray' }}>
-              {'On Boarding: '}
+              {'On Board: '}
             </Text>
             {item.onBoardDate}
           </Text>
-          {<Text >
+          {<Text style={styles.txtLabel}>
             <Text style={{ color: 'gray' }}>
-              {'Off Boarding: '}
+              {'Off Board: '}
             </Text>
             {item.offBoardDate ? item.offBoardDate : 'None'}
           </Text>}
@@ -246,8 +274,9 @@ const styles = StyleSheet.create({
     padding: pxPhone(12),
   },
   name: {
-    fontWeight: 'bold',
-    fontSize: pxPhone(18),
+    fontSize: pxPhone(16),
+    ...textStyle.bold,
+    color: 'black',
   },
   option: {
     position: 'absolute',
@@ -274,5 +303,20 @@ const styles = StyleSheet.create({
   searchInput: {
     width: '95%',
     alignSelf: 'center',
+  },
+  txtRole: {
+    fontSize: pxPhone(14),
+    ...textStyle.semibold,
+    color: 'black',
+  },
+  txtStatus: {
+    marginLeft: pxPhone(5),
+    fontSize: pxPhone(14),
+    ...textStyle.bold,
+  },
+  txtLabel: {
+    color: 'black',
+    fontSize: pxPhone(14),
+    ...textStyle.regular,
   },
 });

@@ -11,7 +11,7 @@ import {
   DrawerItem,
   DrawerContentScrollView,
 } from '@react-navigation/drawer';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
 import { menuItems } from './core/constant/menuSideBarConstant';
 import { store, persistor } from './core/store';
 import EmployeesScreen from './app/manage/EmployeesScreen.js';
@@ -49,6 +49,8 @@ import Feather from 'react-native-vector-icons/Feather';
 import FilterTimeLog from './app/TimeLog/FilterScreen';
 import SortScreen from './app/manage/SortScreen.js';
 import { textStyle } from './app/components/styles/style.js';
+import { ThemeColors } from 'react-navigation';
+import { theme } from './app/theme/appTheme.js';
 LogBox.ignoreAllLogs();
 
 const screenOptionsDefault = (props) => {
@@ -183,24 +185,34 @@ const App = () => {
     );
   };
 
-  const Tab = createBottomTabNavigator();
+  const Tab = createMaterialTopTabNavigator();
 
   const ManageTabNavigator = () => {
     return (
-      <Tab.Navigator initialRouteName={'Project'}>
+      <Tab.Navigator
+        tabBarOptions={{
+          showIcon: true,
+          activeTintColor: theme["color-active"],
+          inactiveTintColor: 'gray',
+          contentContainerStyle: { height: pxPhone(55) },
+
+        }}
+        tabBarPosition={'bottom'}
+        initialRouteName={'Project'}>
         <Tab.Screen
           name="Project"
           component={ProjectStack}
           options={{
-            tabBarIcon: ({ color, size }) => {
+            tabBarIcon: ({ color }) => {
+              console.log(color)
               return <Ionicons
                 name={'ios-newspaper-sharp'}
-                size={size}
+                size={pxPhone(22)}
                 color={color}
               />
             },
             tabBarLabel: ({ color }) => {
-              return <Text style={{ color, fontSize: pxPhone(12) }}>
+              return <Text style={{ color, fontSize: pxPhone(12), ...textStyle.semibold }}>
                 {'Projects'}
               </Text>
             },
@@ -213,12 +225,12 @@ const App = () => {
             tabBarIcon: ({ color, size }) => {
               return <Ionicons
                 name={'md-settings-sharp'}
-                size={size}
+                size={pxPhone(23)}
                 color={color}
               />
             },
             tabBarLabel: ({ color }) => {
-              return <Text style={{ color, fontSize: pxPhone(12) }}>
+              return <Text style={{ color, fontSize: pxPhone(12), ...textStyle.semibold, paddingBottom: pxPhone(2) }}>
                 {'Setting'}
               </Text>
             },
@@ -229,11 +241,10 @@ const App = () => {
           component={EmployeesStack}
           options={{
             tabBarIcon: ({ color, focused, size }) => {
-              console.log(color, focused, size);
-              return myButton('users', color)
+              return <Icon name={'users'} size={pxPhone(20)} color={color} />
             },
             tabBarLabel: ({ color }) => {
-              return <Text style={{ color, fontSize: pxPhone(12) }}>
+              return <Text style={{ color, fontSize: pxPhone(12), ...textStyle.semibold, paddingBottom: pxPhone(2) }}>
                 {'Employees'}
               </Text>
             },
@@ -245,20 +256,27 @@ const App = () => {
 
   const VacationTabNavigator = () => {
     return (
-      <Tab.Navigator>
+      <Tab.Navigator
+        tabBarOptions={{
+          showIcon: true,
+          activeTintColor: theme["color-active"],
+          inactiveTintColor: 'gray',
+          contentContainerStyle: { height: pxPhone(55) },
+        }}
+        tabBarPosition={'bottom'}>
         <Tab.Screen
           name="Dashboard"
           component={DashboardScreen}
           options={{
-            tabBarIcon: ({ color, focused, size }) => {
+            tabBarIcon: ({ color }) => {
               return <Icon
                 name={'calendar-o'}
-                size={size}
+                size={pxPhone(22)}
                 color={color}
               />
             },
-            tabBarLabel: ({ focused, color, position }) => {
-              return <Text style={{ color, fontSize: pxPhone(12) }}>
+            tabBarLabel: ({ color }) => {
+              return <Text style={{ color, fontSize: pxPhone(12), ...textStyle.semibold, paddingBottom: pxPhone(2) }}>
                 {'Absence'}
               </Text>
             },
@@ -270,13 +288,14 @@ const App = () => {
           options={{
             tabBarIcon: ({ color, focused, size }) => {
               return <Icon
+                style={{ bottom: pxPhone(-2) }}
                 name={'line-chart'}
-                size={size}
+                size={pxPhone(22)}
                 color={color}
               />
             },
-            tabBarLabel: ({ focused, color, position }) => {
-              return <Text style={{ color, fontSize: pxPhone(12) }}>
+            tabBarLabel: ({ color }) => {
+              return <Text style={{ color, fontSize: pxPhone(12), ...textStyle.semibold, paddingBottom: pxPhone(2) }}>
                 {'Reports'}
               </Text>
             },
@@ -295,6 +314,7 @@ const App = () => {
           },
           headerTitleAlign: 'center',
           headerTitleStyle: styles.txtTitle,
+          ...TransitionPresets.SlideFromRightIOS,
         }}>
         <Stack.Screen
           name="Project"
@@ -330,6 +350,7 @@ const App = () => {
           component={ProjectAddNew}
           options={{
             title: 'Add new project',
+            ...TransitionPresets.ModalPresentationIOS,
           }}
         />
 
@@ -346,6 +367,7 @@ const App = () => {
           component={MemberAddNew}
           options={{
             title: 'Add new member',
+            ...TransitionPresets.ModalPresentationIOS,
           }}
         />
         <Stack.Screen
@@ -353,42 +375,44 @@ const App = () => {
           component={FilterAndSortTab}
           options={{
             title: 'Filter and Sort',
+            ...TransitionPresets.SlideFromRightIOS,
           }}
         />
         <Stack.Screen
           name="Picker"
           component={PickerComponent}
+          options={{
+            ...TransitionPresets.ModalPresentationIOS,
+          }}
         />
       </Stack.Navigator>
     );
   };
 
-  const TabView = createMaterialTopTabNavigator();
-
   const FilterAndSortTab = () => {
     return (
-      <TabView.Navigator
+      <Tab.Navigator
         tabBarOptions={{
           style: { backgroundColor: '#9AC4F8' },
           labelStyle: styles.txtTitleFilter,
         }}
       >
-        <TabView.Screen name="Filter" component={FilterProject} />
-        <TabView.Screen name="Sort" component={SortScreen} />
-      </TabView.Navigator>
+        <Tab.Screen name="Filter" component={FilterProject} />
+        <Tab.Screen name="Sort" component={SortScreen} />
+      </Tab.Navigator>
     );
   }
 
   const FilterAndSortTabTimeLog = () => {
     return (
-      <TabView.Navigator
+      <Tab.Navigator
         tabBarOptions={{
           style: { backgroundColor: '#9AC4F8' },
           labelStyle: styles.txtTitleFilter,
         }}>
-        <TabView.Screen name="Filter" component={FilterTimeLog} />
-        <TabView.Screen name="Sort" component={FilterTimeLog} />
-      </TabView.Navigator>
+        <Tab.Screen name="Filter" component={FilterTimeLog} />
+        <Tab.Screen name="Sort" component={FilterTimeLog} />
+      </Tab.Navigator>
     );
   }
 
@@ -461,20 +485,27 @@ const App = () => {
 
   const TimelogTabNavigator = () => {
     return (
-      <Tab.Navigator>
+      <Tab.Navigator
+        tabBarOptions={{
+          showIcon: true,
+          activeTintColor: theme["color-active"],
+          inactiveTintColor: 'gray',
+          contentContainerStyle: { height: pxPhone(55) },
+        }}
+        tabBarPosition={'bottom'}>
         <Tab.Screen
           name="TimeLog"
           component={TimelogStack}
           options={{
-            tabBarIcon: ({ color, focused, size }) => {
+            tabBarIcon: ({ color }) => {
               return <Icon
                 name={'clock-o'}
-                size={size}
+                size={pxPhone(22)}
                 color={color}
               />
             },
             tabBarLabel: ({ focused, color, position }) => {
-              return <Text style={{ color, fontSize: pxPhone(12) }}>
+              return <Text style={{ color, fontSize: pxPhone(12), ...textStyle.semibold, paddingBottom: pxPhone(2) }}>
                 {'TimeLog'}
               </Text>
             },
@@ -484,15 +515,15 @@ const App = () => {
           name="Report"
           component={ReportTimelogStack}
           options={{
-            tabBarIcon: ({ color, focused, size }) => {
+            tabBarIcon: ({ color }) => {
               return <Icon
                 name={'line-chart'}
-                size={size}
+                size={pxPhone(22)}
                 color={color}
               />
             },
-            tabBarLabel: ({ focused, color, position }) => {
-              return <Text style={{ color, fontSize: pxPhone(12) }}>
+            tabBarLabel: ({ color }) => {
+              return <Text style={{ color, fontSize: pxPhone(12), ...textStyle.semibold, paddingBottom: pxPhone(2) }}>
                 {'Report'}
               </Text>
             },
@@ -511,6 +542,7 @@ const App = () => {
           },
           headerTitleAlign: 'center',
           headerTitleStyle: styles.txtTitle,
+          ...TransitionPresets.ModalPresentationIOS,
         }}>
         <Stack.Screen
           name="Reports"
@@ -646,7 +678,7 @@ const App = () => {
     );
   };
 
-  const theme = {
+  const themeProvider = {
     ...DefaultTheme,
     roundness: 2,
     colors: {
@@ -659,7 +691,7 @@ const App = () => {
   return (
     <Provider store={store}>
       <SafeAreaProvider>
-        <PaperProvider theme={theme}>
+        <PaperProvider theme={themeProvider}>
           <PersistGate
             persistor={persistor}>
             <DynamicStatusBar barStyle='light-content' />
@@ -679,7 +711,7 @@ const styles = StyleSheet.create({
     ...textStyle.bold,
     color: 'black',
   },
-  txtTitleFilter:{
+  txtTitleFilter: {
     fontSize: pxPhone(16),
     ...textStyle.semibold,
     color: 'black',

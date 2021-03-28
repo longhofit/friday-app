@@ -22,6 +22,7 @@ import { TextInput } from 'react-native-paper';
 import { Picker } from '@react-native-picker/picker';
 import ProjectService from '../services/project.service';
 import { showToastWithGravityAndOffset } from '../../core/utils/utils'
+import { statusEnum } from '../../core/constant/project';
 
 export default ProjectAddNew = ({ route, navigation }) => {
   const initForm = {
@@ -96,7 +97,7 @@ export default ProjectAddNew = ({ route, navigation }) => {
   };
 
   useEffect(() => {
-    console.log(form)
+    console.log('form', form)
   }, [form]);
 
   const setName = (name) => {
@@ -146,6 +147,13 @@ export default ProjectAddNew = ({ route, navigation }) => {
     setForm({
       ...form,
       timeLogFrequency,
+    });
+  };
+
+  const setStatus = (status) => {
+    setForm({
+      ...form,
+      status,
     });
   };
 
@@ -247,6 +255,23 @@ export default ProjectAddNew = ({ route, navigation }) => {
             <Picker.Item label={'Monthly'} value="MONTHLY" />
           </Picker>
         </View>
+        {isUpdate && <View style={styles.picker}>
+          <View style={styles.pickerMask}>
+            <Text style={{ color: '#585858', fontSize: pxPhone(12) }}>
+              {'Status'}
+            </Text>
+          </View>
+          <Picker
+            style={{ flex: 1 }}
+            selectedValue={form.status}
+            onValueChange={setStatus}
+          >
+            <Picker.Item label={'New'} value={'NEW'} />
+            <Picker.Item label={'Suspend'} value={'SUSPEND'} />
+            <Picker.Item label={'Archive'} value={'ARCHIVED'} />
+            <Picker.Item label={'Running'} value={'RUNNING'} />
+          </Picker>
+        </View>}
       </View>
     </ScrollView>
   );
