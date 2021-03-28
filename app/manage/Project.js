@@ -299,7 +299,7 @@ export default ProjectsScreen = (props) => {
                 <Text style={styles.label}>
                   {'Code'}
                 </Text>
-                <Text numberOfLines={1} style={[styles.value, { fontWeight: 'bold' }]}>
+                <Text numberOfLines={1} style={[styles.value, {...textStyle.semibold}]}>
                   {item.code}
                 </Text>
               </View>
@@ -308,13 +308,13 @@ export default ProjectsScreen = (props) => {
               <Text style={styles.label}>
                 {'Prefix'}
               </Text>
-              <Text numberOfLines={1} style={[styles.value, { fontWeight: 'bold' }]}>
+              <Text numberOfLines={1} style={[styles.value, {...textStyle.semibold}]}>
                 {item.ticketPrefix}
               </Text>
             </View>
           </View>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-            <Text>
+            <Text style={{ fontSize: pxPhone(14), ...textStyle.semibold }}>
               {`${item.owner}`}
             </Text>
             <Text>
@@ -385,8 +385,9 @@ const styles = StyleSheet.create({
     fontSize: pxPhone(14),
   },
   name: {
-    fontSize: pxPhone(17),
-    fontWeight: 'bold',
+    fontSize: pxPhone(16),
+    ...textStyle.bold,
+    color: 'black',
   },
   viewProject: {
     margin: pxPhone(7.5),
@@ -406,10 +407,13 @@ const styles = StyleSheet.create({
   },
   label: {
     color: 'gray',
+    fontSize: pxPhone(14),
+    ...textStyle.regular,
   },
   value: {
     marginTop: pxPhone(3),
-
+    fontSize: pxPhone(14),
+    ...textStyle.regular,
   },
   vertical: {
     width: pxPhone(5),
@@ -445,7 +449,8 @@ const styles = StyleSheet.create({
   },
   txtOption: {
     margin: pxPhone(10),
-    fontSize: pxPhone(18),
+    fontSize: pxPhone(16),
+    ...textStyle.semibold,
   },
   sectionSearch: {
     justifyContent: 'flex-end',
