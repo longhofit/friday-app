@@ -16,7 +16,7 @@ import _, { groupBy } from 'lodash';
 import TimeLogSummaryScreen from './TimeLogSummaryScreen';
 import { useDispatch, useSelector } from 'react-redux';
 import { onFilterSortTimeLog } from '../../core/store/reducer/session/actions';
-import Feather from 'react-native-vector-icons/Feather';
+import { textStyle } from '../components/styles/style';
 export default TimeLogReportScreen = (props) => {
   const filterAndSortForm = useSelector(state => state.session.timeLogFilterAndSort);
   const dispatch = useDispatch();
@@ -433,5 +433,6 @@ const styles = StyleSheet.create({
     borderBottomColor: 'darkgray',
     paddingVertical: pxPhone(8),
     marginHorizontal: pxPhone(15),
+    ...textStyle.bold
   },
 });

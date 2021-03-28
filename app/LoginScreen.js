@@ -52,8 +52,8 @@ export default LoginScreen = (props) => {
   const getToken = async() => {
     let fcmToken = await AsyncStorage.getItem('fcmToken');
       if (!fcmToken) {
-        const response = await messaging().getToken();
-        console.log("response = ", result);
+        const response = messaging().getToken();
+        console.log("response = ", response);
         response
           .then(async(result) => {
             console.log("token = ", result);
@@ -81,7 +81,7 @@ export default LoginScreen = (props) => {
 
         let fcmToken = await AsyncStorage.getItem('fcmToken');
         if (!fcmToken) {
-          const response = await messaging().getToken();
+          const response = messaging().getToken();
           response
             .then(async(result) => {
               var fireBaseService = new FirebaseService();

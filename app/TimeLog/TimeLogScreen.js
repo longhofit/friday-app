@@ -13,6 +13,7 @@ import moment from 'moment';
 import _, {groupBy} from 'lodash';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import TimeLogSummaryScreen from './TimeLogSummaryScreen';
+import { textStyle } from '../components/styles/style';
 export default TimeLogScreen = (props) => {
   const [startDate, setStartDate] = useState(
     new Date(
@@ -150,6 +151,7 @@ const styles = StyleSheet.create({
     borderBottomColor: 'darkgray',
     paddingVertical: pxPhone(8),
     marginHorizontal: pxPhone(15),
+    ...textStyle.bold
   },
   icon: {
     position: 'absolute',

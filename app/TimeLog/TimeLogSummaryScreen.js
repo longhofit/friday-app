@@ -16,6 +16,7 @@ import _, {groupBy} from 'lodash';
 import {IconCheck2} from '../assets/icons';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Checkbox} from 'react-native-paper';
+import { textStyle } from '../components/styles/style';
 export default TimeLogSummaryScreen = (props) => {
   const [checked, setChecked] = useState(false);
   const [checkedExtraData, setCheckedExtraData] = useState(false);
@@ -64,7 +65,7 @@ export default TimeLogSummaryScreen = (props) => {
         color = 'green';
         break;
       case 'ANALYZE':
-        color = 'yellow';
+        color = '#e3f91c';
         break;
       case 'UI_DESIGN':
         color = 'orange';
@@ -126,29 +127,29 @@ export default TimeLogSummaryScreen = (props) => {
             marginLeft: pxPhone(8),
             width: '95%',
           }}>
-          <Text style={{fontSize: pxPhone(16), fontWeight: 'bold'}}>
+          <Text style={{fontSize: pxPhone(16), ...textStyle.bold}}>
             {item.name} - {item.projectOwner}
           </Text>
-          <Text style={{fontSize: pxPhone(15), color: color}}>
+          <Text style={{fontSize: pxPhone(15), color: color, ...textStyle.regular}}>
             {item.activity}
           </Text>
-          <Text style={{fontSize: pxPhone(14)}}>{item.comment}</Text>
+          <Text style={{fontSize: pxPhone(14), ...textStyle.regular}}>{item.comment}</Text>
           <View
             style={{
               flexDirection: 'row',
               justifyContent: 'space-between',
               alignItems: 'center',
             }}>
-            <Text style={{fontSize: pxPhone(14)}}>{item.ticket}</Text>
+            <Text style={{fontSize: pxPhone(14), ...textStyle.semibold}}>{item.ticket}</Text>
             
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <Text style={{fontSize: pxPhone(14)}}>
+              <Text style={{fontSize: pxPhone(14), ...textStyle.regular}}>
                 {moment(item.startFrom, 'HH:mm:ss').format('hh:mm A')}
               </Text>
-              <Text style={{fontSize: pxPhone(14), marginLeft: pxPhone(7)}}>
+              <Text style={{fontSize: pxPhone(14), marginLeft: pxPhone(7), ...textStyle.regular}}>
                 {hours + ':'}
               </Text>
-              <Text style={{fontSize: pxPhone(14)}}>{minutes}</Text>
+              <Text style={{fontSize: pxPhone(14), ...textStyle.regular}}>{minutes}</Text>
               {item.status === 'NEW' ? (
                 <TouchableOpacity onPress={(e) => onPressConfirm(e, item.id)}>
                   {IconCheck2({
@@ -370,6 +371,7 @@ const styles = StyleSheet.create({
     marginTop: pxPhone(5),
     marginBottom: pxPhone(3),
     paddingVertical: pxPhone(8),
+    ...textStyle.extrabold
   },
   vertical: {
     width: pxPhone(5),
