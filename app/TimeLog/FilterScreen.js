@@ -11,10 +11,6 @@ import { Hr } from '../components/hr/hr.component';
 import { onFilterSortTimeLog } from '../../core/store/reducer/session/actions';
 export default FilterTimeLog = ({ route, navigation }) => {
   const filterAndSortForm = useSelector(state => state.session.timeLogFilterAndSort);
-  console.log("filterAndSortForm.filter.activity:",filterAndSortForm.filter.activity);
-  console.log("filterAndSortForm.filter.project:",filterAndSortForm.filter.project);
-  console.log("filterAndSortForm.menuFilter.activity:",filterAndSortForm.menuFilter.activity);
-  console.log("filterAndSortForm.menuFilter.project:",filterAndSortForm.menuFilter.project);
   const dispatch = useDispatch();
   const onProjectFilterChange = (project) => {
     dispatch(onFilterSortTimeLog({

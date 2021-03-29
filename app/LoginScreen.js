@@ -48,7 +48,26 @@ export default LoginScreen = (props) => {
       50
     );
   };;
-
+  const getToken = async () => {
+    let fcmToken = await AsyncStorage.getItem('fcmToken');
+    if (!fcmToken) {
+      console.log('null ');
+      const response = messaging().getToken();
+      response
+        .then(async(result) => {
+          console.log('FcmToken1 = ', result);
+          await AsyncStorage.setItem('fcmToken', result);
+        })
+        .catch((error) => {
+          console.log('error = ', error);
+        });
+    } else {
+      console.log('FcmToken2 = ', fcmToken);
+    }
+  }
+  useEffect(() => {
+    getToken();
+  }, [])
   const login = () => {
     setState({ ...state, progress: true });
 

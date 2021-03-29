@@ -17,6 +17,7 @@ import TimeLogSummaryScreen from './TimeLogSummaryScreen';
 import { useDispatch, useSelector } from 'react-redux';
 import { onFilterSortTimeLog } from '../../core/store/reducer/session/actions';
 import { textStyle } from '../components/styles/style';
+import { typeData } from '../../core/constant/activity';
 export default TimeLogReportScreen = (props) => {
   const filterAndSortForm = useSelector(state => state.session.timeLogFilterAndSort);
   const dispatch = useDispatch();
@@ -26,8 +27,8 @@ export default TimeLogReportScreen = (props) => {
       activity: ['ALL'],
     },
     menuFilter: {
-      project: [{label: 'ALL', value: 'ALL'}],
-      activity: [{label: 'ALL', value: 'ALL'}],
+      project: [{label: 'All', value: 'ALL'}],
+      activity: [{label: 'All', value: 'ALL'}],
     },
   }
   useEffect(() => {
@@ -139,18 +140,53 @@ export default TimeLogReportScreen = (props) => {
       .then((result) => {
         setRaw(result);
         let arrayP = [];
-        arrayP.push({label: 'ALL', value: 'ALL'});
+        arrayP.push({label: 'All', value: 'ALL'});
         let arrayA = [];
-        arrayA.push({label: 'ALL', value: 'ALL'});
+        arrayA.push({label: 'All', value: 'ALL'});
         result.map((item) => {
           var indexP = arrayP.map(function(e) { return e.label; }).indexOf(item.name);
-          if (indexP <= 0) {
+          if (indexP == -1) {
             arrayP.push({label: item.name, value: item.name});
           }
 
-          var indexA = arrayA.map(function(e) { return e.label; }).indexOf(item.activity);
-          if (indexA <= 0) {
-            arrayA.push({label: item.activity, value: item.activity});
+          var indexA = arrayA.map(function(e) { return e.value; }).indexOf(item.activity);
+          if (indexA == -1) {
+            typeData.forEach(itemTypeData => {
+              if(itemTypeData.value == item.activity){
+                arrayA.push({label: itemTypeData.name, value: item.activity});  
+                return;
+              }
+            })
+            // let valueItem;
+            // switch (item.activity) {
+            //   case 'DEVELOPMENT':
+            //     valueItem = 'Development';
+            //     break;
+            //   case 'VACATION':
+            //     valueItem = 'Vacation';
+            //     break;
+            //   case 'TESTING':
+            //     valueItem = 'Testing';
+            //     break;
+            //   case 'ANALYZE':
+            //     valueItem = 'Analyze/Write specification';
+            //     break;
+            //   case 'UI_DESIGN':
+            //     valueItem = 'Design Estimate workload';
+            //     break;
+            //   case 'EXT_MEETING':
+            //     valueItem = 'Customer Meeting';
+            //     break;
+            //   case 'INT_MEETING':
+            //     valueItem = 'Internal Team Meeting';
+            //     break;
+            //   case 'MANAGEMENT':
+            //     valueItem = 'Management';
+            //     break;
+            //   default:
+            //     break;
+            // }
+            // arrayA.push({label: valueItem, value: item.activity});  
           }
         })
         const initState = {

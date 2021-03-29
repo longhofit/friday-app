@@ -18,46 +18,11 @@ import { format } from 'date-fns';
 import { Calendar } from 'react-native-calendars';
 import TimeLogService from '../services/timelog.service';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { split } from 'lodash';
-import moment from 'moment';
+import { typeData } from '../../core/constant/activity';
 export default TimeLogEditScreen = (props) => {
   const itemSelect = props.route.params.itemSelect;
   const [isShowModalSelectActivity, setIsShowModalSelectActivity] = useState(false);
   const [isShowModalSelectTime, setIsShowModalSelectTime] = useState(false);
-  const activitys = [
-    {
-        name: 'Development',
-        value: 'DEVELOPMENT'
-    },
-    {
-        name: 'Vacation',
-        value: 'VACATION'
-    },
-    {
-        name: 'Testing',
-        value: 'TESTING'
-    },
-    {
-        name: 'Analyze/Write specification',
-        value: 'ANALYZE'
-    },
-    {
-        name: 'Design Estimate workload',
-        value: 'UI_DESIGN'
-    },
-    {
-        name: 'Customer Meeting',
-        value: 'EXT_MEETING'
-    },
-    {
-        name: 'Internal Team Meeting',
-        value: 'INT_MEETING'
-    },
-    {
-        name: 'Management',
-        value: 'MANAGEMENT'
-    }
-  ]
   const [description, setDescription] = useState(itemSelect.comment);
   const [isDescriptionFocus, setIsDescriptionFocus] = useState(false);
   const [activity, setActivity] = useState({
@@ -73,7 +38,7 @@ export default TimeLogEditScreen = (props) => {
   const [minutes, setMinutes] = useState(parseInt(parseInt(itemSelect.duration) % 60));
   const [showButtonSave, setShowButtonSave] = useState(false);
   useEffect(() => {
-    activitys.map((item) => {
+    typeData.map((item) => {
         if(item.value == itemSelect.activity){
             setActivity(item);
             return;
@@ -117,8 +82,8 @@ export default TimeLogEditScreen = (props) => {
               backgroundColor: 'white',
             }}>
             <FlatList
-                data={activitys}
-                extraData={activitys}
+                data={typeData}
+                extraData={typeData}
                 style={{marginBottom: pxPhone(10)}}
                 renderItem={(items) => {
                     return renderDataSelectActivity(items.item);
@@ -168,7 +133,7 @@ export default TimeLogEditScreen = (props) => {
     const timeLogService = new TimeLogService();
     const response = timeLogService.UpdateTimeEntry(JSON.stringify({
       workDate: format(startDate, "yyyy-MM-dd"),
-      startFrom: format(startDate, "hh:mm:ss"),
+      startFrom: format(startDate, "HH:mm:ss"),
       duration: parseInt(hours)*60 + parseInt(minutes),
       comment: description,
       activity: activity.value,

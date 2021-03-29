@@ -26,8 +26,8 @@ const initialState: SessionState = {
       activity: ['ALL'],
     },
     menuFilter:{
-      project: [{label: 'ALL', value: 'ALL'}],
-      activity: [{label: 'ALL', value: 'ALL'}],
+      project: [{label: 'All', value: 'ALL'}],
+      activity: [{label: 'All', value: 'ALL'}],
     },
   },
 };

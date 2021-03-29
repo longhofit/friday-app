@@ -18,44 +18,11 @@ import { format } from 'date-fns';
 import { Calendar } from 'react-native-calendars';
 import TimeLogService from '../services/timelog.service';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { typeData } from '../../core/constant/activity';
 export default TimeLogCreateScreen = (props) => {
   const [isShowModalSelectActivity, setIsShowModalSelectActivity] = useState(false);
   const [isShowModalSelectProject, setIsShowModalSelectProject] = useState(false);
   const [isShowModalSelectTime, setIsShowModalSelectTime] = useState(false);
-  const activitys = [
-    {
-        name: 'Development',
-        value: 'DEVELOPMENT'
-    },
-    {
-        name: 'Vacation',
-        value: 'VACATION'
-    },
-    {
-        name: 'Testing',
-        value: 'TESTING'
-    },
-    {
-        name: 'Analyze/Write specification',
-        value: 'ANALYZE'
-    },
-    {
-        name: 'Design Estimate workload',
-        value: 'UI_DESIGN'
-    },
-    {
-        name: 'Customer Meeting',
-        value: 'EXT_MEETING'
-    },
-    {
-        name: 'Internal Team Meeting',
-        value: 'INT_MEETING'
-    },
-    {
-        name: 'Management',
-        value: 'MANAGEMENT'
-    }
-  ]
   const [description, setDescription] = useState("");
   const [isDescriptionFocus, setIsDescriptionFocus] = useState(false);
   const [projects, setProjects] = useState(null);
@@ -118,8 +85,8 @@ export default TimeLogCreateScreen = (props) => {
               backgroundColor: 'white',
             }}>
             <FlatList
-                data={activitys}
-                extraData={activitys}
+                data={typeData}
+                extraData={typeData}
                 style={{marginBottom: pxPhone(10)}}
                 renderItem={(items) => {
                     return renderDataSelectActivity(items.item);
@@ -218,7 +185,7 @@ export default TimeLogCreateScreen = (props) => {
       comment: description,
       projectCode: project.code,
       workDate: format(startDate, "yyyy-MM-dd"),
-      startFrom: format(startDate, "hh:mm:ss"),
+      startFrom: format(startDate, "HH:mm:ss"),
       duration: parseInt(hours)*60 + parseInt(minutes),
       activity: activity.value,
       ticket: project.code + '-' + ticket,

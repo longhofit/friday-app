@@ -17,6 +17,7 @@ import {IconCheck2} from '../assets/icons';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Checkbox} from 'react-native-paper';
 import { textStyle } from '../components/styles/style';
+import { typeData } from '../../core/constant/activity';
 export default TimeLogSummaryScreen = (props) => {
   const [checked, setChecked] = useState(false);
   const [checkedExtraData, setCheckedExtraData] = useState(false);
@@ -54,30 +55,39 @@ export default TimeLogSummaryScreen = (props) => {
       minutes = '0' + minutes;
     }
     let color;
+    let itemActivity;
     switch (item.activity) {
       case 'DEVELOPMENT':
         color = 'red';
+        itemActivity = 'Development';
         break;
       case 'VACATION':
         color = 'blue';
+        itemActivity = 'Vacation';
         break;
       case 'TESTING':
         color = 'green';
+        itemActivity = 'Testing';
         break;
       case 'ANALYZE':
         color = '#e3f91c';
+        itemActivity = 'Analyze/Write specification';
         break;
       case 'UI_DESIGN':
         color = 'orange';
+        itemActivity = 'Design Estimate workload';
         break;
       case 'EXT_MEETING':
         color = 'pink';
+        itemActivity = 'Customer Meeting';
         break;
       case 'INT_MEETING':
         color = 'gray';
+        itemActivity = 'Internal Team Meeting';
         break;
       case 'MANAGEMENT':
         color = 'purple';
+        itemActivity = 'Management';
         break;
       default:
         break;
@@ -131,7 +141,7 @@ export default TimeLogSummaryScreen = (props) => {
             {item.name} - {item.projectOwner}
           </Text>
           <Text style={{fontSize: pxPhone(15), color: color, ...textStyle.regular}}>
-            {item.activity}
+            {itemActivity}
           </Text>
           <Text style={{fontSize: pxPhone(14), ...textStyle.regular}}>{item.comment}</Text>
           <View
