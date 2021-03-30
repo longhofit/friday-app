@@ -338,7 +338,7 @@ export default TimeLogSummaryScreen = (props) => {
         </View>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <Text style={styles.txtDate}>
-            {'total: ' + hours + ':' + minutes}
+            {'Total: ' + hours + ':' + minutes}
           </Text>
           <TouchableOpacity
             style={{marginHorizontal: pxPhone(10)}}
