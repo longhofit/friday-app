@@ -223,11 +223,21 @@ export default TimeLogSummaryScreen = (props) => {
     );
   };
   const onPressEditTimeLog = () => {
-    props.navigation.navigate('TimeLogEdit', {
-      itemSelect: itemSelect,
-      onGoBack: () => props.refreshData(),
-    });
-    setIsShowModal(false);
+    if (itemSelect.status == 'NEW') {
+      props.navigation.navigate('TimeLogEdit', {
+        itemSelect: itemSelect,
+        onGoBack: () => props.refreshData(),
+      });
+      setIsShowModal(false);
+    }else{
+      setIsShowModal(false);
+      Alert.alert(
+        'This time entry could not be edit!',
+        '',
+        [{text: 'OK'}],
+        {cancelable: false},
+      );
+    }
   };
   const onPressDeleteTimeLog = () => {
     if (itemSelect != null) {
@@ -244,7 +254,7 @@ export default TimeLogSummaryScreen = (props) => {
         })
         .catch((e) => {
           Alert.alert(
-            'Can not delete!',
+            'This time entry could not be delete!',
             '',
             [{text: 'OK'}],
             {cancelable: false},

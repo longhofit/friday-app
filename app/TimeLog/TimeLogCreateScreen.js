@@ -383,11 +383,20 @@ export default TimeLogCreateScreen = (props) => {
         ) : null}
       </ScrollView>
       {showButtonSave == true ? (
-        <TouchableOpacity style={styles.buttonSave} onPress={onPressSaveChange}>
+        <TouchableOpacity
+          style={[styles.buttonSave, {backgroundColor: '#0052cc'}]}
+          disabled={!showButtonSave}
+          onPress={onPressSaveChange}>
           <Text style={styles.textButton}>SAVE CHANGES</Text>
         </TouchableOpacity>
-      ) : null}
-
+      ) : (
+        <TouchableOpacity
+          style={[styles.buttonSave, {backgroundColor: 'darkgray'}]}
+          disabled={!showButtonSave}
+          onPress={() => console.log('123')}>
+          <Text style={styles.textButton}>SAVE CHANGES</Text>
+        </TouchableOpacity>
+      )}
       {renderTabSelectActivity()}
       {renderTabSelectProject()}
     </View>
@@ -448,7 +457,6 @@ const styles = StyleSheet.create({
     fontSize: pxPhone(17)
   },
   buttonSave:{
-    backgroundColor: "#0052cc",
     alignSelf: 'flex-end',
     alignItems: 'center',
     marginBottom: pxPhone(20),
