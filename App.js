@@ -76,6 +76,7 @@ const screenOptionsDefault = (props) => {
 
 const App = () => {
   let roleUser = store.getState().user.role;
+  console.log("roleUser1:", roleUser);
   const [progress, setProgress] = useState(false);
   const [authenticated, setAuthenticated] = useState(false);
   const [focusDrawer, setFocusDrawer] = useState('Timelog');
@@ -188,7 +189,7 @@ const App = () => {
 
   const ManageTabNavigator = () => {
     roleUser = store.getState().user.role;
-    
+    console.log("roleUser2:", roleUser);
     return (
       <Tab.Navigator
         tabBarOptions={{
@@ -636,7 +637,8 @@ const App = () => {
 
   const DrawerNavigator = () => {
     const dispatch = useDispatch();
-
+    roleUser = useSelector(state => state.user.role);
+    console.log("roleUser3:", roleUser);
     return (
       <Drawer.Navigator
         initialRouteName={!authenticated ? 'login' : 'Manage'}
