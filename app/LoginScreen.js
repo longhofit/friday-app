@@ -27,6 +27,7 @@ import { onGetEmployees } from '../core/store/reducer/employee/actions';
 import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-community/async-storage';
 import FirebaseService from './services/firebase.service';
+import { theme } from './theme/appTheme';
 export default LoginScreen = (props) => {
   const [state, setState] = useState({
     username: '',
@@ -54,7 +55,7 @@ export default LoginScreen = (props) => {
       console.log('null ');
       const response = messaging().getToken();
       response
-        .then(async(result) => {
+        .then(async (result) => {
           console.log('FcmToken1 = ', result);
           await AsyncStorage.setItem('fcmToken', result);
         })
@@ -73,14 +74,14 @@ export default LoginScreen = (props) => {
 
     const { navigation } = props;
     signIn({ username: state.username, password: state.password })
-      .then(async(token) => {
+      .then(async (token) => {
         dispatch(onSetToken(token.access_token));
 
         let fcmToken = await AsyncStorage.getItem('fcmToken');
         if (!fcmToken) {
           const response = messaging().getToken();
           response
-            .then(async(result) => {
+            .then(async (result) => {
               var fireBaseService = new FirebaseService();
               const res = fireBaseService.pushNotification(JSON.stringify({
                 topicName: "string",
@@ -99,7 +100,7 @@ export default LoginScreen = (props) => {
             .catch((error) => {
               console.log("error = ", error);
             })
-        }else{
+        } else {
           console.log("FcmToken = ", fcmToken);
           var fireBaseService = new FirebaseService();
           const res = fireBaseService.pushNotification(JSON.stringify({
@@ -122,13 +123,13 @@ export default LoginScreen = (props) => {
           dispatch(onGetEmployees(data));
         })
         const decoded = jwt_decode(token.access_token);
-        console.log("decoded:",decoded.groups);
+        console.log("decoded:", decoded.groups);
         let role;
-        if(decoded.groups.length == 3){
+        if (decoded.groups.length == 3) {
           role = 'hr';
-        }else if(decoded.groups.length == 2){
+        } else if (decoded.groups.length == 2) {
           role = 'manager';
-        }else{
+        } else {
           role = 'Everyone';
         }
         dispatch(onSetRole(role));
@@ -196,7 +197,7 @@ export default LoginScreen = (props) => {
           <Spinner
             visible={state.progress}
             textStyle={styles.spinnerTextStyle}
-            color={'#0066cc'}
+            color={theme["color-app"]}
           />
           <View style={{ padding: pxPhone(30), paddingTop: pxPhone(60) }}>
             <View style={{ alignItems: 'center' }}>
@@ -210,7 +211,7 @@ export default LoginScreen = (props) => {
             </View>
             <View
               style={{
-                borderColor: isUserNameFocus ? '#5282C1' : 'gray',
+                borderColor: isUserNameFocus ? theme["color-app"] : 'gray',
                 marginTop: pxPhone(150),
                 borderWidth: isUserNameFocus ? pxPhone(2) : pxPhone(1),
                 borderRadius: pxPhone(5),
@@ -221,7 +222,7 @@ export default LoginScreen = (props) => {
                 value={state.username}
                 iconClass={FontAwesomeIcon}
                 iconName={'user-circle-o'}
-                iconColor={isUserNameFocus ? '#5282C1' : 'gray'}
+                iconColor={isUserNameFocus ? theme["color-app"] : 'gray'}
                 inputPadding={pxPhone(20)}
                 labelHeight={pxPhone(24)}
                 borderHeight={pxPhone(2)}
@@ -237,7 +238,7 @@ export default LoginScreen = (props) => {
             </View>
             <View style={
               {
-                borderColor: isPasswordFocus ? '#5282C1' : 'gray',
+                borderColor: isPasswordFocus ? theme["color-app"] : 'gray',
                 borderWidth: isPasswordFocus ? pxPhone(2) : pxPhone(1),
                 marginTop: pxPhone(20),
                 borderRadius: pxPhone(5),
@@ -250,7 +251,7 @@ export default LoginScreen = (props) => {
                 label={'Password'}
                 iconClass={FontAwesomeIcon}
                 iconName={'lock'}
-                iconColor={isPasswordFocus ? '#5282C1' : 'gray'}
+                iconColor={isPasswordFocus ? theme["color-app"] : 'gray'}
                 inputPadding={pxPhone(20)}
                 labelHeight={pxPhone(24)}
                 borderHeight={pxPhone(2)}
@@ -266,13 +267,13 @@ export default LoginScreen = (props) => {
             <TouchableOpacity
               onPress={login}
               activeOpacity={0.75}
-              style={{ marginTop: pxPhone(40), padding: pxPhone(12), backgroundColor: '#5282C1', alignItems: 'center', borderRadius: pxPhone(5) }}>
+              style={{ marginTop: pxPhone(40), padding: pxPhone(12), backgroundColor: theme["color-app"], alignItems: 'center', borderRadius: pxPhone(5) }}>
               <Text style={{ color: 'white', fontWeight: 'bold', fontSize: pxPhone(20) }}>
                 {'Sign in'}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={onPressForgotPassword}>
-              <Text style={{ textAlign: 'center', color: '#0052CC', fontSize: pxPhone(15), marginTop: pxPhone(18) }}>
+              <Text style={{ textAlign: 'center', color:theme["color-app"], fontSize: pxPhone(15), marginTop: pxPhone(18) }}>
                 {'Forgot Password?'}
               </Text>
             </TouchableOpacity>
@@ -316,5 +317,5 @@ const styles = StyleSheet.create({
     color: 'white',
     paddingTop: 40,
     textAlign: 'center',
-  }
+  },
 });

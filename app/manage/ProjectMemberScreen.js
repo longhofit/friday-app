@@ -32,16 +32,18 @@ export default ProjectMemberScreen = ({ route, navigation }) => {
         return (
           <TouchableOpacity
             onPress={onEditPress}
-            style={{ flex: 1, paddingRight: pxPhone(16), justifyContent: 'center' }}>
+            style={{ flex: 1, paddingRight: pxPhone(16), justifyContent: 'center', paddingBottom: pxPhone(4), }}>
             <AntDesign
               name={'edit'}
               size={pxPhone(22)}
-              color={'black'}
+              color={'white'}
             />
           </TouchableOpacity>
         );
       },
       headerTitle: route.params.project.name,
+      headerTintColor: 'white',
+
     });
   }, [route]);
 

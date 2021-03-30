@@ -1,11 +1,10 @@
 export const textStyle = {
   bold: {
     fontFamily: 'opensans-bold',
-    fontWeight: 'normal',
+
   },
   semibold: {
     fontFamily: 'opensans-semibold',
-    fontWeight: 'normal',
   },
   boldBold: {
     fontFamily: 'opensans-bold',

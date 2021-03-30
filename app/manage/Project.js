@@ -429,7 +429,7 @@ const styles = StyleSheet.create({
     right: pxPhone(10),
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#3753C7',
+    backgroundColor: theme["color-app"],
     borderRadius: pxPhone(50 / 2),
     width: pxPhone(50),
     height: pxPhone(50),

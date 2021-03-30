@@ -53,13 +53,10 @@ import SortTimeLog from './app/TimeLog/SortScreen.js';
 import { ThemeColors } from 'react-navigation';
 import { theme } from './app/theme/appTheme.js';
 LogBox.ignoreAllLogs();
-let getStore = store.getState();
 const screenOptionsDefault = (props) => {
   return (
     {
-      headerStyle: {
-        backgroundColor: '#9AC4F8',
-      },
+      headerStyle: styles.headerStyle,
       headerTitleAlign: 'center',
       headerTitleStyle: styles.txtTitle,
       headerLeft: () => {
@@ -69,7 +66,7 @@ const screenOptionsDefault = (props) => {
             style={{ paddingLeft: pxPhone(18) }}
             name={'menu'}
             size={pxPhone(30)}
-            color={'black'}
+            color={'white'}
           />
         );
       },
@@ -78,7 +75,7 @@ const screenOptionsDefault = (props) => {
 }
 
 const App = () => {
-  const roleUser = getStore.user.role;
+  let roleUser = store.getState().user.role;
   const [progress, setProgress] = useState(false);
   const [authenticated, setAuthenticated] = useState(false);
   const [focusDrawer, setFocusDrawer] = useState('Timelog');
@@ -103,7 +100,7 @@ const App = () => {
         overlayColor={'transparent'}
         visible={progress}
         textStyle={{ color: '#FFF' }}
-        color={'#0066cc'}
+        color={theme["color-app"]}
       />
     );
   }
@@ -163,10 +160,10 @@ const App = () => {
             return (
               <React.Fragment key={index}>
                 <DrawerItem
-                  pressColor={'#0066cc'}
+                  pressColor={theme["color-app"]}
                   focused={focusDrawer === item.name}
                   labelStyle={{ fontWeight: 'bold', fontSize: pxPhone(18) }}
-                  icon={() => myButton(item.iconName, focusDrawer === item.name ? '#0066cc' : 'black', item.name === 'Employees')}
+                  icon={() => myButton(item.iconName, focusDrawer === item.name ? theme["color-app"] : 'black', item.name === 'Employees')}
                   key={index}
                   label={item.name}
                   onPress={() => {
@@ -190,6 +187,8 @@ const App = () => {
   const Tab = createMaterialTopTabNavigator();
 
   const ManageTabNavigator = () => {
+    roleUser = store.getState().user.role;
+    
     return (
       <Tab.Navigator
         tabBarOptions={{
@@ -197,7 +196,7 @@ const App = () => {
           activeTintColor: theme["color-active"],
           inactiveTintColor: 'gray',
           contentContainerStyle: { height: pxPhone(55) },
-
+          indicatorStyle: {backgroundColor:theme["color-active"]},
         }}
         tabBarPosition={'bottom'}
         initialRouteName={'Project'}>
@@ -206,7 +205,6 @@ const App = () => {
           component={ProjectStack}
           options={{
             tabBarIcon: ({ color }) => {
-              console.log(color)
               return <Ionicons
                 name={'ios-newspaper-sharp'}
                 size={pxPhone(22)}
@@ -361,9 +359,7 @@ const App = () => {
     return (
       <Stack.Navigator
         screenOptions={{
-          headerStyle: {
-            backgroundColor: '#9AC4F8',
-          },
+          headerStyle: styles.headerStyle,
           headerTitleAlign: 'center',
           headerTitleStyle: styles.txtTitle,
           ...TransitionPresets.SlideFromRightIOS,
@@ -380,7 +376,7 @@ const App = () => {
                   style={{ paddingLeft: pxPhone(18) }}
                   name={'menu'}
                   size={pxPhone(30)}
-                  color={'black'}
+                  color={'white'}
                 />
               );
             },
@@ -391,7 +387,7 @@ const App = () => {
                   style={{ paddingRight: pxPhone(18) }}
                   name={'filter'}
                   size={pxPhone(25)}
-                  color={'black'}
+                  color={'white'}
                 />
               );
             },
@@ -445,7 +441,7 @@ const App = () => {
     return (
       <Tab.Navigator
         tabBarOptions={{
-          style: { backgroundColor: '#9AC4F8' },
+          style: styles.headerStyle,
           labelStyle: styles.txtTitleFilter,
         }}
       >
@@ -459,7 +455,7 @@ const App = () => {
     return (
       <Tab.Navigator
         tabBarOptions={{
-          style: { backgroundColor: '#9AC4F8' },
+          style: styles.headerStyle,
           labelStyle: styles.txtTitleFilter,
         }}>
         <Tab.Screen name="Filter" component={FilterTimeLog} />
@@ -517,9 +513,7 @@ const App = () => {
     return (
       <Stack.Navigator
         screenOptions={{
-          headerStyle: {
-            backgroundColor: '#9AC4F8',
-          },
+          headerStyle: styles.headerStyle,
           headerTintColor: 'white',
           headerBackTitle: 'Back',
           headerTitleAlign: 'center',
@@ -539,9 +533,7 @@ const App = () => {
     return (
       <Stack.Navigator
         screenOptions={{
-          headerStyle: {
-            backgroundColor: '#9AC4F8',
-          },
+          headerStyle: styles.headerStyle,
           headerTitleAlign: 'center',
           headerTitleStyle: styles.txtTitle,
           ...TransitionPresets.ModalPresentationIOS,
@@ -558,7 +550,7 @@ const App = () => {
                   style={{ paddingLeft: pxPhone(18) }}
                   name={'menu'}
                   size={pxPhone(30)}
-                  color={'black'}
+                  color={'white'}
                 />
               );
             },
@@ -569,7 +561,7 @@ const App = () => {
                   style={{ paddingRight: pxPhone(18) }}
                   name={'filter'}
                   size={pxPhone(25)}
-                  color={'black'}
+                  color={'white'}
                 />
               );
             },
@@ -601,9 +593,7 @@ const App = () => {
     return (
       <Stack.Navigator
         screenOptions={{
-          headerStyle: {
-            backgroundColor: '#9AC4F8',
-          },
+          headerStyle: styles.headerStyle,
 
           headerTitleAlign: 'center',
           headerTitleStyle: styles.txtTitle,
@@ -620,7 +610,7 @@ const App = () => {
                   style={{ paddingLeft: pxPhone(18) }}
                   name={'menu'}
                   size={pxPhone(30)}
-                  color={'black'}
+                  color={'white'}
                 />
               );
             },
@@ -689,7 +679,7 @@ const App = () => {
     roundness: 2,
     colors: {
       ...DefaultTheme.colors,
-      primary: '#3753C7',
+      primary: styles.headerStyle,
       accent: '#f1c40f',
     },
   };
@@ -715,13 +705,16 @@ const styles = StyleSheet.create({
   txtTitle: {
     fontSize: pxPhone(18),
     ...textStyle.bold,
-    color: 'black',
+    color: 'white',
   },
-  txtTitleFilter:{
+  txtTitleFilter: {
     fontSize: pxPhone(16),
     ...textStyle.semibold,
-    color: 'black',
-  }
+    color: 'white',
+  },
+  headerStyle: {
+    backgroundColor: theme["color-app"],
+  },
 });
 
 export default App;
