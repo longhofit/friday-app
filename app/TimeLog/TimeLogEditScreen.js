@@ -12,13 +12,13 @@ import {
 import { Hideo } from 'react-native-textinput-effects';
 import { pxPhone } from '../../core/utils/utils';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-import { IconAdd, IconCalendar, IconClock, IconActivity, IconTicket} from '../assets/icons';
 import Modal from 'react-native-modal';
 import { format } from 'date-fns';
 import { Calendar } from 'react-native-calendars';
 import TimeLogService from '../services/timelog.service';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { typeData } from '../../core/constant/activity';
+import Icon from 'react-native-vector-icons/FontAwesome';
 export default TimeLogEditScreen = (props) => {
   const itemSelect = props.route.params.itemSelect;
   const [isShowModalSelectActivity, setIsShowModalSelectActivity] = useState(false);
@@ -170,10 +170,10 @@ export default TimeLogEditScreen = (props) => {
           style={{
             borderColor: isDescriptionFocus ? '#5282C1' : 'gray',
             borderWidth: isDescriptionFocus ? pxPhone(2) : pxPhone(1),
-            paddingHorizontal:pxPhone(1),
+            paddingHorizontal: pxPhone(1),
             paddingVertical: pxPhone(10),
           }}>
-        <Hideo
+          <Hideo
             placeholder={'What have you worked on?'}
             value={description}
             iconClass={FontAwesomeIcon}
@@ -183,113 +183,151 @@ export default TimeLogEditScreen = (props) => {
             labelHeight={pxPhone(24)}
             borderHeight={pxPhone(2)}
             iconSize={pxPhone(25)}
-            inputStyle={{ color: 'black' }}
+            inputStyle={{color: 'black'}}
             autoCapitalize={'none'}
             autoCorrect={false}
             onFocus={() => setIsDescriptionFocus(true)}
             onEndEditing={() => setIsDescriptionFocus(false)}
-            onChangeText={description => setDescription(description)}
+            onChangeText={(description) => setDescription(description)}
             iconBackgroundColor={'stranpate'}
-        />
-      </View>
+          />
+        </View>
         <View style={styles.viewAddProject}>
           <TouchableOpacity>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                {IconAdd({
-                    width: pxPhone(25),
-                    height: pxPhone(25),
-                    marginRight: pxPhone(25),
-                    tintColor: '#0052CC'
-                })}
-                <Text style={{fontSize: pxPhone(17), color: '#0052CC'}}>{itemSelect.name}</Text>
-              </View> 
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Icon
+                name={'plus'}
+                size={pxPhone(25)}
+                color={'#0052CC'}
+                style={{marginRight: pxPhone(25)}}
+              />
+              <Text style={{fontSize: pxPhone(17), color: '#0052CC'}}>
+                {itemSelect.name}
+              </Text>
+            </View>
           </TouchableOpacity>
-      </View>
-        <TouchableOpacity style={styles.viewSelectActivity} onPress={() => setIsShowModalSelectActivity(true)}>
-        {IconActivity({
-            width: pxPhone(25),
-            height: pxPhone(25),
-            marginRight: pxPhone(25),
-        })}
-        <Text style={styles.textHeader}>{activity.name}</Text>
-      </TouchableOpacity>
-        <View style={styles.viewTicket}>
-          {IconTicket({
-            width: pxPhone(25),
-            height: pxPhone(25),
-            marginRight: pxPhone(25),
-          })}
-            <Text style={styles.textHeader}>{headerTicket + ' -'}</Text>
-            <TextInput style={[styles.textHeader,{paddingVertical: pxPhone(0)}]} placeholder={'Ticket'} value={ticket} onChangeText={(text) => setTicket(text)}/>
         </View>
-        <TouchableOpacity style={styles.viewStartDate} onPress={() => setIsShowModalSelectTime(true)}>
-            {IconCalendar({
-                width: pxPhone(25),
-                height: pxPhone(25),
-                marginRight: pxPhone(25),
-            })}
-            <Text style={styles.textHeader}>{format(startDate, "yyyy-MM-dd") + "  " + format(startDate, "HH:mm")}</Text>
+        <TouchableOpacity
+          style={styles.viewSelectActivity}
+          onPress={() => setIsShowModalSelectActivity(true)}>
+          <Icon
+            name={'file-code-o'}
+            size={pxPhone(25)}
+            color={'black'}
+            style={{marginRight: pxPhone(25)}}
+          />
+          <Text style={styles.textHeader}>{activity.name}</Text>
+        </TouchableOpacity>
+        <View style={styles.viewTicket}>
+          <Icon
+            name={'code'}
+            size={pxPhone(25)}
+            color={'black'}
+            style={{marginRight: pxPhone(25)}}
+          />
+          <Text style={styles.textHeader}>{headerTicket + ' -'}</Text>
+          <TextInput
+            style={[styles.textHeader, {paddingVertical: pxPhone(0)}]}
+            placeholder={'Ticket'}
+            value={ticket}
+            onChangeText={(text) => setTicket(text)}
+          />
+        </View>
+        <TouchableOpacity
+          style={styles.viewStartDate}
+          onPress={() => setIsShowModalSelectTime(true)}>
+          <Icon
+            name={'calendar-o'}
+            size={pxPhone(25)}
+            color={'black'}
+            style={{marginRight: pxPhone(25)}}
+          />
+          <Text style={styles.textHeader}>
+            {format(startDate, 'yyyy-MM-dd') +
+              '  ' +
+              format(startDate, 'HH:mm')}
+          </Text>
         </TouchableOpacity>
         <View style={styles.viewDuration}>
-        {IconClock({
-            width: pxPhone(25),
-            height: pxPhone(25),
-            marginRight: pxPhone(25),
-        })}
-        <TextInput style={[styles.textHeader,{paddingVertical: pxPhone(0)}]} placeholder={'08'} value={hours} maxLength={2} onChangeText={(text) => onHoursChange(text)}/>
-        <Text style={styles.textHeader}>:</Text>
-        <TextInput style={[styles.textHeader,{paddingVertical: pxPhone(0)}]} placeholder={'00'} value={minutes} maxLength={2} onChangeText={(text) => onMinutesChange(text)}/>
-      </View>
+          <Icon
+            name={'clock-o'}
+            size={pxPhone(25)}
+            color={'black'}
+            style={{marginRight: pxPhone(25)}}
+          />
+          <TextInput
+            style={[styles.textHeader, {paddingVertical: pxPhone(0)}]}
+            placeholder={'08'}
+            value={hours}
+            maxLength={2}
+            onChangeText={(text) => onHoursChange(text)}
+          />
+          <Text style={styles.textHeader}>:</Text>
+          <TextInput
+            style={[styles.textHeader, {paddingVertical: pxPhone(0)}]}
+            placeholder={'00'}
+            value={minutes}
+            maxLength={2}
+            onChangeText={(text) => onMinutesChange(text)}
+          />
+        </View>
         <Calendar
-        markingType={'multi-dot'}
-        style={{
-          width: '100%',
-        }}
-        markedDates={{[format(startDate, "yyyy-MM-dd")]:{ selected: true, selectedColor: '#9AC4F8' }}}
-        theme={{
-          calendarBackground: 'white',
-          textSectionTitleColor: 'black',
-          textSectionTitleDisabledColor: '#9AC4F8',
-          selectedDayBackgroundColor: 'blue',
-          selectedDayTextColor: 'white',
-          textDisabledColor: '#9AC4F8',
-          todayTextColor: 'blue',
-          dayTextColor: 'black',
-          dotColor: 'white',
-          selectedDotColor: 'white',
-          arrowColor: 'black',
-          monthTextColor: 'black',
-          indicatorColor: 'red',
-          textDayFontWeight: '300',
-          textMonthFontWeight: 'bold',
-          textDayHeaderFontWeight: '300',
-        }}
-        onDayPress={(date) => onDatePress(date)}
-        onMonthChange={(date) => onMonthChange(date.month, date.year)}
-        hideArrows={false}
-        hideExtraDays={true}
-        disableMonthChange={false}
-        firstDay={0}
-        hideDayNames={true}
-        onPressArrowLeft={subtractMonth => subtractMonth()}
-        onPressArrowRight={addMonth => addMonth()}
-        disableAllTouchEventsForDisabledDays={true}
+          markingType={'multi-dot'}
+          style={{
+            width: '100%',
+          }}
+          markedDates={{
+            [format(startDate, 'yyyy-MM-dd')]: {
+              selected: true,
+              selectedColor: '#9AC4F8',
+            },
+          }}
+          theme={{
+            calendarBackground: 'white',
+            textSectionTitleColor: 'black',
+            textSectionTitleDisabledColor: '#9AC4F8',
+            selectedDayBackgroundColor: 'blue',
+            selectedDayTextColor: 'white',
+            textDisabledColor: '#9AC4F8',
+            todayTextColor: 'blue',
+            dayTextColor: 'black',
+            dotColor: 'white',
+            selectedDotColor: 'white',
+            arrowColor: 'black',
+            monthTextColor: 'black',
+            indicatorColor: 'red',
+            textDayFontWeight: '300',
+            textMonthFontWeight: 'bold',
+            textDayHeaderFontWeight: '300',
+          }}
+          onDayPress={(date) => onDatePress(date)}
+          onMonthChange={(date) => onMonthChange(date.month, date.year)}
+          hideArrows={false}
+          hideExtraDays={true}
+          disableMonthChange={false}
+          firstDay={0}
+          hideDayNames={true}
+          onPressArrowLeft={(subtractMonth) => subtractMonth()}
+          onPressArrowRight={(addMonth) => addMonth()}
+          disableAllTouchEventsForDisabledDays={true}
         />
-        {isShowModalSelectTime == true ?<DateTimePicker
-          testID="dateTimePicker"
-          value={startDate}
-          mode={'time'}
-          is24Hour={true}
-          display='spinner'
-          onChange={time => onChangeSelectTime(time)}
-        />: null}
+        {isShowModalSelectTime == true ? (
+          <DateTimePicker
+            testID="dateTimePicker"
+            value={startDate}
+            mode={'time'}
+            is24Hour={true}
+            display="spinner"
+            onChange={(time) => onChangeSelectTime(time)}
+          />
+        ) : null}
       </ScrollView>
-      {showButtonSave == true ? 
-      <TouchableOpacity style={styles.buttonSave} onPress={onPressSaveChange}>
+      {showButtonSave == true ? (
+        <TouchableOpacity style={styles.buttonSave} onPress={onPressSaveChange}>
           <Text style={styles.textButton}>SAVE CHANGES</Text>
-      </TouchableOpacity>
-      : null}
-      
+        </TouchableOpacity>
+      ) : null}
+
       {renderTabSelectActivity()}
     </View>
   );

@@ -11,12 +11,8 @@ import {
   Alert,
 } from 'react-native';
 import Modal from 'react-native-modal';
-import {
-  IconCalendar,
-  IconEdit,
-  IconUpArrow,
-  IconDownArrow,
-} from './assets/icons';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon2 from 'react-native-vector-icons/MaterialIcons';
 import {pxPhone} from '../core/utils/utils';
 import CreatePolicyService from './services/create.policy.service';
 export default CreatePolicyScreen = (props) => {
@@ -106,11 +102,12 @@ export default CreatePolicyScreen = (props) => {
             </Text>
           )}
           <TouchableOpacity onPress={showModalUpdate}>
-            {IconEdit({
-              width: pxPhone(25),
-              height: pxPhone(25),
-              marginRight: pxPhone(5),
-            })}
+            <Icon
+              name={'edit'}
+              size={pxPhone(25)}
+              color={'black'}
+              style={{marginRight: pxPhone(5)}}
+            />
           </TouchableOpacity>
         </View>
       );
@@ -178,10 +175,18 @@ export default CreatePolicyScreen = (props) => {
                 alignSelf: 'center',
               }}>
               <TouchableOpacity onPress={setUpNewDayOff}>
-                {IconUpArrow({width: pxPhone(15), height: pxPhone(15)})}
+                <Icon
+                  name={'angle-up'}
+                  size={pxPhone(20)}
+                  color={'black'}
+                />
               </TouchableOpacity>
               <TouchableOpacity onPress={setDownNewDayOff}>
-                {IconDownArrow({width: pxPhone(15), height: pxPhone(15)})}
+                <Icon
+                  name={'angle-down'}
+                  size={pxPhone(20)}
+                  color={'black'}
+                />
               </TouchableOpacity>
             </View>
             <Text style={[styles.textModal, {fontWeight: 'bold'}]}>
@@ -240,27 +245,29 @@ export default CreatePolicyScreen = (props) => {
           </View>
           {diffDays > 1 ? (
             <View style={{flexDirection: 'row', alignItems: 'center', marginTop: pxPhone(5)}}>
-              {IconCalendar({
-                width: pxPhone(25),
-                height: pxPhone(25),
-                marginRight: pxPhone(5),
-              })}
+              <Icon
+                name={'calendar-o'}
+                size={pxPhone(25)}
+                color={'black'}
+                style={{marginRight: pxPhone(5)}}
+              />
               <Text>{column.item.start.toDateString().substring(0, 10)}</Text>
-              {IconCalendar({
-                width: pxPhone(25),
-                height: pxPhone(25),
-                marginRight: pxPhone(5),
-                marginLeft: pxPhone(10),
-              })}
+              <Icon
+                name={'calendar-o'}
+                size={pxPhone(25)}
+                color={'black'}
+                style={{marginRight: pxPhone(5), marginLeft: pxPhone(10),}}
+              />
               <Text>{column.item.end.toDateString().substring(0, 10)}</Text>
             </View>
           ) : (
             <View style={{flexDirection: 'row', alignItems: 'center', marginTop: pxPhone(5)}}>
-              {IconCalendar({
-                width: pxPhone(25),
-                height: pxPhone(25),
-                marginRight: pxPhone(5),
-              })}
+              <Icon
+                name={'calendar-o'}
+                size={pxPhone(25)}
+                color={'black'}
+                style={{marginRight: pxPhone(5)}}
+              />
               <Text>{column.item.start.toDateString().substring(0, 10)}</Text>
             </View>
           )}
@@ -268,7 +275,12 @@ export default CreatePolicyScreen = (props) => {
         <TouchableOpacity
           style={styles.buttonDelete}
           onPress={(column) => showModalDelete(item)}>
-          <Text>X</Text>
+          <Icon2
+            name={'delete'}
+            size={pxPhone(20)}
+            color={'black'}
+            style={{ marginRight: pxPhone(5) }}
+          />
         </TouchableOpacity>
       </View>
     );

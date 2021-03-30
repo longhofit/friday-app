@@ -86,15 +86,11 @@ export default EmployeesScreen = (props) => {
         <View style={styles.viewItem}>
           <Text style={styles.number}>{column.index + 1}</Text>
           <Text style={styles.employee}>{column.item.name}</Text>
-          {(column.item.slackId == null || column.item.slackId === "") ? <TextInput
-            style={styles.slackId}
-            value={"Enter slackID"}
-            onChangeText={(text) => onChangeSlackID(column.item.id, text)}
-          /> : <TextInput
+          <TextInput
               style={styles.slackId}
               value={column.item.slackId}
               onChangeText={(text) => onChangeSlackID(column.item.id, text)}
-            />}
+            />
         </View>
       );
     } else {
@@ -102,15 +98,11 @@ export default EmployeesScreen = (props) => {
         <View style={styles.viewItem2}>
           <Text style={styles.number}>{column.index + 1}</Text>
           <Text style={styles.employee}>{column.item.name}</Text>
-          {(column.item.slackId === null || column.item.slackId === "") ? <TextInput
-            style={styles.slackId}
-            value={"Enter slackID"}
-            onChangeText={(text) => onChangeSlackID(column.item.id, text)}
-          /> : <TextInput
+          <TextInput
               style={styles.slackId}
               value={column.item.slackId}
               onChangeText={(text) => onChangeSlackID(column.item.id, text)}
-            />}
+            />
         </View>
       );
     }
