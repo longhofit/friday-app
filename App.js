@@ -306,6 +306,56 @@ const App = () => {
     );
   };
 
+  const TimelogTabNavigator = () => {
+    return (
+      <Tab.Navigator
+        tabBarOptions={{
+          showIcon: true,
+          activeTintColor: theme["color-active"],
+          inactiveTintColor: 'gray',
+          contentContainerStyle: { height: pxPhone(55) },
+        }}
+        tabBarPosition={'bottom'}>
+        <Tab.Screen
+          name="TimeLog"
+          component={TimelogStack}
+          options={{
+            tabBarIcon: ({ color }) => {
+              return <Icon
+                name={'clock-o'}
+                size={pxPhone(22)}
+                color={color}
+              />
+            },
+            tabBarLabel: ({ focused, color, position }) => {
+              return <Text style={{ color, fontSize: pxPhone(12), ...textStyle.semibold, paddingBottom: pxPhone(2) }}>
+                {'TimeLog'}
+              </Text>
+            },
+          }}
+        />
+        <Tab.Screen
+          name="Report"
+          component={ReportTimelogStack}
+          options={{
+            tabBarIcon: ({ color }) => {
+              return <Icon
+                name={'line-chart'}
+                size={pxPhone(22)}
+                color={color}
+              />
+            },
+            tabBarLabel: ({ color }) => {
+              return <Text style={{ color, fontSize: pxPhone(12), ...textStyle.semibold, paddingBottom: pxPhone(2) }}>
+                {'Report'}
+              </Text>
+            },
+          }}
+        />
+      </Tab.Navigator>
+    );
+  };
+
   const ProjectStack = (props) => {
     return (
       <Stack.Navigator
@@ -481,56 +531,6 @@ const App = () => {
           }}
         />
       </Stack.Navigator>
-    );
-  };
-
-  const TimelogTabNavigator = () => {
-    return (
-      <Tab.Navigator
-        tabBarOptions={{
-          showIcon: true,
-          activeTintColor: theme["color-active"],
-          inactiveTintColor: 'gray',
-          contentContainerStyle: { height: pxPhone(55) },
-        }}
-        tabBarPosition={'bottom'}>
-        <Tab.Screen
-          name="TimeLog"
-          component={TimelogStack}
-          options={{
-            tabBarIcon: ({ color }) => {
-              return <Icon
-                name={'clock-o'}
-                size={pxPhone(22)}
-                color={color}
-              />
-            },
-            tabBarLabel: ({ focused, color, position }) => {
-              return <Text style={{ color, fontSize: pxPhone(12), ...textStyle.semibold, paddingBottom: pxPhone(2) }}>
-                {'TimeLog'}
-              </Text>
-            },
-          }}
-        />
-        <Tab.Screen
-          name="Report"
-          component={ReportTimelogStack}
-          options={{
-            tabBarIcon: ({ color }) => {
-              return <Icon
-                name={'line-chart'}
-                size={pxPhone(22)}
-                color={color}
-              />
-            },
-            tabBarLabel: ({ color }) => {
-              return <Text style={{ color, fontSize: pxPhone(12), ...textStyle.semibold, paddingBottom: pxPhone(2) }}>
-                {'Report'}
-              </Text>
-            },
-          }}
-        />
-      </Tab.Navigator>
     );
   };
 
