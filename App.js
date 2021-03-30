@@ -21,7 +21,7 @@ import Icon2 from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import { pxPhone } from './core/utils/utils.js';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { clearTokens } from '@okta/okta-react-native';
 import { onSetUser } from './core/store/reducer/user/actions';
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -53,7 +53,7 @@ import SortTimeLog from './app/TimeLog/SortScreen.js';
 import { ThemeColors } from 'react-navigation';
 import { theme } from './app/theme/appTheme.js';
 LogBox.ignoreAllLogs();
-
+let getStore = store.getState();
 const screenOptionsDefault = (props) => {
   return (
     {
@@ -78,6 +78,7 @@ const screenOptionsDefault = (props) => {
 }
 
 const App = () => {
+  const roleUser = getStore.user.role;
   const [progress, setProgress] = useState(false);
   const [authenticated, setAuthenticated] = useState(false);
   const [focusDrawer, setFocusDrawer] = useState('Timelog');
@@ -219,7 +220,7 @@ const App = () => {
             },
           }}
         />
-        <Tab.Screen
+        {(roleUser === 'hr' || roleUser === 'manage') && <Tab.Screen
           name="Settings"
           component={SettingStack}
           options={{
@@ -236,8 +237,8 @@ const App = () => {
               </Text>
             },
           }}
-        />
-        <Tab.Screen
+        />}
+        {(roleUser === 'hr' || roleUser === 'manage') && <Tab.Screen
           name="Employees"
           component={EmployeesStack}
           options={{
@@ -250,7 +251,7 @@ const App = () => {
               </Text>
             },
           }}
-        />
+        />}
       </Tab.Navigator>
     );
   };

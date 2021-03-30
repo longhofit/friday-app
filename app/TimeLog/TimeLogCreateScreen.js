@@ -53,8 +53,6 @@ export default TimeLogCreateScreen = (props) => {
                 projects: _.map(item, 'project'),
               }))
               .value();
-            console.log('groupByStatus', groupByStatus);
-            console.log('res', res);
             var array = [];
             groupByStatus.forEach(item => {
               if(item.status == 'NEW'){

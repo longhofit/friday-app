@@ -122,9 +122,17 @@ export default LoginScreen = (props) => {
           dispatch(onGetEmployees(data));
         })
         const decoded = jwt_decode(token.access_token);
-        const role = decoded.groups.length > 1 ? 'HR' : 'Everyone';
+        console.log("decoded:",decoded.groups);
+        let role;
+        if(decoded.groups.length == 3){
+          role = 'hr';
+        }else if(decoded.groups.length == 2){
+          role = 'manager';
+        }else{
+          role = 'Everyone';
+        }
         dispatch(onSetRole(role));
-        if (role === 'HR') {
+        if (role === 'hr' || role === 'manager') {
           const settingService = new SettingService();
           const response = settingService.getPolicy();
           response
