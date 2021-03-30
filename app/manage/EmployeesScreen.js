@@ -7,6 +7,7 @@ import {
   FlatList,
   ScrollView,
   TextInput,
+  RefreshControl,
 } from 'react-native';
 import { pxPhone } from '../../core/utils/utils';
 import EmployeesService from '../services/employees.service';
@@ -15,6 +16,7 @@ export default EmployeesScreen = (props) => {
   const [data, setData] = useState(null);
   const [reqData, setReqData] = useState(null);
   const [isSaveChanges, setIsSaveChanges] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   useEffect(() => {
     const fetchData = async () => {
       const employeesService = new EmployeesService();
@@ -37,7 +39,7 @@ export default EmployeesScreen = (props) => {
         })
     }
     fetchData();
-  }, [])
+  }, [refreshing])
   const onChangeSlackID = (id, slackId) => {
     const newReqData = data;
     let count = 0;
@@ -107,32 +109,46 @@ export default EmployeesScreen = (props) => {
       );
     }
   };
+  const wait = (timeout) => {
+    return new Promise((resolve) => {
+      setTimeout(resolve, timeout);
+    });
+  };
+  const onRefreshPage = () => {
+    setRefreshing(true);
+    wait(1000).then(() => setRefreshing(false));
+  };
   return (
-    <ScrollView style={styles.container}>
-      <View style={{
-        marginTop: pxPhone(20),
-        paddingVertical: pxPhone(18),
-        width: '90%',
-        backgroundColor: 'white',
-        borderRadius: pxPhone(6),
-        shadowColor: '#000',
-        paddingLeft:pxPhone(20),
-        shadowOffset: {
-          width: pxPhone(3),
-          height: pxPhone(4),
-        },
-        shadowOpacity: pxPhone(0.25),
-        shadowRadius: pxPhone(6),
-        elevation: 8,
-        alignSelf: 'center',
-      }}>
+    <ScrollView
+      style={styles.container}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefreshPage} />
+      }>
+      <View
+        style={{
+          marginTop: pxPhone(20),
+          paddingVertical: pxPhone(18),
+          width: '90%',
+          backgroundColor: 'white',
+          borderRadius: pxPhone(6),
+          shadowColor: '#000',
+          paddingLeft: pxPhone(20),
+          shadowOffset: {
+            width: pxPhone(3),
+            height: pxPhone(4),
+          },
+          shadowOpacity: pxPhone(0.25),
+          shadowRadius: pxPhone(6),
+          elevation: 8,
+          alignSelf: 'center',
+        }}>
         <Text style={styles.textHeader}>Manage Employee</Text>
       </View>
       <View style={styles.viewTable}>
         <View style={styles.viewItemHeader}>
-          <Text style={[styles.number, { fontWeight: 'bold', }]}>Num</Text>
-          <Text style={[styles.employee, { fontWeight: 'bold', }]}>Employee</Text>
-          <Text style={[styles.slackId, { fontWeight: 'bold', }]}>SlackID</Text>
+          <Text style={[styles.number, {fontWeight: 'bold'}]}>Num</Text>
+          <Text style={[styles.employee, {fontWeight: 'bold'}]}>Employee</Text>
+          <Text style={[styles.slackId, {fontWeight: 'bold'}]}>SlackID</Text>
         </View>
         <FlatList
           data={data}
@@ -141,11 +157,14 @@ export default EmployeesScreen = (props) => {
             return renderColumnEmployee(item);
           }}
         />
-        {isSaveChanges ? <TouchableOpacity style={styles.buttonSave} onPress={onPressSaveChanges}>
-          <Text style={styles.textButton}>SAVE CHANGES</Text>
-        </TouchableOpacity> : null}
+        {isSaveChanges ? (
+          <TouchableOpacity
+            style={styles.buttonSave}
+            onPress={onPressSaveChanges}>
+            <Text style={styles.textButton}>SAVE CHANGES</Text>
+          </TouchableOpacity>
+        ) : null}
       </View>
-
     </ScrollView>
   );
 }

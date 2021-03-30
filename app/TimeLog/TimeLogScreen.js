@@ -5,6 +5,8 @@ import {
   View,
   TouchableOpacity,
   FlatList,
+  ScrollView,
+  RefreshControl,
 } from 'react-native';
 import {pxPhone} from '../../core/utils/utils';
 import {format} from 'date-fns';
@@ -112,9 +114,16 @@ export default TimeLogScreen = (props) => {
   };
   const refreshData = () => {
     setResetData(true);
+    wait(500).then(() => setResetData(false));
+  };
+  const wait = (timeout) => {
+    return new Promise((resolve) => {
+      setTimeout(resolve, timeout);
+    });
   };
   return (
-    <View style={styles.container}>
+    <View
+      style={styles.container}>
       <FlatList
         data={data}
         extraData={data}
@@ -122,6 +131,9 @@ export default TimeLogScreen = (props) => {
         renderItem={(item) => {
           return renderItemTimeLogByWeek(item.item);
         }}
+        refreshControl={
+          <RefreshControl refreshing={resetData} onRefresh={refreshData} />
+        }
       />
       <TouchableOpacity
         onPress={() =>

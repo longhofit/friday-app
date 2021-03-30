@@ -19,6 +19,8 @@ import TimeLogService from '../services/timelog.service';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { typeData } from '../../core/constant/activity';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import _, {groupBy} from 'lodash';
+import { textStyle } from '../components/styles/style';
 export default TimeLogCreateScreen = (props) => {
   const [isShowModalSelectActivity, setIsShowModalSelectActivity] = useState(false);
   const [isShowModalSelectProject, setIsShowModalSelectProject] = useState(false);
@@ -42,12 +44,41 @@ export default TimeLogCreateScreen = (props) => {
     const fetchData = async() => {
         const timeLogService = new TimeLogService()
         const response = timeLogService.getMyProject();
-        response.then((res) => {
-          setProjects(res);
-        })
-        .catch((e) => {
-          console.log('error:', e);
-        }); 
+        response
+          .then((res) => {
+            var groupByStatus = _(res)
+              .groupBy('project.status')
+              .map((item, status) => ({
+                status,
+                projects: _.map(item, 'project'),
+              }))
+              .value();
+            console.log('groupByStatus', groupByStatus);
+            console.log('res', res);
+            var array = [];
+            groupByStatus.forEach(item => {
+              if(item.status == 'NEW'){
+                array.push(item);  
+                return;
+              }
+            })
+            groupByStatus.forEach(item => {
+              if(item.status == 'RUNNING'){
+                array.push(item);  
+                return;
+              }
+            })
+            groupByStatus.forEach(item => {
+              if(item.status == 'SUSPEND'){
+                array.push(item);  
+                return;
+              }
+            })
+            setProjects(array);
+          })
+          .catch((e) => {
+            console.log('error:', e);
+          }); 
     }
     fetchData();
   }, []);
@@ -109,51 +140,86 @@ export default TimeLogCreateScreen = (props) => {
   }
   const renderTabSelectProject = () => {
     return (
-        <Modal
-          onBackdropPress={() => setIsShowModalSelectProject(false)}
-          isVisible={isShowModalSelectProject}
-          animationIn="slideInUp"
-          animationOut="slideOutDown"
-          animationInTiming={1}
-          animationOutTiming={1}
-          backdropTransitionInTiming={1}
-          backdropTransitionOutTiming={1}
-          style={{
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-          <View
-            style={{
-              paddingHorizontal: pxPhone(15),
-              borderRadius: pxPhone(8),
-              paddingVertical: pxPhone(20),
-              width: '100%',
-              backgroundColor: 'white',
-            }}>
-            <FlatList
-                data={projects}
-                extraData={projects}
-                renderItem={(items) => {
-                    return renderDataSelectProject(items.item);
-                }}
-            />
-          </View>
-        </Modal>
-      );
-  }
-  const renderDataSelectProject = (item) => {
-    return(
-        <TouchableOpacity style={styles.buttonSelectProject} 
-        onPress={()=>{
-            setProject(item.project);
-            setIsShowModalSelectProject(false);
-            setHeaderTicket(item.project.code + " - ")
-            setShowHeaderTicket(true);
+      <Modal
+        onBackdropPress={() => setIsShowModalSelectProject(false)}
+        isVisible={isShowModalSelectProject}
+        animationIn="slideInUp"
+        animationOut="slideOutDown"
+        animationInTiming={1}
+        animationOutTiming={1}
+        backdropTransitionInTiming={1}
+        backdropTransitionOutTiming={1}
+        style={{
+          alignItems: 'center',
+          justifyContent: 'center',
         }}>
-            <Text style={{fontSize: pxPhone(17), color: '#f6af42'}}>{item.project.name} - {item.project.owner}</Text>
-        </TouchableOpacity> 
-    )
+        <View
+          style={{
+            paddingHorizontal: pxPhone(15),
+            borderRadius: pxPhone(8),
+            paddingVertical: pxPhone(20),
+            width: '100%',
+            backgroundColor: 'white',
+          }}>
+          <FlatList
+            data={projects}
+            extraData={projects}
+            renderItem={(items) => {
+              return renderDataGroupByStatusProject(items.item);
+            }}
+          />
+        </View>
+      </Modal>
+    );
   }
+  const renderDataGroupByStatusProject = (item) => {
+    let color;
+    let textStatus;
+    switch (item.status) {
+      case 'SUSPEND':
+        color = 'red';
+        textStatus = 'Suspend';
+        break;
+      case 'RUNNING':
+        color = 'blue';
+        textStatus = 'Running';
+        break;
+      case 'NEW':
+        color = 'green';
+        textStatus = 'New';
+        break;
+      default:
+        break;
+    }
+    return (
+      <View>
+        <Text style={[styles.statusProject, {color: color}]}>{textStatus}</Text>
+        <FlatList
+          data={item.projects}
+          extraData={item.projects}
+          renderItem={(items) => {
+            return renderDataSelectProject(items.item, color);
+          }}
+        />
+      </View>
+    );
+  };
+  const renderDataSelectProject = (item, color) => {
+    return (
+      <TouchableOpacity
+        style={[styles.buttonSelectProject, {borderColor: color,}]}
+        onPress={() => {
+          setProject(item);
+          setIsShowModalSelectProject(false);
+          setHeaderTicket(item.code + ' - ');
+          setShowHeaderTicket(true);
+        }}>
+        <Text style={{fontSize: pxPhone(17), color: 'black', ...textStyle.regular}}>
+          {item.name} - {item.owner}
+        </Text>
+      </TouchableOpacity>
+    );
+  };
   const onDatePress = (date) => {
     const newDate = new Date(date.dateString);
     setStartDate(newDate);
@@ -413,7 +479,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: pxPhone(10),
     borderWidth: pxPhone(1),
-    borderColor: '#f6af42',
     paddingHorizontal: pxPhone(10),
   },
   viewAddProject:{
@@ -468,6 +533,11 @@ const styles = StyleSheet.create({
   textButton:{
     color:'white',
     fontSize: pxPhone(17),
+  },
+  statusProject:{
+    fontSize: pxPhone(17),
+    ...textStyle.bold,
+    marginTop: pxPhone(10)
   }
   
 });

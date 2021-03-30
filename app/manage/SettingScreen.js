@@ -6,9 +6,8 @@ import {
   TouchableOpacity,
   FlatList,
   ScrollView,
-  TextInput,
-  Image,
   Alert,
+  RefreshControl,
 } from 'react-native';
 import Modal from 'react-native-modal';
 import SettingService from '../services/setting.service';
@@ -22,11 +21,11 @@ export default SettingScreen = (props) => {
   const [itemHolidayOff, setItemHolidayOff] = useState(null);
   const [leaveType, setLeaveType] = useState(null);
   const [listHoliday, setListHoliday] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
   useEffect(() => {
     const fetchPolicy = async () => {
       const settingService = new SettingService();
       const response = settingService.getPolicy();
-      console.log("response.status:", response.status);
       response
         .then((res) => {
           const arrLeaveType = [
@@ -61,7 +60,7 @@ export default SettingScreen = (props) => {
         });
     };
     fetchPolicy();
-  }, []);
+  }, [refreshing]);
   const renderLeaveTypes = (column) => {
     if (column.item.name === 'Annual leave') {
       return (
@@ -317,8 +316,21 @@ export default SettingScreen = (props) => {
       console.log("error:",e);
     })
   }
+  const wait = (timeout) => {
+    return new Promise((resolve) => {
+      setTimeout(resolve, timeout);
+    });
+  };
+  const onRefreshPage = () => {
+    setRefreshing(true);
+    wait(1000).then(() => setRefreshing(false));
+  };
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefreshPage} />
+      }>
       <View style={{marginHorizontal: pxPhone(10)}}>
         <Text style={styles.textHeader}>Leave Types</Text>
         <FlatList
@@ -340,7 +352,7 @@ export default SettingScreen = (props) => {
         />
       </View>
       <TouchableOpacity style={styles.buttonSave} onPress={onPressSaveChanges}>
-          <Text style={styles.textButton}>SAVE CHANGES</Text>
+        <Text style={styles.textButton}>SAVE CHANGES</Text>
       </TouchableOpacity>
       {renderTabDeleteHolidayOff()}
       {renderTabUpdateLeaveTypes()}
