@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   FlatList,
   Alert,
+  Animated
 } from 'react-native';
 import {pxPhone} from '../../core/utils/utils';
 import Modal from 'react-native-modal';
@@ -13,11 +14,12 @@ import {format} from 'date-fns';
 import TimeLogService from '../services/timelog.service';
 import moment from 'moment';
 import _, {groupBy} from 'lodash';
-import {IconCheck2} from '../assets/icons';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import {Checkbox} from 'react-native-paper';
 import { textStyle } from '../components/styles/style';
-import { typeData } from '../../core/constant/activity';
+import Swipeable from 'react-native-gesture-handler/Swipeable';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon2 from 'react-native-vector-icons/MaterialIcons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 export default TimeLogSummaryScreen = (props) => {
   const [checked, setChecked] = useState(false);
   const [checkedExtraData, setCheckedExtraData] = useState(false);
@@ -42,9 +44,33 @@ export default TimeLogSummaryScreen = (props) => {
     minutes = '0' + minutes;
   }
   const [isBulkEdit, setIsBulkEdit] = useState(false);
-  const [isShowModal, setIsShowModal] = useState(false);
-  const [itemSelect, setItemSelect] = useState(null);
   const [listItemSelect, setListItemSelect] = useState([]);
+  const RenderRightActions = ({progress, dragX, onPressEdit, onPressDelete}) => {
+    const trans = dragX.interpolate({
+      inputRange: [-100, 0],
+      outputRange: [1, 0],
+    });
+    return (
+      <View style={styles.viewEditDelete}>
+        <TouchableOpacity style={styles.leftAction} onPress={onPressEdit}>
+          <Icon
+            name={'edit'}
+            size={pxPhone(30)}
+            color={'blue'}
+            style={{marginRight: pxPhone(10)}}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.leftAction} onPress={onPressDelete}>
+          <Icon2
+            name={'delete'}
+            size={pxPhone(30)}
+            color={'red'}
+            style={{marginRight: pxPhone(10)}}
+          />
+        </TouchableOpacity>
+      </View>
+    );
+  };
   const renderItemTimeLog = (item) => {
     var hours = parseInt(parseInt(item.duration) / 60);
     var minutes = parseInt(parseInt(item.duration) % 60);
@@ -93,144 +119,135 @@ export default TimeLogSummaryScreen = (props) => {
         break;
     }
     return (
-      <TouchableOpacity
-        style={styles.viewGroupByDay}
-        onPress={() => {
-          setIsShowModal(true);
-          setItemSelect(item);
-        }}>
+      <Swipeable
+        childrenContainerStyle={styles.viewGroupByDay}
+        renderRightActions={(progress, dragX) => (
+          <RenderRightActions
+            progress={progress}
+            dragX={dragX}
+            onPressEdit={() => onPressEditTimeLog(item)}
+            onPressDelete={() => onPressDeleteTimeLog(item)}
+          />
+        )}>
         <View style={[styles.vertical, {backgroundColor: color}]}></View>
         {isBulkEdit == true ? (
           item.status == 'NEW' ? (
-            <View style={{justifyContent: 'center', marginRight: pxPhone(0), width: '10%'}}>
-            <Checkbox
-              status={item.checkbox ? 'checked' : 'unchecked'}
-              onPress={() => {
-                item.checkbox = !item.checkbox;
-                setCheckedExtraData(!checkedExtraData);
-                var newArray = listItemSelect;
-                if(item.checkbox == true){
-                  newArray.push(item.id);
-                  setListItemSelect(newArray);
-                }else{
-                  var index = listItemSelect.indexOf(item.id);
-                  if (index > -1) {
-                    newArray.splice(index, 1);
+            <View
+              style={{
+                justifyContent: 'center',
+                marginRight: pxPhone(0),
+                width: '10%',
+              }}>
+              <Checkbox
+                status={item.checkbox ? 'checked' : 'unchecked'}
+                onPress={() => {
+                  item.checkbox = !item.checkbox;
+                  setCheckedExtraData(!checkedExtraData);
+                  var newArray = listItemSelect;
+                  if (item.checkbox == true) {
+                    newArray.push(item.id);
+                    setListItemSelect(newArray);
+                  } else {
+                    var index = listItemSelect.indexOf(item.id);
+                    if (index > -1) {
+                      newArray.splice(index, 1);
+                    }
+                    setListItemSelect(newArray);
                   }
-                  setListItemSelect(newArray);
-                }   
-              }}
-            />
+                }}
+              />
             </View>
-          ) : (<View style={{justifyContent: 'center', marginRight: pxPhone(0), width: '10%'}}></View>)
+          ) : (
+            <View
+              style={{
+                justifyContent: 'center',
+                marginRight: pxPhone(0),
+                width: '10%',
+              }}></View>
+          )
         ) : null}
         <View
-        {...isBulkEdit == true ?null : null}
-          style={isBulkEdit == true ? {
-            marginVertical: pxPhone(10),
-            marginRight: pxPhone(15),
-            marginLeft: pxPhone(8),
-            width: '85%',
-          }:{
-            marginVertical: pxPhone(10),
-            marginRight: pxPhone(15),
-            marginLeft: pxPhone(8),
-            width: '95%',
-          }}>
+          {...(isBulkEdit == true ? null : null)}
+          style={
+            isBulkEdit == true
+              ? {
+                  marginVertical: pxPhone(10),
+                  marginRight: pxPhone(15),
+                  marginLeft: pxPhone(8),
+                  width: '85%',
+                }
+              : {
+                  marginVertical: pxPhone(10),
+                  marginRight: pxPhone(15),
+                  marginLeft: pxPhone(8),
+                  width: '95%',
+                }
+          }>
           <Text style={{fontSize: pxPhone(16), ...textStyle.bold}}>
             {item.name} - {item.projectOwner}
           </Text>
-          <Text style={{fontSize: pxPhone(15), color: color, ...textStyle.regular}}>
+          <Text
+            style={{fontSize: pxPhone(15), color: color, ...textStyle.regular}}>
             {itemActivity}
           </Text>
-          <Text style={{fontSize: pxPhone(14), ...textStyle.regular}}>{item.comment}</Text>
+          <Text style={{fontSize: pxPhone(14), ...textStyle.regular}}>
+            {item.comment}
+          </Text>
           <View
             style={{
               flexDirection: 'row',
               justifyContent: 'space-between',
               alignItems: 'center',
             }}>
-            <Text style={{fontSize: pxPhone(14), ...textStyle.semibold}}>{item.ticket}</Text>
-            
+            <Text style={{fontSize: pxPhone(14), ...textStyle.semibold}}>
+              {item.ticket}
+            </Text>
+
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <Text style={{fontSize: pxPhone(14), ...textStyle.regular}}>
                 {moment(item.startFrom, 'HH:mm:ss').format('hh:mm A')}
               </Text>
-              <Text style={{fontSize: pxPhone(14), marginLeft: pxPhone(7), ...textStyle.regular}}>
+              <Text
+                style={{
+                  fontSize: pxPhone(14),
+                  marginLeft: pxPhone(7),
+                  ...textStyle.regular,
+                }}>
                 {hours + ':'}
               </Text>
-              <Text style={{fontSize: pxPhone(14), ...textStyle.regular}}>{minutes}</Text>
+              <Text style={{fontSize: pxPhone(14), ...textStyle.regular}}>
+                {minutes}
+              </Text>
               {item.status === 'NEW' ? (
                 <TouchableOpacity onPress={(e) => onPressConfirm(e, item.id)}>
-                  {IconCheck2({
-                    width: pxPhone(25),
-                    height: pxPhone(25),
-                    marginLeft: pxPhone(15),
-                    tintColor: 'green',
-                  })}
+                  <AntDesign
+                    name={'checkcircleo'}
+                    size={pxPhone(25)}
+                    style={{marginLeft: pxPhone(15)}}
+                    color={'green'}
+                  />
                 </TouchableOpacity>
-              ) : (IconCheck2({
-                    width: pxPhone(25),
-                    height: pxPhone(25),
-                    marginLeft: pxPhone(15),
-                    tintColor: 'darkgray',
-                  }))}
+              ) : (
+                <AntDesign
+                  name={'checkcircleo'}
+                  size={pxPhone(25)}
+                  style={{marginLeft: pxPhone(15)}}
+                  color={'darkgray'}
+                />
+              )}
             </View>
           </View>
         </View>
-      </TouchableOpacity>
+      </Swipeable>
     );
   };
-  const renderModalSelect = () => {
-    return (
-      <Modal
-        onBackdropPress={() => setIsShowModal(false)}
-        isVisible={isShowModal}
-        animationIn="slideInUp"
-        animationOut="slideOutDown"
-        animationInTiming={1}
-        animationOutTiming={1}
-        backdropTransitionInTiming={1}
-        backdropTransitionOutTiming={1}
-        style={{
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
-        <View
-          style={{
-            paddingHorizontal: pxPhone(25),
-            borderRadius: pxPhone(8),
-            paddingVertical: pxPhone(15),
-            width: '60%',
-            backgroundColor: 'white',
-          }}>
-          <TouchableOpacity
-            style={{
-              alignSelf: 'center',
-              marginBottom: pxPhone(15),
-              flexDirection: 'row',
-            }}
-            onPress={onPressEditTimeLog}>
-            <Text style={{fontSize: pxPhone(20), color: 'blue'}}>Edit</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{alignSelf: 'center', flexDirection: 'row'}}
-            onPress={onPressDeleteTimeLog}>
-            <Text style={{fontSize: pxPhone(20), color: 'red'}}>Delete</Text>
-          </TouchableOpacity>
-        </View>
-      </Modal>
-    );
-  };
-  const onPressEditTimeLog = () => {
-    if (itemSelect.status == 'NEW') {
+  const onPressEditTimeLog = (item) => {
+    if (item.status == 'NEW') {
       props.navigation.navigate('TimeLogEdit', {
-        itemSelect: itemSelect,
+        itemSelect: item,
         onGoBack: () => props.refreshData(),
       });
-      setIsShowModal(false);
     }else{
-      setIsShowModal(false);
       Alert.alert(
         'This time entry could not be edit!',
         '',
@@ -239,30 +256,27 @@ export default TimeLogSummaryScreen = (props) => {
       );
     }
   };
-  const onPressDeleteTimeLog = () => {
-    if (itemSelect != null) {
-      const timeLogService = new TimeLogService();
-      const response = timeLogService.DeleteTimeEntry(itemSelect.id);
-      response
-        .then((result) => {
-          Alert.alert(
-            'Delete successfully!',
-            '',
-            [{text: 'OK', onPress: () => props.refreshData()}],
-            {cancelable: false},
-          );
-        })
-        .catch((e) => {
-          Alert.alert(
-            'This time entry could not be delete!',
-            '',
-            [{text: 'OK'}],
-            {cancelable: false},
-          );
-          console.log('error:', e);
-        });
-    }
-    setIsShowModal(false);
+  const onPressDeleteTimeLog = (item) => {
+    const timeLogService = new TimeLogService();
+    const response = timeLogService.DeleteTimeEntry(item.id);
+    response
+      .then((result) => {
+        Alert.alert(
+          'Delete successfully!',
+          '',
+          [{text: 'OK', onPress: () => props.refreshData()}],
+          {cancelable: false},
+        );
+      })
+      .catch((e) => {
+        Alert.alert(
+          'This time entry could not be delete!',
+          '',
+          [{text: 'OK'}],
+          {cancelable: false},
+        );
+        console.log('error:', e);
+      });
   };
   const onPressConfirm = (e, id) => {
     e.stopPropagation();
@@ -354,7 +368,6 @@ export default TimeLogSummaryScreen = (props) => {
           return renderItemTimeLog(item.item);
         }}
       />
-      {renderModalSelect()}
     </View>
   );
 };
@@ -398,4 +411,8 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: pxPhone(6),
     borderBottomStartRadius: pxPhone(6),
   },
+  viewEditDelete:{
+    flexDirection: 'row',
+    alignItems: 'center',
+  }
 });
