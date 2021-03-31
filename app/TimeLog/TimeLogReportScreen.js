@@ -5,6 +5,7 @@ import {
   View,
   TouchableOpacity,
   FlatList,
+  ScrollView,
 } from 'react-native';
 import { pxPhone } from '../../core/utils/utils';
 import Modal from 'react-native-modal';
@@ -18,9 +19,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { onFilterSortTimeLog } from '../../core/store/reducer/session/actions';
 import { textStyle } from '../components/styles/style';
 import { typeData } from '../../core/constant/activity';
+import { theme } from '../theme/appTheme';
+import AntDesign from 'react-native-vector-icons/AntDesign'
 export default TimeLogReportScreen = (props) => {
   const filterAndSortForm = useSelector(state => state.session.timeLogFilterAndSort);
   const dispatch = useDispatch();
+  const scrollView = React.useRef(undefined);
   const initState = {
     filter: {
       project: ['ALL'],
@@ -310,6 +314,50 @@ export default TimeLogReportScreen = (props) => {
     const result = _.map(groupByWeek, (data, weekName) => ({weekName, data}));
     return result;
   };
+  const onRenderFilterOption = (title, onPress) => {
+    return (
+      <View style={styles.viewFilterOption}>
+        <Text style={styles.textFilterOption}>
+          {title}
+        </Text>
+        <TouchableOpacity
+          activeOpacity={0.75}
+          onPress={onPress}>
+          <AntDesign
+            name={'closecircle'}
+            size={pxPhone(12)}
+            color={theme["color-dark-100"]}
+          />
+        </TouchableOpacity>
+      </View>
+    );
+  };
+  const onRemoveFilter = (key) => {
+    dispatch(onFilterSortTimeLog({
+      ...filterAndSortForm,
+      filter: {
+        ...filterAndSortForm.filter,
+        [key]: ['ALL'],
+      }
+    }))
+    scrollView.current?.scrollTo({ x: 0 });
+  };
+  const onRenderFilterOptions = () => {
+    return (
+      <ScrollView
+        horizontal
+        ref={scrollView}
+        showsHorizontalScrollIndicator={false}
+        style={styles.sectionFilterOption}>
+        {!filterAndSortForm.filter.project.includes('ALL') && onRenderFilterOption(`${filterAndSortForm.filter.project.join(', ').toLowerCase()}`, () => {
+          onRemoveFilter('project');
+        })}
+        {!filterAndSortForm.filter.activity.includes('ALL') && onRenderFilterOption(`${filterAndSortForm.filter.activity.join(', ').toLowerCase()}`, () => {
+          onRemoveFilter('activity')
+        })}
+      </ScrollView>
+    );
+  };
   useEffect(() => {
     handleFilter();
   }, [filterAndSortForm])
@@ -361,6 +409,9 @@ export default TimeLogReportScreen = (props) => {
             </Text>
           </TouchableOpacity>
         </View>
+      </View>
+      <View style={{marginHorizontal: pxPhone(15), marginVertical: pxPhone(10)}}>
+        {onRenderFilterOptions()}
       </View>
       <FlatList
         data={data}
@@ -470,5 +521,23 @@ const styles = StyleSheet.create({
     paddingVertical: pxPhone(8),
     marginHorizontal: pxPhone(15),
     ...textStyle.bold
+  },
+  viewFilterOption: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: pxPhone(25),
+    marginRight: pxPhone(10),
+    paddingHorizontal: pxPhone(10),
+    borderRadius: pxPhone(16.25),
+    backgroundColor: theme['color-custom-2100'],
+  },
+  textFilterOption: {
+    fontSize: pxPhone(12),
+    marginRight: pxPhone(5),
+    ...textStyle.regular,
+  },
+  sectionFilterOption: {
+    width: '90%',
   },
 });

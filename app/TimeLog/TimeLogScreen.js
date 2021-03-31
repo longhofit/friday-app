@@ -16,6 +16,7 @@ import _, {groupBy} from 'lodash';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import TimeLogSummaryScreen from './TimeLogSummaryScreen';
 import { textStyle } from '../components/styles/style';
+import { theme } from '../theme/appTheme';
 export default TimeLogScreen = (props) => {
   const [startDate, setStartDate] = useState(
     new Date(
@@ -171,7 +172,7 @@ const styles = StyleSheet.create({
     right: pxPhone(10),
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#3753C7',
+    backgroundColor: theme["color-app"],
     borderRadius: pxPhone(50 / 2),
     width: pxPhone(50),
     height: pxPhone(50),
