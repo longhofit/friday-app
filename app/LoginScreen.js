@@ -197,8 +197,13 @@ export default LoginScreen = (props) => {
     }
   }, [supportedURL]);
 
-  const onSignInWithRecognizePress = () => {
-    onSignInWithRecognize();
+  const onSignInWithRecognizePress = async () => {
+    const credentials = await Keychain.getGenericPassword();
+    if (!credentials) {
+      showToastWithGravityAndOffset('Please login for the first time before using.');
+    } else {
+      onSignInWithRecognize();
+    }
   };
 
   const onGetGenericPassword = async () => {
