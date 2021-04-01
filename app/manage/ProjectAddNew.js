@@ -23,6 +23,7 @@ import { Picker } from '@react-native-picker/picker';
 import ProjectService from '../services/project.service';
 import { showToastWithGravityAndOffset } from '../../core/utils/utils'
 import { statusEnum } from '../../core/constant/project';
+import { textStyle } from '../components/styles/style';
 
 export default ProjectAddNew = ({ route, navigation }) => {
   const initForm = {
@@ -47,7 +48,7 @@ export default ProjectAddNew = ({ route, navigation }) => {
             activeOpacity={0.75}
             onPress={() => navigation.goBack()}
             style={{ flex: 1, paddingLeft: pxPhone(16), justifyContent: 'center' }}>
-            <Text style={{ fontWeight: 'bold', fontSize: pxPhone(17), }}>
+            <Text style={styles.txtHeaderLeft}>
               {'Cancel'}
             </Text>
           </TouchableOpacity>
@@ -60,7 +61,7 @@ export default ProjectAddNew = ({ route, navigation }) => {
             activeOpacity={0.75}
             onPress={addNewProject}
             style={{ flex: 1, paddingRight: pxPhone(16), justifyContent: 'center', opacity: isInvalid() && 0.3 }}>
-            <Text style={{ fontWeight: 'bold', fontSize: pxPhone(17), }}>
+              <Text style={styles.txtHeaderLeft}>
               {'Save'}
             </Text>
           </TouchableOpacity>
@@ -302,5 +303,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     left: pxPhone(10),
     paddingHorizontal: pxPhone(5),
+  },
+  txtHeaderLeft: {
+    fontSize: pxPhone(17),
+    ...textStyle.semibold,
+    color: 'white',
   }
 });

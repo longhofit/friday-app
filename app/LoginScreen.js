@@ -28,6 +28,10 @@ import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-community/async-storage';
 import FirebaseService from './services/firebase.service';
 import { theme } from './theme/appTheme';
+import * as Keychain from 'react-native-keychain';
+import { onRequestRecognizeAuthentication } from '../core/utils/recognizeHelper';
+import Ionicons from 'react-native-vector-icons/Ionicons'
+
 export default LoginScreen = (props) => {
   const [state, setState] = useState({
     username: '',
@@ -69,13 +73,21 @@ export default LoginScreen = (props) => {
   useEffect(() => {
     getToken();
   }, [])
+
+  const { navigation } = props;
+
   const login = () => {
+    onLogin(state.username, state.password)
+  }
+
+  const onLogin = (username, password) => {
     setState({ ...state, progress: true });
 
-    const { navigation } = props;
-    signIn({ username: state.username, password: state.password })
+    signIn({ username, password })
       .then(async (token) => {
         dispatch(onSetToken(token.access_token));
+
+        onSetGenericPassword(username, password);
 
         let fcmToken = await AsyncStorage.getItem('fcmToken');
         if (!fcmToken) {
@@ -171,6 +183,7 @@ export default LoginScreen = (props) => {
         showToastWithGravityAndOffset(e.message);
       });
   }
+
   const onPressForgotPassword = useCallback(async () => {
     // Checking if the link is supported for links with custom URL scheme.
     const supported = await Linking.canOpenURL(supportedURL);
@@ -183,6 +196,39 @@ export default LoginScreen = (props) => {
       Alert.alert(`Don't know how to open this URL: ${supportedURL}`);
     }
   }, [supportedURL]);
+
+  const onSignInWithRecognizePress = () => {
+    onSignInWithRecognize();
+  };
+
+  const onGetGenericPassword = async () => {
+    const credentials = await Keychain.getGenericPassword();
+
+    if (credentials) {
+      const { username, password } = credentials;
+      console.log(`Credentials successfully loaded for username: ${username}, password: ${password}`);
+      onLogin(username, password);
+    } else {
+      console.log('No credentials stored');
+    }
+  };
+
+  const onSignInWithRecognize = () => {
+    onRequestRecognizeAuthentication(() => {
+      onGetGenericPassword();
+    }, (errorCode) => {
+      if (errorCode === 'UNKNOWN_ERROR') {
+        console.log('Fingerprint / Face ID setting have been changed, please customize in the system settings.')
+        // dispatch(onUpdateFaceIDEnabled(false));
+        // dispatch(onUpdateFingerprintEnabled(false));
+        // dispatch(onUpdateRecognizeSupported(undefined));
+      }
+    });
+  };
+
+  const onSetGenericPassword = async (username, password) => {
+    await Keychain.setGenericPassword(username, password);
+  };
 
 
   return (
@@ -272,8 +318,17 @@ export default LoginScreen = (props) => {
                 {'Sign in'}
               </Text>
             </TouchableOpacity>
+            <TouchableOpacity
+              style={{ alignSelf: 'center', marginTop: pxPhone(30) }}
+              onPress={onSignInWithRecognizePress}
+              activeOpacity={0.75}>
+              <Ionicons
+                size={pxPhone(50)}
+                name={'ios-finger-print'}
+                color={theme["color-app"]} />
+            </TouchableOpacity>
             <TouchableOpacity onPress={onPressForgotPassword}>
-              <Text style={{ textAlign: 'center', color:theme["color-app"], fontSize: pxPhone(15), marginTop: pxPhone(18) }}>
+              <Text style={{ textAlign: 'center', color: theme["color-app"], fontSize: pxPhone(15), marginTop: pxPhone(18) }}>
                 {'Forgot Password?'}
               </Text>
             </TouchableOpacity>

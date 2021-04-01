@@ -52,6 +52,7 @@ import { textStyle } from './app/components/styles/style.js';
 import SortTimeLog from './app/TimeLog/SortScreen.js';
 import { ThemeColors } from 'react-navigation';
 import { theme } from './app/theme/appTheme.js';
+
 LogBox.ignoreAllLogs();
 const screenOptionsDefault = (props) => {
   return (
@@ -168,7 +169,8 @@ const App = () => {
                   key={index}
                   label={item.name}
                   onPress={() => {
-                    setFocusDrawer(item.name);
+                    // setFocusDrawer(item.name);
+                    props.navigation.closeDrawer();
                     props.navigation.navigate(item.name);
                   }}
                 />
@@ -197,7 +199,7 @@ const App = () => {
           activeTintColor: theme["color-active"],
           inactiveTintColor: 'gray',
           contentContainerStyle: { height: pxPhone(55) },
-          indicatorStyle: {backgroundColor:theme["color-active"]},
+          indicatorStyle: { backgroundColor: theme["color-active"] },
         }}
         tabBarPosition={'bottom'}
         initialRouteName={'Project'}>
@@ -399,7 +401,7 @@ const App = () => {
           component={ProjectAddNew}
           options={{
             title: 'Add new project',
-            ...TransitionPresets.ModalPresentationIOS,
+            ...TransitionPresets.SlideFromRightIOS,
           }}
         />
 
@@ -416,7 +418,7 @@ const App = () => {
           component={MemberAddNew}
           options={{
             title: 'Add new member',
-            ...TransitionPresets.ModalPresentationIOS,
+            ...TransitionPresets.SlideFromRightIOS,
           }}
         />
         <Stack.Screen
@@ -431,7 +433,7 @@ const App = () => {
           name="Picker"
           component={PickerComponent}
           options={{
-            ...TransitionPresets.ModalPresentationIOS,
+            ...TransitionPresets.SlideFromRightIOS,
           }}
         />
       </Stack.Navigator>
@@ -537,7 +539,7 @@ const App = () => {
           headerStyle: styles.headerStyle,
           headerTitleAlign: 'center',
           headerTitleStyle: styles.txtTitle,
-          ...TransitionPresets.ModalPresentationIOS,
+          ...TransitionPresets.SlideFromRightIOS,
         }}>
         <Stack.Screen
           name="Reports"
@@ -657,16 +659,22 @@ const App = () => {
           name="Profile"
           component={ProfileScreen}
           options={{
-            title: 'Profile',
+            title: 'Profile', 
           }}
         />
         <Drawer.Screen
           name="Vacation"
           component={VacationStack}
+          options={{
+            ...TransitionPresets.SlideFromRightIOS,
+          }}
         />
         <Drawer.Screen
           name="Manage"
           component={ManageTabNavigator}
+          options={{
+            ...TransitionPresets.SlideFromRightIOS,
+          }}
         />
         <Drawer.Screen
           name="Timelog"
