@@ -31,7 +31,6 @@ import ReportsScreen from './app/vacation/ReportsScreen.js';
 import { PersistGate } from 'redux-persist/lib/integration/react';
 import TimeLogCreateScreen from './app/TimeLog/TimeLogCreateScreen.js';
 import TimeLogScreen from './app/TimeLog/TimeLogScreen.js';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import ProjectsScreen from './app/manage/Project.js';
 import ProjectAddNew from './app/manage/ProjectAddNew.js';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
@@ -54,6 +53,7 @@ import { theme } from './app/theme/appTheme.js';
 import RNBootSplash from "react-native-bootsplash";
 
 LogBox.ignoreAllLogs();
+
 const screenOptionsDefault = (props) => {
   return (
     {
@@ -77,7 +77,6 @@ const screenOptionsDefault = (props) => {
 
 const App = () => {
   let roleUser = store.getState().user.role;
-  console.log("roleUser1:", roleUser);
   const [progress, setProgress] = useState(false);
   const [authenticated, setAuthenticated] = useState(false);
   const [focusDrawer, setFocusDrawer] = useState('Timelog');

@@ -81,6 +81,8 @@ export default class ApiService {
   private appendHeaders(hasToken: boolean = false): RequestHeader {
     const { accessToken } = store.getState().session;
 
+    console.log(accessToken,'asxasdasd')
+
     const headers: RequestHeader = {
       Accept: 'application/json',
       'Content-Type': 'application/json',

@@ -6,23 +6,21 @@ import {
 } from './types';
 
 const initialState: UserState = {
-  name: '',
   email: '',
-  sub: '',
   role: '',
+  annualDaysUsed: 0,
+  dateOfBirth: '',
+  id: '',
+  name: '',
+  phoneNumber: '',
+  slackId: '',
 };
 
 export const userReducer = (state = initialState, action: UserActionTypes): UserState => {
   switch (action.type) {
     case SET_USER: {
-      const user: UserState = {
-        role: state.role,
-        name: action.payload.name,
-        email: action.payload.email,
-        sub: action.payload.sub,
-      };
 
-      return user;
+      return action.payload;
     }
 
     case SET_ROLE: {

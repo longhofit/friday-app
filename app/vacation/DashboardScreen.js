@@ -32,7 +32,7 @@ export default DashboardScreen = (props) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    getUserInfo();
+    // getUserInfo();
 
     getAllRequestLeave();
   }, [session.accessToken]);
@@ -64,7 +64,7 @@ export default DashboardScreen = (props) => {
 
   const getUserInfo = () => {
     setProgress(true);
-    getUser()
+    getUser() 
       .then(user => {
         dispatch(onSetUser({
           name: user.name,

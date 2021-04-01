@@ -68,6 +68,8 @@ export default ProjectMemberScreen = ({ route, navigation }) => {
 
       const membersTemp = [];
 
+      console.log('employeeState',employeeState)
+
       data && data.members.forEach(item => {
         membersTemp.push({
           ...item,

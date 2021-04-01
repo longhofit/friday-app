@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -9,7 +9,7 @@ import {
   Alert,
 } from 'react-native';
 import ProfileService from './services/profile.service';
-import {pxPhone} from '../core/utils/utils';
+import { pxPhone } from '../core/utils/utils';
 import {
   IconAvatarAnonymous,
 } from './assets/icons';
@@ -20,8 +20,9 @@ export default ProfileScreen = (props) => {
       const profileService = new ProfileService();
       const response = profileService.getEmployee();
       response.then((res) => {
-          setUserInfo(res.employee);
-        })
+        console.log(res.employee);
+        setUserInfo(res.employee);
+      })
         .catch((e) => {
           console.log('error:', e);
         });
@@ -31,10 +32,10 @@ export default ProfileScreen = (props) => {
   const onPressSaveChanges = () => {
     const profileService = new ProfileService();
     const newSlackId = userInfo.slackId;
-    const response = profileService.updateMySlackID(JSON.stringify({"slackId" : newSlackId}));
+    const response = profileService.updateMySlackID(JSON.stringify({ "slackId": newSlackId }));
     response.then((res) => {
-        Alert.alert("Update profile successfully!");
-      })
+      Alert.alert("Update profile successfully!");
+    })
       .catch((e) => {
         Alert.alert("something went wrong!");
         console.log('error:', e);
@@ -43,7 +44,7 @@ export default ProfileScreen = (props) => {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.viewAvatar}>
-        <TouchableOpacity>     
+        <TouchableOpacity>
           {IconAvatarAnonymous({
             width: pxPhone(150),
             height: pxPhone(150),
@@ -55,20 +56,20 @@ export default ProfileScreen = (props) => {
       <View style={styles.userInformation}>
         <View style={styles.itemInfo}>
           <Text style={styles.textHeader}>Name</Text>
-          <Text style={styles.textValue}>{userInfo&&userInfo.name}</Text>
+          <Text style={styles.textValue}>{userInfo && userInfo.name}</Text>
         </View>
         <View style={styles.itemInfo}>
           <Text style={styles.textHeader}>Phone Number</Text>
-          <Text style={styles.textValue}>{userInfo&&userInfo.phoneNumber}</Text>
+          <Text style={styles.textValue}>{userInfo && userInfo.phoneNumber}</Text>
         </View>
         <View style={styles.itemInfo}>
           <Text style={styles.textHeader}>Date Of Birth</Text>
-          <Text style={styles.textValue}>{userInfo&&userInfo.dateOfBirth}</Text>
+          <Text style={styles.textValue}>{userInfo && userInfo.dateOfBirth}</Text>
         </View>
         <View style={styles.itemInfo}>
           <Text style={styles.textHeader}>SlackId</Text>
-          <TextInput style={styles.textValue} value={userInfo&&userInfo.slackId} 
-          onChangeText={(slackId) => setUserInfo({...userInfo, slackId: slackId})}></TextInput>
+          <TextInput style={styles.textValue} value={userInfo && userInfo.slackId}
+            onChangeText={(slackId) => setUserInfo({ ...userInfo, slackId: slackId })}></TextInput>
         </View>
       </View>
       <TouchableOpacity style={styles.buttonSave} onPress={onPressSaveChanges}>
@@ -123,12 +124,12 @@ const styles = StyleSheet.create({
     paddingVertical: pxPhone(8),
     borderWidth: 1,
     borderColor: 'gray',
-    backgroundColor:'#3753C7',
-    borderRadius:pxPhone(5),
+    backgroundColor: '#3753C7',
+    borderRadius: pxPhone(5),
   },
   textButton: {
     fontWeight: 'bold',
     fontSize: pxPhone(20),
-    color:'white',
+    color: 'white',
   },
 });

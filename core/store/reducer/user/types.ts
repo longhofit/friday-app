@@ -1,7 +1,11 @@
 export interface UserState {
+  annualDaysUsed: number;
+  dateOfBirth: string;
+  id: string;
+  phoneNumber:string;
+  slackId:string;
   email: string;
   name: string;
-  sub: string;
   role: string;
 }
 

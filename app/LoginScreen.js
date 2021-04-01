@@ -19,7 +19,7 @@ import { pxPhone } from '../core/utils/utils';
 import { signIn } from '@okta/okta-react-native';
 import { useDispatch } from 'react-redux';
 import { onSetToken } from '../core/store/reducer/session/actions';
-import { onSetRole } from '../core/store/reducer/user/actions';
+import { onSetUser } from '../core/store/reducer/user/actions';
 import jwt_decode from "jwt-decode";
 import SettingService from './services/setting.service';
 import EmployeesService from './services/employees.service';
@@ -31,6 +31,7 @@ import { theme } from './theme/appTheme';
 import * as Keychain from 'react-native-keychain';
 import { onRequestRecognizeAuthentication } from '../core/utils/recognizeHelper';
 import Ionicons from 'react-native-vector-icons/Ionicons'
+import ProfileService from './services/profile.service';
 
 export default LoginScreen = (props) => {
   const [state, setState] = useState({
@@ -87,6 +88,31 @@ export default LoginScreen = (props) => {
       .then(async (token) => {
         dispatch(onSetToken(token.access_token));
 
+        const decoded = jwt_decode(token.access_token);
+        console.log("decoded:", decoded.groups);
+        let role;
+        if (decoded.groups.length == 3) {
+          role = 'hr';
+        } else if (decoded.groups.length == 2) {
+          role = 'manager';
+        } else {
+          role = 'Everyone';
+        }
+
+        console.log('ropwowo', role);
+
+        const profileService = new ProfileService();
+        profileService.getEmployee()
+          .then(res => {
+            console.log(res.employee)
+            const payload = { ...res.employee, role };
+            console.log(payload, 'payload');
+            dispatch(onSetUser(payload));
+          })
+          .catch(e => {
+            showToastWithGravityAndOffset(e);
+          })
+
         onSetGenericPassword(username, password);
 
         let fcmToken = await AsyncStorage.getItem('fcmToken');
@@ -134,17 +160,6 @@ export default LoginScreen = (props) => {
         employeesService.getAllEmployee().then(data => {
           dispatch(onGetEmployees(data));
         })
-        const decoded = jwt_decode(token.access_token);
-        console.log("decoded:", decoded.groups);
-        let role;
-        if (decoded.groups.length == 3) {
-          role = 'hr';
-        } else if (decoded.groups.length == 2) {
-          role = 'manager';
-        } else {
-          role = 'Everyone';
-        }
-        dispatch(onSetRole(role));
         if (role === 'hr' || role === 'manager') {
           const settingService = new SettingService();
           const response = settingService.getPolicy();
