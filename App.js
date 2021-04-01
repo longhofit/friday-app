@@ -50,8 +50,8 @@ import FilterTimeLog from './app/TimeLog/FilterScreen';
 import SortScreen from './app/manage/SortScreen.js';
 import { textStyle } from './app/components/styles/style.js';
 import SortTimeLog from './app/TimeLog/SortScreen.js';
-import { ThemeColors } from 'react-navigation';
 import { theme } from './app/theme/appTheme.js';
+import RNBootSplash from "react-native-bootsplash";
 
 LogBox.ignoreAllLogs();
 const screenOptionsDefault = (props) => {
@@ -83,6 +83,8 @@ const App = () => {
   const [focusDrawer, setFocusDrawer] = useState('Timelog');
 
   useEffect(() => {
+    RNBootSplash.hide({ fade: true }); // fade
+
     const checkAuthStatus = async () => {
       const { authenticated } = await isAuthenticated();
       setAuthenticated(authenticated);
@@ -659,7 +661,7 @@ const App = () => {
           name="Profile"
           component={ProfileScreen}
           options={{
-            title: 'Profile', 
+            title: 'Profile',
           }}
         />
         <Drawer.Screen

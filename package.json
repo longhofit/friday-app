@@ -32,6 +32,7 @@
     "moment": "^2.29.1",
     "react": "17.0.1",
     "react-native": "0.63.3",
+    "react-native-bootsplash": "^3.2.0",
     "react-native-calendars": "^1.17.0",
     "react-native-gesture-handler": "^1.10.3",
     "react-native-keychain": "^6.2.0",
