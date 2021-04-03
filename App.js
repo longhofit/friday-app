@@ -1,7 +1,7 @@
 import 'react-native-gesture-handler';
 import { Provider } from 'react-redux';
 import React, { useState, useEffect } from 'react';
-import { View, LogBox, Text, Image, StyleSheet } from 'react-native';
+import { LogBox, Text, Image, StyleSheet } from 'react-native';
 import { isAuthenticated } from '@okta/okta-react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import LoginScreen from './app/LoginScreen.js';
@@ -19,7 +19,6 @@ import SettingScreen from './app/manage/SettingScreen.js';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons'
-import AntDesign from 'react-native-vector-icons/AntDesign'
 import { pxPhone } from './core/utils/utils.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearTokens } from '@okta/okta-react-native';
@@ -79,7 +78,6 @@ const App = () => {
   let roleUser = store.getState().user.role;
   const [progress, setProgress] = useState(false);
   const [authenticated, setAuthenticated] = useState(false);
-  const [focusDrawer, setFocusDrawer] = useState('Timelog');
 
   useEffect(() => {
     RNBootSplash.hide({ fade: true }); // fade
@@ -110,10 +108,7 @@ const App = () => {
 
   const Drawer = createDrawerNavigator();
   const Stack = createStackNavigator();
-
-  const myButton = (name, color, isEmploy) => {
-    return <Icon name={name} size={isEmploy ? pxPhone(18) : pxPhone(22)} color={color} />;
-  };
+  const Tab = createMaterialTopTabNavigator();
 
   const DrawerContent = (props) => {
     const logout = () => {
@@ -138,6 +133,8 @@ const App = () => {
         });
     };
 
+    const indexFocus = props.state.index;
+
     return (
       <DrawerContentScrollView style={{ padding: 0, margin: 0 }}>
         <Image
@@ -148,51 +145,31 @@ const App = () => {
           }}
           source={logo.imageSource}
         />
-        <DrawerItem
-          focused={focusDrawer === 'Profile'}
-          labelStyle={{ fontWeight: 'bold', fontSize: pxPhone(18) }}
-          icon={() => myButton('user-circle-o')}
-          label={'Profile'}
-          onPress={() => {
-            setFocusDrawer('Profile');
-            props.navigation.navigate('Profile');
-          }}
-        />
         {menuItems &&
           menuItems.map((item, index) => {
             return (
               <React.Fragment key={index}>
                 <DrawerItem
+                  focused={indexFocus === item.routeIndex}
+                  activeTintColor={theme["color-app"]}
                   pressColor={theme["color-app"]}
-                  focused={focusDrawer === item.name}
                   labelStyle={{ fontWeight: 'bold', fontSize: pxPhone(18) }}
-                  icon={() => myButton(item.iconName, focusDrawer === item.name ? theme["color-app"] : 'black', item.name === 'Employees')}
+                  icon={({ color }) => <Icon name={item.iconName} size={pxPhone(22)} color={color} />}
                   key={index}
                   label={item.name}
                   onPress={() => {
-                    // setFocusDrawer(item.name);
-                    props.navigation.closeDrawer();
-                    props.navigation.navigate(item.name);
+                    item.name === 'Log out' ? logout() : props.navigation.navigate(item.name);
                   }}
                 />
               </React.Fragment>
             );
           })}
-        <DrawerItem
-          labelStyle={{ fontWeight: 'bold', fontSize: pxPhone(18) }}
-          icon={() => myButton('power-off')}
-          label={'Log out'}
-          onPress={logout}
-        />
       </DrawerContentScrollView>
     );
   };
 
-  const Tab = createMaterialTopTabNavigator();
-
   const ManageTabNavigator = () => {
     roleUser = store.getState().user.role;
-    console.log("roleUser2:", roleUser);
     return (
       <Tab.Navigator
         tabBarOptions={{
@@ -641,10 +618,9 @@ const App = () => {
   const DrawerNavigator = () => {
     const dispatch = useDispatch();
     roleUser = useSelector(state => state.user.role);
-    console.log("roleUser3:", roleUser);
     return (
       <Drawer.Navigator
-        initialRouteName={!authenticated ? 'login' : 'Manage'}
+        initialRouteName={!authenticated ? 'login' : 'Timelog'}
         drawerContent={(props) =>
           DrawerContent({ ...props, dispatch: dispatch })
         }>
@@ -664,6 +640,10 @@ const App = () => {
           }}
         />
         <Drawer.Screen
+          name="Timelog"
+          component={TimelogTabNavigator}
+        />
+        <Drawer.Screen
           name="Vacation"
           component={VacationStack}
           options={{
@@ -676,10 +656,6 @@ const App = () => {
           options={{
             ...TransitionPresets.SlideFromRightIOS,
           }}
-        />
-        <Drawer.Screen
-          name="Timelog"
-          component={TimelogTabNavigator}
         />
       </Drawer.Navigator>
     );

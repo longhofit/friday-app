@@ -176,6 +176,7 @@ export default ProjectAddNew = ({ route, navigation }) => {
         showToastWithGravityAndOffset('Save project not successfully.')
       }
     } catch (error) {
+      console.log(error);
       showToastWithGravityAndOffset(error.message)
     }
   };

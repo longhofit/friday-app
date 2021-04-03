@@ -1,40 +1,28 @@
 export const menuItems = [
     {
+        name: 'Profile',
+        iconName: 'user-circle-o',
+        routeIndex: 1,
+    },
+    {
         name: 'Timelog',
-        iconName: 'clock-o'
+        iconName: 'clock-o',
+        routeIndex: 2,
     },
     {
         name: 'Vacation',
-        iconName: 'calendar-o'
+        iconName: 'calendar-o',
+        routeIndex: 3,
     },
     {
         name: 'Manage',
-        iconName: 'dashboard'
+        iconName: 'dashboard',
+        routeIndex: 4,
     },
-    // {
-    //     name: 'Employees',
-    //     iconName: 'users'
-    // },
-    // {
-    //     name: 'Setting',
-    //     iconName: 'wrench'
-    // },
-    // {
-    //     name: 'Dashboard',
-    //     iconName: 'dashboard'
-    // },
-    // {
-    //     name: 'Reports',
-    //     iconName: 'sticky-note'
-    // },
-    // {
-    //     name: 'Employees',
-    //     iconName: 'users'
-    // },
-    // {
-    //     name: 'Setting',
-    //     iconName: 'wrench'
-    // },
+    {
+        name: 'Log out',
+        iconName: 'power-off',
+    },
 ];
 
 export const leaveTypes = {
