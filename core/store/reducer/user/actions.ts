@@ -4,6 +4,8 @@ import {
   UserState,
   SetRoleAction,
   SET_ROLE,
+  ClearUserAction,
+  CLEAR_USER,
 } from './types';
 
 export const onSetUser = (payload: UserState): SetUserAction => ({
@@ -14,4 +16,8 @@ export const onSetUser = (payload: UserState): SetUserAction => ({
 export const onSetRole = (payload: string): SetRoleAction => ({
   type: SET_ROLE,
   payload,
+});
+
+export const onClearUser = (): ClearUserAction => ({
+  type: CLEAR_USER,
 });

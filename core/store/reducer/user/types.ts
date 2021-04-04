@@ -11,6 +11,7 @@ export interface UserState {
 
 export const SET_USER = 'SET_USER';
 export const SET_ROLE = 'SET_ROLE';
+export const CLEAR_USER = 'CLEAR_USER';
 
 
 export interface SetUserAction {
@@ -23,5 +24,9 @@ export interface SetRoleAction {
   payload: string;
 }
 
+export interface ClearUserAction {
+  type: typeof CLEAR_USER;
+}
 
-export type UserActionTypes = SetUserAction | SetRoleAction;
+
+export type UserActionTypes = SetUserAction | SetRoleAction | ClearUserAction;

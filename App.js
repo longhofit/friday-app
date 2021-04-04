@@ -1,7 +1,7 @@
 import 'react-native-gesture-handler';
 import { Provider } from 'react-redux';
 import React, { useState, useEffect } from 'react';
-import { LogBox, Text, Image, StyleSheet } from 'react-native';
+import { LogBox, Text, Image, StyleSheet, View } from 'react-native';
 import { isAuthenticated } from '@okta/okta-react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import LoginScreen from './app/LoginScreen.js';
@@ -19,10 +19,11 @@ import SettingScreen from './app/manage/SettingScreen.js';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons'
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import { pxPhone } from './core/utils/utils.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearTokens } from '@okta/okta-react-native';
-import { onSetUser } from './core/store/reducer/user/actions';
+import { onClearUser } from './core/store/reducer/user/actions';
 import Spinner from 'react-native-loading-spinner-overlay';
 import CreatePolicyScreen from './app/CreatePolicyScreen.js';
 import ProfileScreen from './app/ProfileScreen.js';
@@ -50,6 +51,9 @@ import { textStyle } from './app/components/styles/style.js';
 import SortTimeLog from './app/TimeLog/SortScreen.js';
 import { theme } from './app/theme/appTheme.js';
 import RNBootSplash from "react-native-bootsplash";
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
+import { Hr } from './app/components/hr/hr.component.js';
+
 
 LogBox.ignoreAllLogs();
 
@@ -108,24 +112,23 @@ const App = () => {
 
   const Drawer = createDrawerNavigator();
   const Stack = createStackNavigator();
-  const Tab = createMaterialTopTabNavigator();
+  const Tab = createMaterialBottomTabNavigator();
+  const TabFilter = createMaterialTopTabNavigator();
 
   const DrawerContent = (props) => {
+    roleUser = store.getState().user.role;
+    const userName=store.getState().user.name;
+    const isAdmin = (roleUser === 'hr' || roleUser === 'manage');
+
     const logout = () => {
-      console.log('log')
       setProgress(true);
 
       clearTokens()
-        .then(() => {
-          props.dispatch(
-            onSetUser({
-              name: '',
-              email: '',
-              sub: '',
-              role: '',
-            }),
-          );
-          props.navigation.navigate('login');
+        .then((rs) => {
+          if (rs) {
+            props.dispatch(onClearUser());
+            setAuthenticated(false);
+          }
         })
         .catch((e) => { })
         .finally(() => {
@@ -141,22 +144,39 @@ const App = () => {
           style={{
             width: pxPhone(50) * (446 / 160),
             height: pxPhone(50),
-            alignSelf: 'center',
+            marginLeft: pxPhone(14),
           }}
           source={logo.imageSource}
         />
+        <View style={styles.profile}>
+          <Text style={styles.txtProfile}>
+            {userName}
+          </Text>
+          {/* <AntDesign name={'caretdown'} size={pxPhone(18)} color={'gray'} /> */}
+        </View>
+        <Hr style={{ marginBottom: pxPhone(12) }} />
         {menuItems &&
           menuItems.map((item, index) => {
             return (
               <React.Fragment key={index}>
                 <DrawerItem
+                  activeBackgroundColor={'white'}
                   focused={indexFocus === item.routeIndex}
                   activeTintColor={theme["color-app"]}
                   pressColor={theme["color-app"]}
-                  labelStyle={{ fontWeight: 'bold', fontSize: pxPhone(18) }}
-                  icon={({ color }) => <Icon name={item.iconName} size={pxPhone(22)} color={color} />}
+                  labelStyle={styles.labelStyle}
+                  icon={({ color }) => {
+                    if ((item.name === 'Manage' && !isAdmin)) {
+                      return <Ionicons
+                        name={'ios-newspaper-sharp'}
+                        size={pxPhone(22)}
+                        color={color}
+                      />
+                    }
+                    return <Icon name={item.iconName} size={pxPhone(22)} color={color} />
+                  }}
                   key={index}
-                  label={item.name}
+                  label={(item.name === 'Manage' && !isAdmin) ? 'Projects' : item.name}
                   onPress={() => {
                     item.name === 'Log out' ? logout() : props.navigation.navigate(item.name);
                   }}
@@ -168,83 +188,77 @@ const App = () => {
     );
   };
 
-  const ManageTabNavigator = () => {
+  const ManageTabNavigator = (props) => {
     roleUser = store.getState().user.role;
-    return (
-      <Tab.Navigator
-        tabBarOptions={{
-          showIcon: true,
-          activeTintColor: theme["color-active"],
-          inactiveTintColor: 'gray',
-          contentContainerStyle: { height: pxPhone(55) },
-          indicatorStyle: { backgroundColor: theme["color-active"] },
-        }}
-        tabBarPosition={'bottom'}
-        initialRouteName={'Project'}>
-        <Tab.Screen
-          name="Project"
-          component={ProjectStack}
-          options={{
-            tabBarIcon: ({ color }) => {
-              return <Ionicons
-                name={'ios-newspaper-sharp'}
-                size={pxPhone(22)}
-                color={color}
-              />
-            },
-            tabBarLabel: ({ color }) => {
-              return <Text style={{ color, fontSize: pxPhone(12), ...textStyle.semibold }}>
-                {'Projects'}
-              </Text>
-            },
+    const isAdmin = (roleUser === 'hr' || roleUser === 'manage');
+
+    if (!isAdmin) {
+      return ProjectStack(props);
+    } else {
+      return (
+        <Tab.Navigator
+          tabBarOptions={{
           }}
-        />
-        {(roleUser === 'hr' || roleUser === 'manage') && <Tab.Screen
-          name="Settings"
-          component={SettingStack}
-          options={{
-            tabBarIcon: ({ color, size }) => {
-              return <Ionicons
-                name={'md-settings-sharp'}
-                size={pxPhone(23)}
-                color={color}
-              />
-            },
-            tabBarLabel: ({ color }) => {
-              return <Text style={{ color, fontSize: pxPhone(12), ...textStyle.semibold, paddingBottom: pxPhone(2) }}>
-                {'Setting'}
-              </Text>
-            },
-          }}
-        />}
-        {(roleUser === 'hr' || roleUser === 'manage') && <Tab.Screen
-          name="Employees"
-          component={EmployeesStack}
-          options={{
-            tabBarIcon: ({ color, focused, size }) => {
-              return <Icon name={'users'} size={pxPhone(20)} color={color} />
-            },
-            tabBarLabel: ({ color }) => {
-              return <Text style={{ color, fontSize: pxPhone(12), ...textStyle.semibold, paddingBottom: pxPhone(2) }}>
-                {'Employees'}
-              </Text>
-            },
-          }}
-        />}
-      </Tab.Navigator>
-    );
+          shifting={true}
+          labeled={true}
+          activeColor={theme["color-active"]}
+          inactiveColor={'gray'}
+          barStyle={{ backgroundColor: 'white' }}
+          initialRouteName={'Project'}>
+          <Tab.Screen
+            name="Project"
+            component={ProjectStack}
+            options={{
+              tabBarIcon: ({ color }) => {
+                return <Ionicons
+                  name={'ios-newspaper-sharp'}
+                  size={pxPhone(22)}
+                  color={color}
+                />
+              },
+              tabBarLabel: 'Projects',
+            }}
+          />
+          <Tab.Screen
+            name="Settings"
+            component={SettingStack}
+            options={{
+              tabBarIcon: ({ color }) => {
+                return <Ionicons
+                  name={'md-settings-sharp'}
+                  size={pxPhone(23)}
+                  color={color}
+                />
+              },
+              tabBarLabel: 'Policy',
+            }}
+          />
+          <Tab.Screen
+            name="Employees"
+            component={EmployeesStack}
+            options={{
+              tabBarIcon: ({ color }) => {
+                return <Icon name={'users'} size={pxPhone(20)} color={color} />
+              },
+              tabBarLabel: 'Employees',
+            }}
+          />
+        </Tab.Navigator>
+      );
+    }
   };
 
   const VacationTabNavigator = () => {
     return (
       <Tab.Navigator
         tabBarOptions={{
-          showIcon: true,
-          activeTintColor: theme["color-active"],
-          inactiveTintColor: 'gray',
-          contentContainerStyle: { height: pxPhone(55) },
         }}
-        tabBarPosition={'bottom'}>
+        shifting={true}
+        labeled={true}
+        activeColor={theme["color-active"]}
+        inactiveColor={'gray'}
+        barStyle={{ backgroundColor: 'white' }}
+        initialRouteName={'Dashboard'}>
         <Tab.Screen
           name="Dashboard"
           component={DashboardScreen}
@@ -256,30 +270,21 @@ const App = () => {
                 color={color}
               />
             },
-            tabBarLabel: ({ color }) => {
-              return <Text style={{ color, fontSize: pxPhone(12), ...textStyle.semibold, paddingBottom: pxPhone(2) }}>
-                {'Absence'}
-              </Text>
-            },
+            tabBarLabel: 'Absence',
           }}
         />
         <Tab.Screen
           name="Reports"
           component={ReportsScreen}
           options={{
-            tabBarIcon: ({ color, focused, size }) => {
+            tabBarIcon: ({ color }) => {
               return <Icon
-                style={{ bottom: pxPhone(-2) }}
                 name={'line-chart'}
                 size={pxPhone(22)}
                 color={color}
               />
             },
-            tabBarLabel: ({ color }) => {
-              return <Text style={{ color, fontSize: pxPhone(12), ...textStyle.semibold, paddingBottom: pxPhone(2) }}>
-                {'Reports'}
-              </Text>
-            },
+            tabBarLabel: 'Reports',
           }}
         />
       </Tab.Navigator>
@@ -290,12 +295,13 @@ const App = () => {
     return (
       <Tab.Navigator
         tabBarOptions={{
-          showIcon: true,
-          activeTintColor: theme["color-active"],
-          inactiveTintColor: 'gray',
-          contentContainerStyle: { height: pxPhone(55) },
         }}
-        tabBarPosition={'bottom'}>
+        shifting={true}
+        labeled={true}
+        activeColor={theme["color-active"]}
+        inactiveColor={'gray'}
+        barStyle={{ backgroundColor: 'white' }}
+        initialRouteName={'TimeLog'}>
         <Tab.Screen
           name="TimeLog"
           component={TimelogStack}
@@ -303,15 +309,11 @@ const App = () => {
             tabBarIcon: ({ color }) => {
               return <Icon
                 name={'clock-o'}
-                size={pxPhone(22)}
+                size={pxPhone(25)}
                 color={color}
               />
             },
-            tabBarLabel: ({ focused, color, position }) => {
-              return <Text style={{ color, fontSize: pxPhone(12), ...textStyle.semibold, paddingBottom: pxPhone(2) }}>
-                {'TimeLog'}
-              </Text>
-            },
+            tabBarLabel: 'Time Log',
           }}
         />
         <Tab.Screen
@@ -321,15 +323,11 @@ const App = () => {
             tabBarIcon: ({ color }) => {
               return <Icon
                 name={'line-chart'}
-                size={pxPhone(22)}
+                size={pxPhone(21)}
                 color={color}
               />
             },
-            tabBarLabel: ({ color }) => {
-              return <Text style={{ color, fontSize: pxPhone(12), ...textStyle.semibold, paddingBottom: pxPhone(2) }}>
-                {'Report'}
-              </Text>
-            },
+            tabBarLabel: 'Report',
           }}
         />
       </Tab.Navigator>
@@ -344,6 +342,7 @@ const App = () => {
           headerTitleAlign: 'center',
           headerTitleStyle: styles.txtTitle,
           ...TransitionPresets.SlideFromRightIOS,
+          headerTintColor: 'white',
         }}>
         <Stack.Screen
           name="Project"
@@ -416,19 +415,19 @@ const App = () => {
         />
       </Stack.Navigator>
     );
-  };
+  }
 
   const FilterAndSortTab = () => {
     return (
-      <Tab.Navigator
+      <TabFilter.Navigator
         tabBarOptions={{
           style: styles.headerStyle,
           labelStyle: styles.txtTitleFilter,
         }}
       >
-        <Tab.Screen name="Filter" component={FilterProject} />
-        <Tab.Screen name="Sort" component={SortScreen} />
-      </Tab.Navigator>
+        <TabFilter.Screen name="Filter" component={FilterProject} />
+        <TabFilter.Screen name="Sort" component={SortScreen} />
+      </TabFilter.Navigator>
     );
   }
 
@@ -490,6 +489,21 @@ const App = () => {
     );
   };
 
+  const ManageStack = (props) => {
+    return (
+      <Stack.Navigator
+        screenOptions={screenOptionsDefault(props)}>
+        <Stack.Screen
+          name="Manage"
+          component={ManageTabNavigator}
+          options={{
+            title: 'Manage',
+          }}
+        />
+      </Stack.Navigator>
+    );
+  };
+
   const PolicyStackNavigator = () => {
     return (
       <Stack.Navigator
@@ -517,13 +531,14 @@ const App = () => {
           headerStyle: styles.headerStyle,
           headerTitleAlign: 'center',
           headerTitleStyle: styles.txtTitle,
+          headerTintColor: 'white',
           ...TransitionPresets.SlideFromRightIOS,
         }}>
         <Stack.Screen
           name="Reports"
           component={TimeLogReportScreen}
           options={{
-            title: 'Reports TimeLog',
+            title: 'Time Log',
             headerLeft: () => {
               return (
                 <Icon2
@@ -552,7 +567,7 @@ const App = () => {
           name="TimeLogEdit"
           component={TimeLogEditScreen}
           options={{
-            title: 'Edit Timelog',
+            title: 'Edit Time Log',
           }}
         />
         <Stack.Screen
@@ -578,12 +593,13 @@ const App = () => {
 
           headerTitleAlign: 'center',
           headerTitleStyle: styles.txtTitle,
+          headerTintColor: 'white',
         }}>
         <Stack.Screen
           name="TimeLog"
           component={TimeLogScreen}
           options={{
-            title: 'TimeLog',
+            title: 'Time Log',
             headerLeft: () => {
               return (
                 <Icon2
@@ -601,14 +617,14 @@ const App = () => {
           name="TimeLogCreate"
           component={TimeLogCreateScreen}
           options={{
-            title: 'Create Timelog',
+            title: 'Create Time Log',
           }}
         />
         <Stack.Screen
           name="TimeLogEdit"
           component={TimeLogEditScreen}
           options={{
-            title: 'Edit Timelog',
+            title: 'Edit Time Log',
           }}
         />
       </Stack.Navigator>
@@ -620,7 +636,7 @@ const App = () => {
     roleUser = useSelector(state => state.user.role);
     return (
       <Drawer.Navigator
-        initialRouteName={!authenticated ? 'login' : 'Timelog'}
+        initialRouteName={!authenticated ? 'login' : 'Time Log'}
         drawerContent={(props) =>
           DrawerContent({ ...props, dispatch: dispatch })
         }>
@@ -640,7 +656,7 @@ const App = () => {
           }}
         />
         <Drawer.Screen
-          name="Timelog"
+          name="Time Log"
           component={TimelogTabNavigator}
         />
         <Drawer.Screen
@@ -701,6 +717,24 @@ const styles = StyleSheet.create({
   },
   headerStyle: {
     backgroundColor: theme["color-app"],
+  },
+  profile: {
+    paddingHorizontal: pxPhone(16),
+    paddingVertical: pxPhone(20),
+    flexDirection: 'row',
+    ...textStyle.bold,
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  labelStyle: {
+    fontSize: pxPhone(18),
+    ...textStyle.semibold,
+  },
+  txtProfile: {
+    fontSize: pxPhone(21),
+    ...textStyle.bold,
+    color: theme["color-app"],
   },
 });
 

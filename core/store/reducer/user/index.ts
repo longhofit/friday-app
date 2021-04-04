@@ -2,7 +2,8 @@ import {
   UserState,
   UserActionTypes,
   SET_USER,
-  SET_ROLE
+  SET_ROLE,
+  CLEAR_USER
 } from './types';
 
 const initialState: UserState = {
@@ -29,6 +30,9 @@ export const userReducer = (state = initialState, action: UserActionTypes): User
         role: action.payload,
       };
     }
+
+    case CLEAR_USER:
+      return initialState;
 
     default: {
       return state;

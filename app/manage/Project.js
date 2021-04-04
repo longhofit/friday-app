@@ -27,6 +27,8 @@ export default ProjectsScreen = (props) => {
   const [projectSelected, setProjectSelected] = useState();
   const [isShow, setIsShow] = useState(false);
   const filterAndSortForm = useSelector(state => state.session.projectFilterAndSort);
+  const role = useSelector(state => state.user.role);
+  const isAdmin = (role === 'hr' || role === 'manage');
   const [keyword, setKeyword] = useState('');
   const dispatch = useDispatch();
 
@@ -46,9 +48,22 @@ export default ProjectsScreen = (props) => {
   }, []);
 
   const getProjects = async () => {
-    const projectService = new ProjectService();
-    const data = await projectService.getProjects();
-    setProjects(data.content);
+    try {
+      const projectService = new ProjectService();
+      if (isAdmin) {
+        const data = await projectService.getProjects();
+        setProjects(data.content)
+      } else {
+        const data = await projectService.getProjectMine();
+        let projectsTemp = [];
+        data.forEach(item => {
+          projectsTemp.push(item.project)
+        });
+        setProjects(projectsTemp);
+      }
+    } catch (error) {
+      showToastWithGravityAndOffset(error);
+    }
   };
 
   const onUpdateProjectSuccess = (newProject) => {
@@ -249,6 +264,7 @@ export default ProjectsScreen = (props) => {
   const renderProject = (item, index, color) => {
     return (
       <TouchableOpacity
+        disabled={!isAdmin}
         activeOpacity={0.75}
         onPress={() => onItemPress(item)}
         key={index}
@@ -372,7 +388,7 @@ export default ProjectsScreen = (props) => {
       </View>
       {renderProjects()}
       {projectSelected && renderModal()}
-      {renderAddButton()}
+      {isAdmin && renderAddButton()}
     </React.Fragment>
   );
 };

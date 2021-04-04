@@ -176,11 +176,11 @@ const themedStyle = StyleSheet.create({
   txtButton: {
     fontSize: pxPhone(16),
     ...textStyle.semibold,
-    color: 'black',
+    color: 'white',
   },
   txtTitle: {
     fontSize: pxPhone(18),
     ...textStyle.bold,
-    color: 'black',
+    color: 'white',
   },
 })

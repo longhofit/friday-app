@@ -29,6 +29,10 @@ export default class ProjectService extends ApiService {
     return this.apiGet<any>(`/project/${id}`, null, true);
   }
 
+  public getProjectMine() {
+    return this.apiGet<any>('/project/mine', null, true);
+  }
+
   public addMember(body, id: string) {
     return this.apiPost<any>(`/project/${id}/member`, body, null, true);
   }
