@@ -14,6 +14,7 @@ import SettingService from '../services/setting.service';
 import {pxPhone} from '../../core/utils/utils';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/MaterialIcons';
+import { theme } from '../theme/appTheme';
 export default SettingScreen = (props) => {
   const [isShowModalUpdate, setIsShowModalUpdate] = useState(false);
   const [newDayOff, setNewDayOff] = useState(0);
@@ -431,7 +432,7 @@ const styles = StyleSheet.create({
     fontSize: pxPhone(16),
   },
   buttonSave:{
-    backgroundColor: "#0052cc",
+    backgroundColor: theme["color-app"],
     alignSelf: 'center',
     paddingHorizontal: pxPhone(20),
     paddingVertical: pxPhone(10),

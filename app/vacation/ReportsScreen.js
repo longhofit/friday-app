@@ -7,6 +7,7 @@ import Modal from 'react-native-modal';
 import { Calendar } from 'react-native-calendars';
 import EmployeesService from "../services/employees.service";
 import { IconClose, IconDelete } from "../assets/icons";
+import { theme } from "../theme/appTheme";
 
 export default Reports = () => {
   const initDateForm = {
@@ -414,11 +415,11 @@ export default Reports = () => {
             onPress={onFilterReport}
             style={{
               justifyContent: 'center',
-              backgroundColor: '#3753C7',
+              backgroundColor: theme["color-app"],
               borderRadius: pxPhone(6),
               height: pxPhone(40),
               paddingHorizontal: pxPhone(15),
-              shadowColor: '#3753C7',
+              shadowColor: theme["color-app"],
               shadowOffset: {
                 width: pxPhone(3),
                 height: pxPhone(4),

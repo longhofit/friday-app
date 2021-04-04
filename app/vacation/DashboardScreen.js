@@ -19,6 +19,7 @@ import { onSetUser } from '../../core/store/reducer/user/actions';
 import { pxPhone } from '../../core/utils/utils';
 import { leaveTypes } from '../../core/constant/menuSideBarConstant';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
+import { theme } from '../theme/appTheme';
 
 export default DashboardScreen = (props) => {
   const [progress, setProgress] = useState(true);
@@ -130,7 +131,7 @@ export default DashboardScreen = (props) => {
           <Spinner
             visible={progress}
             textStyle={styles.spinnerTextStyle}
-            color={'#0066cc'}
+            color={theme["color-app"]}
           />
           <Error error={error} />
           {(
@@ -263,11 +264,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     marginHorizontal: 10,
   },
-  logoutButton: {
-    paddingLeft: 10,
-    fontSize: 16,
-    color: '#0066cc'
-  },
   container: {
     padding: pxPhone(16),
     // flex: 1,
@@ -278,7 +274,7 @@ const styles = StyleSheet.create({
   titleHello: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#0066cc',
+    color:theme["color-app"],
   },
   titleDetails: {
     fontSize: 15,
@@ -299,7 +295,7 @@ const styles = StyleSheet.create({
     right: pxPhone(10),
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#3753C7',
+    backgroundColor: theme["color-app"],
     borderRadius: pxPhone(50 / 2),
     width: pxPhone(50),
     height: pxPhone(50),

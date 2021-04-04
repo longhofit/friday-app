@@ -498,11 +498,11 @@ const styles = StyleSheet.create({
   },
   buttonShowReport: {
     justifyContent: 'center',
-    backgroundColor: '#3753C7',
+    backgroundColor: theme["color-app"],
     borderRadius: pxPhone(6),
     height: pxPhone(40),
     paddingHorizontal: pxPhone(15),
-    shadowColor: '#3753C7',
+    shadowColor: theme["color-app"],
     shadowOffset: {
       width: pxPhone(3),
       height: pxPhone(4),

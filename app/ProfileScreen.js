@@ -13,6 +13,7 @@ import { pxPhone } from '../core/utils/utils';
 import {
   IconAvatarAnonymous,
 } from './assets/icons';
+import { theme } from './theme/appTheme';
 export default ProfileScreen = (props) => {
   const [userInfo, setUserInfo] = useState(null);
   useEffect(() => {
@@ -86,8 +87,8 @@ const styles = StyleSheet.create({
   },
   viewAvatar: {
     width: '100%',
-    height: pxPhone(250),
-    backgroundColor: '#9AC4F8',
+    height: pxPhone(200),
+    backgroundColor: theme["color-app"],
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -124,7 +125,7 @@ const styles = StyleSheet.create({
     paddingVertical: pxPhone(8),
     borderWidth: 1,
     borderColor: 'gray',
-    backgroundColor: '#3753C7',
+    backgroundColor: theme["color-app"],
     borderRadius: pxPhone(5),
   },
   textButton: {

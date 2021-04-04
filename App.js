@@ -142,8 +142,8 @@ const App = () => {
       <DrawerContentScrollView style={{ padding: 0, margin: 0 }}>
         <Image
           style={{
-            width: pxPhone(50) * (446 / 160),
-            height: pxPhone(50),
+            width: pxPhone(60) * (446 / 160),
+            height: pxPhone(60),
             marginLeft: pxPhone(14),
           }}
           source={logo.imageSource}
@@ -152,7 +152,6 @@ const App = () => {
           <Text style={styles.txtProfile}>
             {userName}
           </Text>
-          {/* <AntDesign name={'caretdown'} size={pxPhone(18)} color={'gray'} /> */}
         </View>
         <Hr style={{ marginBottom: pxPhone(12) }} />
         {menuItems &&
@@ -423,6 +422,7 @@ const App = () => {
         tabBarOptions={{
           style: styles.headerStyle,
           labelStyle: styles.txtTitleFilter,
+          indicatorStyle: { backgroundColor: '#090a12' },
         }}
       >
         <TabFilter.Screen name="Filter" component={FilterProject} />
@@ -433,14 +433,15 @@ const App = () => {
 
   const FilterAndSortTabTimeLog = () => {
     return (
-      <Tab.Navigator
+      <TabFilter.Navigator
         tabBarOptions={{
           style: styles.headerStyle,
           labelStyle: styles.txtTitleFilter,
+          indicatorStyle: { backgroundColor: '#090a12' },
         }}>
-        <Tab.Screen name="Filter" component={FilterTimeLog} />
-        <Tab.Screen name="Sort" component={SortTimeLog} />
-      </Tab.Navigator>
+        <TabFilter.Screen name="Filter" component={FilterTimeLog} />
+        <TabFilter.Screen name="Sort" component={SortTimeLog} />
+      </TabFilter.Navigator>
     );
   }
 
@@ -483,6 +484,21 @@ const App = () => {
           component={VacationTabNavigator}
           options={{
             title: 'Vacation',
+          }}
+        />
+      </Stack.Navigator>
+    );
+  };
+
+  const ProfileStack = (props) => {
+    return (
+      <Stack.Navigator
+        screenOptions={screenOptionsDefault(props)}>
+        <Stack.Screen
+          name="Profile"
+          component={ProfileScreen}
+          options={{
+            title: 'Profile',
           }}
         />
       </Stack.Navigator>
@@ -636,7 +652,7 @@ const App = () => {
     roleUser = useSelector(state => state.user.role);
     return (
       <Drawer.Navigator
-        initialRouteName={!authenticated ? 'login' : 'Time Log'}
+        initialRouteName={!authenticated ? 'login' : 'Manage'}
         drawerContent={(props) =>
           DrawerContent({ ...props, dispatch: dispatch })
         }>
@@ -650,7 +666,7 @@ const App = () => {
         />
         <Drawer.Screen
           name="Profile"
-          component={ProfileScreen}
+          component={ProfileStack}
           options={{
             title: 'Profile',
           }}
