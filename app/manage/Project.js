@@ -5,6 +5,7 @@ import {
   View,
   TouchableOpacity,
   ScrollView,
+  RefreshControl,
 } from 'react-native';
 import { isEmpty, pxPhone, showToastWithGravityAndOffset } from '../../core/utils/utils';
 import ProjectService from '../services/project.service';
@@ -143,57 +144,6 @@ export default ProjectsScreen = (props) => {
 
     props.navigation.navigate('Members', { project, onAddOrEditProject });
   };
-
-  const renderModal = () => {
-    return (
-      <Modal
-        onBackdropPress={onCloseModal}
-        isVisible={isShow}
-        animationIn='slideInUp'
-        animationOut='slideOutDown'
-        animationInTiming={1}
-        animationOutTiming={1}
-        backdropTransitionInTiming={1}
-        backdropTransitionOutTiming={1}
-        style={{ alignItems: 'center', justifyContent: 'center' }}>
-        <View style={styles.option}>
-          <TouchableOpacity onPress={() => onViewPress(projectSelected.code, projectSelected.name)}>
-            <Text
-              style={[styles.txtOption, { color: 'orange' }]}>
-              {'View members'}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={onAddNewPress}>
-            <Text
-              style={[styles.txtOption, { color: 'red' }]}>
-              {'Edit'}
-            </Text>
-          </TouchableOpacity>
-          {projectSelected.status !== 'SUSPEND' && <TouchableOpacity
-            onPress={onSuspend}
-            style={{ paddingTop: pxPhone(7) }}>
-            <Text style={[styles.txtOption, { color: '#7D61C8' }]}>
-              {'Suspend'}
-            </Text>
-          </TouchableOpacity>}
-          {projectSelected.status !== 'ARCHIVED' && <TouchableOpacity
-            onPress={onArchived}
-            style={{ paddingTop: pxPhone(7) }}>
-            <Text style={[styles.txtOption, { color: '#D86667' }]}>
-              {'Archive'}
-            </Text>
-          </TouchableOpacity>}
-          {projectSelected.status !== 'RUNNING' && <TouchableOpacity
-            onPress={onRunning}
-            style={{ paddingTop: pxPhone(7) }}>
-            <Text style={[styles.txtOption, { color: 'green' }]}>
-              {'Running'}
-            </Text>
-          </TouchableOpacity>}
-        </View>
-      </Modal>
-    )
-  }
 
   const onRenderFilterOption = (title, onPress) => {
     return (
@@ -342,11 +292,19 @@ export default ProjectsScreen = (props) => {
         </View>
       </TouchableOpacity>
     )
-  }
+  };
+
+  const onRefresh = () => {
+    getProjects();
+  };
 
   const renderProjects = () => {
     return (
       <ScrollView
+        refreshControl={<RefreshControl
+          refreshing={false}
+          onRefresh={onRefresh}
+        />}
         showsVerticalScrollIndicator={false}
         ref={scrollViewProject}
         style={styles.container}>
@@ -387,7 +345,6 @@ export default ProjectsScreen = (props) => {
         {onRenderFilterOptions()}
       </View>
       {renderProjects()}
-      {projectSelected && renderModal()}
       {isAdmin && renderAddButton()}
     </React.Fragment>
   );

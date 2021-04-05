@@ -96,25 +96,36 @@ export default ProjectMemberScreen = ({ route, navigation }) => {
     });
     return (
       <View style={{ flexDirection: 'row' }}>
-        <TouchableOpacity style={[styles.leftAction, { backgroundColor: '#4D5BC8' }]} onPress={onPressLock}>
+        <TouchableOpacity
+          activeOpacity={0.75}
+          style={[styles.leftAction, { backgroundColor: theme["color-app"] }]}
+          onPress={onPressEdit}>
+          <Icon
+            name={'edit'}
+            size={pxPhone(24)}
+            color={'white'}
+            style={{ left: pxPhone(2), top: pxPhone(3) }}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          activeOpacity={0.75}
+          style={[styles.leftAction, { backgroundColor: '#4D5BC8' }]}
+          onPress={onPressLock}>
           <Fontisto
             name={item.active ? 'locked' : 'unlocked'}
             size={pxPhone(23)}
             color={'white'}
           />
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.leftAction, { backgroundColor: '#D86667' }]} onPress={onPressDelete}>
+        <TouchableOpacity
+          activeOpacity={0.75}
+          style={[styles.leftAction, { backgroundColor: '#D86667' }]}
+          onPress={onPressDelete}>
           <Icon2
             name={'delete'}
             size={pxPhone(27)}
             color={'white'}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.leftAction, { backgroundColor: theme["color-app"] }]} onPress={null}>
-          <Icon
-            name={'edit'}
-            size={pxPhone(24)}
-            color={'white'}
+            style={{ top: pxPhone(1) }}
           />
         </TouchableOpacity>
       </View>
@@ -149,7 +160,10 @@ export default ProjectMemberScreen = ({ route, navigation }) => {
             item={item}
             progress={progress}
             dragX={dragX}
-            onPressEdit={null}
+            onPressEdit={() => {
+              onAddButtonPress(item);
+              refMember.close();
+            }}
             onPressDelete={() => {
               onDeleteMember(item);
               refMember.close();
@@ -160,7 +174,7 @@ export default ProjectMemberScreen = ({ route, navigation }) => {
             }}
           />
         )}>
-        <TouchableOpacity onPress={() => refMember.openRight()}>
+        <TouchableOpacity activeOpacity={0.75} onPress={() => refMember.openRight()}>
           <View style={{ justifyContent: 'space-between', flexDirection: 'row', paddingVertical: pxPhone(5) }}>
             <Text style={styles.name}>
               {item.name}
@@ -230,8 +244,8 @@ export default ProjectMemberScreen = ({ route, navigation }) => {
     )
   };
 
-  const onAddButtonPress = () => {
-    navigation.navigate('MemberAddNew', { id, onAddMemmberSuccess });
+  const onAddButtonPress = (member) => {
+    navigation.navigate('MemberAddNew', { id, onAddMemmberSuccess, member, onUpdateMember });
   };
 
   const onAddMemmberSuccess = (member) => {
@@ -248,7 +262,7 @@ export default ProjectMemberScreen = ({ route, navigation }) => {
   const onDeleteMember = async (item) => {
     try {
       const projectService = new ProjectService();
-      const data = await projectService.deleteMember(id, [item.member]);
+      await projectService.deleteMember(id, [item.member]);
       showToastWithGravityAndOffset('Delete successfully')
       setMemberSelect(undefined);
       const newMembers = members.filter(member => member.member !== item.member)
@@ -263,14 +277,32 @@ export default ProjectMemberScreen = ({ route, navigation }) => {
       const projectService = new ProjectService();
       let body = item;
       body = { ...body, active: !item.active, offBoardDate: item.active ? yyyMMddFormatter(new Date()) : '' };
-      data = await projectService.updateMember([body], id);
-
+      await projectService.updateMember([body], id);
       let newMembers = members.filter(item => item.member !== body.member);
       setMembers([body, ...newMembers]);
       scrollView.current?.scrollTo({ x: 0 })
-      // navigation.navigate('Members');
       showToastWithGravityAndOffset('Update member successfully.')
       setMemberSelect(undefined);
+    } catch (error) {
+      showToastWithGravityAndOffset(error.message)
+    }
+  };
+
+  const onUpdateMember = async (form, navigation) => {
+    try {
+      const projectService = new ProjectService();
+      const data = await projectService.updateMember([form], id);
+      if (data) {
+        let newMembers = members.filter(item => item.member !== form.member);
+        setMembers([form, ...newMembers]);
+        setTimeout(() => {
+          scrollView.current?.scrollTo({ x: 0 })
+        }, 500);
+        navigation.navigate('Members');
+        showToastWithGravityAndOffset('Update member successfully.')
+      } else {
+        showToastWithGravityAndOffset('Update member not successfully.')
+      }
     } catch (error) {
       showToastWithGravityAndOffset(error.message)
     }
@@ -316,7 +348,7 @@ export default ProjectMemberScreen = ({ route, navigation }) => {
         </View>
       </ScrollView>
       <TouchableOpacity
-        onPress={onAddButtonPress}
+        onPress={() => onAddButtonPress(undefined)}
         activeOpacity={0.75}
         style={styles.icon}>
         <FontAwesome5
@@ -341,7 +373,7 @@ const styles = StyleSheet.create({
     right: pxPhone(10),
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#3753C7',
+    backgroundColor: theme["color-app"],
     borderRadius: pxPhone(50 / 2),
     width: pxPhone(50),
     height: pxPhone(50),

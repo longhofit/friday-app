@@ -32,6 +32,7 @@ import * as Keychain from 'react-native-keychain';
 import { onRequestRecognizeAuthentication } from '../core/utils/recognizeHelper';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import ProfileService from './services/profile.service';
+import { textStyle } from './components/styles/style';
 
 export default LoginScreen = (props) => {
   const [state, setState] = useState({
@@ -171,7 +172,7 @@ export default LoginScreen = (props) => {
                 password: '',
                 error: ''
               });
-              navigation.navigate('Time Log');
+              navigation.navigate('Manage');
             })
             .catch((e) => {
               console.log('error:', e);
@@ -190,7 +191,7 @@ export default LoginScreen = (props) => {
             password: '',
             error: ''
           });
-          navigation.navigate('Time Log');
+          navigation.navigate('Manage');
         }
       })
       .catch(e => {
@@ -334,12 +335,17 @@ export default LoginScreen = (props) => {
               onPress={login}
               activeOpacity={0.75}
               style={{ marginTop: pxPhone(40), padding: pxPhone(12), backgroundColor: theme["color-app"], alignItems: 'center', borderRadius: pxPhone(5) }}>
-              <Text style={{ color: 'white', fontWeight: 'bold', fontSize: pxPhone(20) }}>
+              <Text style={styles.txtSignIn}>
                 {'Sign in'}
               </Text>
             </TouchableOpacity>
+            <TouchableOpacity onPress={onPressForgotPassword}>
+              <Text style={styles.txtForgot}>
+                {'Forgot Password?'}
+              </Text>
+            </TouchableOpacity>
             <TouchableOpacity
-              style={{ alignSelf: 'center', marginTop: pxPhone(30) }}
+              style={{ alignSelf: 'center', marginTop: pxPhone(35) }}
               onPress={onSignInWithRecognizePress}
               activeOpacity={0.75}>
               <Ionicons
@@ -347,12 +353,9 @@ export default LoginScreen = (props) => {
                 name={'ios-finger-print'}
                 color={theme["color-app"]} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={onPressForgotPassword}>
-              <Text style={{ textAlign: 'center', color: theme["color-app"], fontSize: pxPhone(15), marginTop: pxPhone(18) }}>
-                {'Forgot Password?'}
-              </Text>
-            </TouchableOpacity>
-
+            <Text style={styles.txtTouchID}>
+              {'Sign in with Touch ID'}
+            </Text>
           </View>
         </ScrollView>
       </SafeAreaView>
@@ -393,4 +396,23 @@ const styles = StyleSheet.create({
     paddingTop: 40,
     textAlign: 'center',
   },
+  txtTouchID: {
+    ...textStyle.regular,
+    color: theme["color-app"],
+    fontSize: pxPhone(14),
+    textAlign: 'center',
+    marginTop: pxPhone(5),
+  },
+  txtForgot: {
+    textAlign: 'center',
+    color: theme["color-app"],
+    marginTop: pxPhone(18),
+    fontSize: pxPhone(14),
+    ...textStyle.regular,
+  },
+  txtSignIn:{
+    color: 'white', 
+   ...textStyle.bold, 
+    fontSize: pxPhone(20),
+  }
 });

@@ -6,6 +6,7 @@ import {
   ToastAndroid,
   ScrollView,
   TouchableOpacity,
+  RefreshControl,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { getUser } from '@okta/okta-react-native';
@@ -60,12 +61,14 @@ export default DashboardScreen = (props) => {
 
     });
 
+    console.log('ruururur')
+
     setDates(dateTemps);
   }, [requests]);
 
   const getUserInfo = () => {
     setProgress(true);
-    getUser() 
+    getUser()
       .then(user => {
         dispatch(onSetUser({
           name: user.name,
@@ -124,9 +127,18 @@ export default DashboardScreen = (props) => {
       });
   };
 
+  const onRefresh = () => {
+    getAllRequestLeave();
+  };
+
   return (
     <React.Fragment>
-      <ScrollView contentContainerStyle={{ paddingBottom: pxPhone(70) }} style={{ flex: 1 }}>
+      <ScrollView
+        refreshControl={<RefreshControl
+          refreshing={false}
+          onRefresh={onRefresh}
+        />}
+        contentContainerStyle={{ paddingBottom: pxPhone(70) }} style={{ flex: 1 }}>
         <View style={{ flex: 1 }} >
           <Spinner
             visible={progress}
@@ -274,7 +286,7 @@ const styles = StyleSheet.create({
   titleHello: {
     fontSize: 20,
     fontWeight: 'bold',
-    color:theme["color-app"],
+    color: theme["color-app"],
   },
   titleDetails: {
     fontSize: 15,

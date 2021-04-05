@@ -117,7 +117,7 @@ const App = () => {
 
   const DrawerContent = (props) => {
     roleUser = store.getState().user.role;
-    const userName=store.getState().user.name;
+    const userName = store.getState().user.name;
     const isAdmin = (roleUser === 'hr' || roleUser === 'manage');
 
     const logout = () => {
@@ -163,7 +163,7 @@ const App = () => {
                   focused={indexFocus === item.routeIndex}
                   activeTintColor={theme["color-app"]}
                   pressColor={theme["color-app"]}
-                  labelStyle={styles.labelStyle}
+                  labelStyle={[styles.labelStyle, item.name === 'Vacation' && { left: pxPhone(2) }, item.name === 'Time Log' && { left: pxPhone(1) }]}
                   icon={({ color }) => {
                     if ((item.name === 'Manage' && !isAdmin)) {
                       return <Ionicons
@@ -172,7 +172,11 @@ const App = () => {
                         color={color}
                       />
                     }
-                    return <Icon name={item.iconName} size={pxPhone(22)} color={color} />
+                    return <Icon
+                      style={item.iconName === 'calendar-o' && { left: pxPhone(1) }}
+                      name={item.iconName}
+                      size={item.iconName === 'clock-o' ? pxPhone(25) : item.iconName === 'power-off' ? pxPhone(25) : pxPhone(22)}
+                      color={color} />
                   }}
                   key={index}
                   label={(item.name === 'Manage' && !isAdmin) ? 'Projects' : item.name}
@@ -188,7 +192,7 @@ const App = () => {
   };
 
   const ManageTabNavigator = (props) => {
-    roleUser = store.getState().user.role;
+    roleUser = useSelector(state => state.user.role); // moi doi
     const isAdmin = (roleUser === 'hr' || roleUser === 'manage');
 
     if (!isAdmin) {
@@ -745,10 +749,10 @@ const styles = StyleSheet.create({
   },
   labelStyle: {
     fontSize: pxPhone(18),
-    ...textStyle.semibold,
+    ...textStyle.bold,
   },
   txtProfile: {
-    fontSize: pxPhone(21),
+    fontSize: pxPhone(23),
     ...textStyle.bold,
     color: theme["color-app"],
   },

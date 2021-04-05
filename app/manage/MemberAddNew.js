@@ -15,10 +15,13 @@ import { useSelector } from 'react-redux';
 import { textStyle } from '../components/styles/style';
 
 export default MemberAddNew = ({ route, navigation }) => {
-  const { id, onAddMemmberSuccess } = route.params;
+  const { id, onAddMemmberSuccess, member, onUpdateMember } = route.params;
   const employeeState = useSelector(state => state.employee.employees);
 
-  const initForm = {
+
+  console.log(member, 'member');
+
+  const initForm = member ? member : {
     employeeId: employeeState && employeeState.length > 0 && employeeState[0].id,
     role: '',
     comment: '',
@@ -29,7 +32,6 @@ export default MemberAddNew = ({ route, navigation }) => {
   };
 
   const [form, setForm] = useState(initForm);
-  const [isUpdate, setIsUpdate] = useState(false);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -61,21 +63,9 @@ export default MemberAddNew = ({ route, navigation }) => {
       headerRightContainerStyle: {
         padding: 0,
       },
-      headerTitle: isUpdate ? `Update member` : 'Add new member',
+      headerTitle: member ? `Update member` : 'Add new member',
     });
-    console.log(form)
   }, [navigation, form]);
-
-  useEffect(() => {
-    if (route.params) {
-      const { project } = route.params;
-
-      if (project) {
-        setIsUpdate(true);
-        setForm(project);
-      };
-    }
-  }, [navigation])
 
   const isEmpty = (value) => {
     return value === '';
@@ -110,21 +100,19 @@ export default MemberAddNew = ({ route, navigation }) => {
   const addNewMember = async () => {
     try {
       const projectService = new ProjectService();
-      let data;
-      if (isUpdate) {
-        // data = await projectService.updateProject(form);
+      if (member) {
+        onUpdateMember(form, navigation);
       } else {
-        data = await projectService.addMember([form], id);
-      }
-
-      if (data) {
-        let newMember = data[0];
-        newMember = { ...newMember, member: newMember.key.member, name: form.name }
-        onAddMemmberSuccess(newMember)
-        navigation.navigate('Members');
-        showToastWithGravityAndOffset('Add member successfully.')
-      } else {
-        showToastWithGravityAndOffset('Add member not successfully.')
+        const data = await projectService.addMember([form], id);
+        if (data) {
+          let newMember = data[0];
+          newMember = { ...newMember, member: newMember.key.member, name: form.name }
+          onAddMemmberSuccess(newMember)
+          navigation.navigate('Members');
+          showToastWithGravityAndOffset('Add member successfully.')
+        } else {
+          showToastWithGravityAndOffset('Add member not successfully.')
+        }
       }
     } catch (error) {
       showToastWithGravityAndOffset(error.message)
@@ -136,7 +124,7 @@ export default MemberAddNew = ({ route, navigation }) => {
       showsVerticalScrollIndicator={false}
       style={{ flex: 1, backgroundColor: 'white' }}>
       <View style={styles.container}>
-        <View style={styles.picker}>
+        {!member && <View style={styles.picker}>
           <View style={styles.pickerMask}>
             <Text style={{ color: '#585858', fontSize: pxPhone(12) }}>
               {'Employee'}
@@ -152,7 +140,7 @@ export default MemberAddNew = ({ route, navigation }) => {
               )
             })}
           </Picker>
-        </View>
+        </View>}
         <TextInput
           style={styles.input}
           mode={'outlined'}
@@ -161,7 +149,6 @@ export default MemberAddNew = ({ route, navigation }) => {
           onChangeText={setRole}
         />
         <TextInput
-          disabled={isUpdate}
           style={styles.input}
           mode={'outlined'}
           label={'Comment'}
